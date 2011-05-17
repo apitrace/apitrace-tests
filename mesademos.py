@@ -48,6 +48,7 @@ def ansi_strip(s):
 
 def popen(command, *args, **kwargs):
     sys.stdout.write(' '.join(command) + '\n')
+    sys.stdout.flush()
     return subprocess.Popen(command, *args, **kwargs)
 
 
@@ -69,24 +70,27 @@ ignored_function_names = set([
 
 def runtest(demo):
 
-    app = os.path.join(options.mesa_demos, demo)
+    app = os.path.join(options.mesa_demos, 'src', demo)
 
     dirname, basename = os.path.split(app)
+    
+    trace = os.path.abspath(demo.replace('/', '-') + '.trace')
 
     env = os.environ.copy()
     env['LD_PRELOAD'] = os.path.abspath('glxtrace.so')
-    env['TRACE_FILE'] = '/tmp/trace'
+    env['TRACE_FILE'] = trace
     
     args = [os.path.join('.', basename)]
     p = popen(args, env=env, cwd=dirname, stdout=subprocess.PIPE)
     time.sleep(0.5)
 
     # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
-    subprocess.call('xwd -name \'%s\' | xwdtopnm | pnmtopng > %s' % (args[0], '/tmp/ref.png'), shell=True, stdout=subprocess.PIPE)
+    ref_image = demo.replace('/', '-') + '.ref.png'
+    subprocess.call('xwd -name \'%s\' | xwdtopnm | pnmtopng > %s' % (args[0], ref_image), shell=True, stdout=subprocess.PIPE)
 
     os.kill(p.pid, signal.SIGTERM)
 
-    p = popen(['./tracedump', '/tmp/trace'], stdout=subprocess.PIPE)
+    p = popen(['./tracedump', trace], stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
 
     call_re = re.compile('^([0-9]+) (\w+)\(')
@@ -106,8 +110,8 @@ def runtest(demo):
     args = ['./glretrace']
     if double_buffer:
         args += ['-db']
-    args += ['-s', '/tmp/test_']
-    args += ['/tmp/trace']
+    args += ['-s', '/tmp/' + demo.replace('/', '-') + '.']
+    args += [trace]
     p = popen(args, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     image_re = re.compile('^Wrote (.*\.png)$')
@@ -118,7 +122,8 @@ def runtest(demo):
             image = mo.group(1)
     
     if image:
-        p = popen(["compare", '-metric', 'AE', '-fuzz', '5%', '-extract', '250x250', '/tmp/ref.png', image, '/tmp/delta.png'])
+        delta_image = demo.replace('/', '-') + '.diff.png'
+        p = popen(["compare", '-metric', 'AE', '-fuzz', '5%', '-extract', '250x250', ref_image, image, delta_image])
         _, stderr = p.communicate()
 
 
@@ -684,7 +689,7 @@ def main():
         optparser.error("incorrect number of arguments")
 
     for test in tests:
-       runtest('src/' + test)
+       runtest(test)
 
 
 if __name__ == '__main__':
