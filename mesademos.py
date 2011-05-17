@@ -516,7 +516,6 @@ tests = [
     #'slang/vstest',
     'tests/afsmultiarb',
     'tests/antialias',
-    'tests/api_speed.py',
     'tests/arbfpspec',
     'tests/arbfptest1',
     'tests/arbfptexture',
@@ -672,7 +671,7 @@ def main():
 
     # Parse command line options
     optparser = optparse.OptionParser(
-        usage='\n\t%prog [options] ',
+        usage='\n\t%prog [options] [demo] ...',
         version='%%prog')
     optparser.add_option(
         '--build', metavar='PATH',
@@ -686,7 +685,7 @@ def main():
 
     (options, args) = optparser.parse_args(sys.argv[1:])
     if args:
-        optparser.error("incorrect number of arguments")
+        tests = args
 
     for test in tests:
        runtest(test)
