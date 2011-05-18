@@ -47,6 +47,12 @@ def ansi_strip(s):
 
 
 def popen(command, *args, **kwargs):
+    if 'cwd' in kwargs:
+        sys.stdout.write('cd %s && ' % kwargs['cwd'])
+    if 'env' in kwargs:
+        for name, value in kwargs['env'].iteritems():
+            if value != os.environ.get(name, None):
+                sys.stdout.write('%s=%s ' % (name, value))
     sys.stdout.write(' '.join(command) + '\n')
     sys.stdout.flush()
     return subprocess.Popen(command, *args, **kwargs)
@@ -82,7 +88,7 @@ def runtest(demo):
     
     args = [os.path.join('.', basename)]
     p = popen(args, env=env, cwd=dirname, stdout=subprocess.PIPE)
-    time.sleep(0.5)
+    time.sleep(1)
 
     # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
     ref_image = demo.replace('/', '-') + '.ref.png'
@@ -123,7 +129,7 @@ def runtest(demo):
     
     if image:
         delta_image = demo.replace('/', '-') + '.diff.png'
-        p = popen(["compare", '-metric', 'AE', '-fuzz', '5%', '-extract', '250x250', ref_image, image, delta_image])
+        p = popen(["compare", '-metric', 'AE', '-fuzz', '5%', ref_image, image, delta_image])
         _, stderr = p.communicate()
 
 
