@@ -129,7 +129,7 @@ def runtest(demo):
     
     if image:
         delta_image = demo.replace('/', '-') + '.diff.png'
-        p = popen(["compare", '-metric', 'AE', '-fuzz', '5%', ref_image, image, delta_image])
+        p = popen(["compare", '-alpha', 'opaque', '-metric', 'AE', '-fuzz', '5%', ref_image, image, delta_image])
         _, stderr = p.communicate()
 
 
