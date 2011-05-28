@@ -683,18 +683,22 @@ def main():
         '--build', metavar='PATH',
         type='string', dest='build', default='.',
         help='path to apitrace build')
-
     optparser.add_option(
         '--mesa-demos', metavar='PATH',
         type='string', dest='mesa_demos', default=os.environ.get('MESA_DEMOS'),
-        help='path to mesa demos')
+        help='path to Mesa demos')
 
     (options, args) = optparser.parse_args(sys.argv[1:])
-    if args:
-        tests = args
 
-    for test in tests:
-       runtest(test)
+    if not options.mesa_demos:
+        optparser.error('path to Mesa demos not specified')
+
+    if args:
+        for test in args:
+           runtest(test)
+    else:
+        for test in tests:
+           runtest(test)
 
 
 if __name__ == '__main__':
