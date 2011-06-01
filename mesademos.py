@@ -83,20 +83,21 @@ def runtest(demo):
     trace = os.path.abspath(demo.replace('/', '-') + '.trace')
 
     env = os.environ.copy()
-    env['LD_PRELOAD'] = os.path.abspath('glxtrace.so')
+    env['LD_PRELOAD'] = os.path.abspath(os.path.join(options.build, 'glxtrace.so'))
     env['TRACE_FILE'] = trace
     
     args = [os.path.join('.', basename)]
-    p = popen(args, env=env, cwd=dirname, stdout=subprocess.PIPE)
+    p = popen(args, env=env, cwd=dirname)
     time.sleep(1)
 
     # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
     ref_image = demo.replace('/', '-') + '.ref.png'
-    subprocess.call('xwd -name \'%s\' | xwdtopnm | pnmtopng > %s' % (args[0], ref_image), shell=True, stdout=subprocess.PIPE)
+    #subprocess.call(['xwininfo', '-root', '-tree'])
+    subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
 
     os.kill(p.pid, signal.SIGTERM)
 
-    p = popen(['./tracedump', trace], stdout=subprocess.PIPE)
+    p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
 
     call_re = re.compile('^([0-9]+) (\w+)\(')
@@ -113,9 +114,11 @@ def runtest(demo):
                 double_buffer = True
         #print orig_line
 
-    args = ['./glretrace']
+    args = [os.path.join(options.build, 'glretrace')]
     if double_buffer:
         args += ['-db']
+    else:
+        args += ['-sb']
     args += ['-s', '/tmp/' + demo.replace('/', '-') + '.']
     args += [trace]
     p = popen(args, stdout=subprocess.PIPE)
@@ -682,11 +685,11 @@ def main():
     optparser.add_option(
         '--build', metavar='PATH',
         type='string', dest='build', default='.',
-        help='path to apitrace build')
+        help='path to apitrace build [default=%default]')
     optparser.add_option(
         '--mesa-demos', metavar='PATH',
         type='string', dest='mesa_demos', default=os.environ.get('MESA_DEMOS'),
-        help='path to Mesa demos')
+        help='path to Mesa demos [default=%default]')
 
     (options, args) = optparser.parse_args(sys.argv[1:])
 
