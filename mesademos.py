@@ -74,13 +74,19 @@ ignored_function_names = set([
 ])
 
 
-def runtest(demo):
+def image_tag(html, image):
+    url = os.path.relpath(image, options.results)
+    html.write('        <td><a href="%s"><img src="%s"/></a></td>\n' % (url, url))
+
+
+def runtest(html, demo):
+    html.write('      <tr>\n')
 
     app = os.path.join(options.mesa_demos, 'src', demo)
 
     dirname, basename = os.path.split(app)
     
-    trace = os.path.abspath(demo.replace('/', '-') + '.trace')
+    trace = os.path.abspath(os.path.join(options.results, demo.replace('/', '-') + '.trace'))
 
     env = os.environ.copy()
     env['LD_PRELOAD'] = os.path.abspath(os.path.join(options.build, 'glxtrace.so'))
@@ -88,14 +94,16 @@ def runtest(demo):
     
     args = [os.path.join('.', basename)]
     p = popen(args, env=env, cwd=dirname)
-    time.sleep(1)
+    try:
+        time.sleep(1)
 
-    # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
-    ref_image = demo.replace('/', '-') + '.ref.png'
-    #subprocess.call(['xwininfo', '-root', '-tree'])
-    subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
+        # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
+        ref_image = os.path.join(options.results, demo.replace('/', '-') + '.ref.png')
+        #subprocess.call(['xwininfo', '-root', '-tree'])
+        subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
 
-    os.kill(p.pid, signal.SIGTERM)
+    finally:
+        os.kill(p.pid, signal.SIGTERM)
 
     p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
@@ -119,7 +127,8 @@ def runtest(demo):
         args += ['-db']
     else:
         args += ['-sb']
-    args += ['-s', '/tmp/' + demo.replace('/', '-') + '.']
+    snapshot_prefix = os.path.join(options.results, demo.replace('/', '-') + '.')
+    args += ['-s', snapshot_prefix]
     args += [trace]
     p = popen(args, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
@@ -130,10 +139,16 @@ def runtest(demo):
         if mo:
             image = mo.group(1)
     
+    image_tag(html, ref_image)
     if image:
-        delta_image = demo.replace('/', '-') + '.diff.png'
+        delta_image = os.path.join(options.results, demo.replace('/', '-') + '.diff.png')
         p = popen(["compare", '-alpha', 'opaque', '-metric', 'AE', '-fuzz', '5%', ref_image, image, delta_image])
         _, stderr = p.communicate()
+        image_tag(html, image)
+        image_tag(html, delta_image)
+
+    html.write('      </tr>\n')
+    html.flush()
 
 
 tests = [
@@ -142,7 +157,7 @@ tests = [
     'trivial/clear-fbo-scissor',
     'trivial/clear-fbo-tex',
     'trivial/clear-random',
-    'trivial/clear-repeat',
+    #'trivial/clear-repeat',
     'trivial/clear-scissor',
     'trivial/clear-undefined',
     'trivial/createwin',
@@ -669,7 +684,7 @@ tests = [
 ]
 
 
-tests = [
+_tests = [
     'trivial/tri',
     'trivial/tri-tex',
 ]
@@ -687,6 +702,10 @@ def main():
         type='string', dest='build', default='.',
         help='path to apitrace build [default=%default]')
     optparser.add_option(
+        '--results', metavar='PATH',
+        type='string', dest='results', default='.',
+        help='results directory [default=%default]')
+    optparser.add_option(
         '--mesa-demos', metavar='PATH',
         type='string', dest='mesa_demos', default=os.environ.get('MESA_DEMOS'),
         help='path to Mesa demos [default=%default]')
@@ -695,13 +714,21 @@ def main():
 
     if not options.mesa_demos:
         optparser.error('path to Mesa demos not specified')
+    if not os.path.exists(options.results):
+        os.makedirs(options.results)
 
-    if args:
-        for test in args:
-           runtest(test)
-    else:
-        for test in tests:
-           runtest(test)
+    html = open(os.path.join(options.results, 'index.html'), 'wt')
+    html.write('<html>\n')
+    html.write('  <body>\n')
+    html.write('    <table border="1">\n')
+    html.write('      <tr><th>Ref</th><th>Src</th><th>&Delta;</th></tr>\n')
+    if not args:
+        args = tests
+    for test in args:
+       runtest(html, test)
+    html.write('    </table>\n')
+    html.write('  </body>\n')
+    html.write('</html>\n')
 
 
 if __name__ == '__main__':
