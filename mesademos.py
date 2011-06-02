@@ -80,7 +80,6 @@ def image_tag(html, image):
 
 
 def runtest(html, demo):
-    html.write('      <tr>\n')
 
     app = os.path.join(options.mesa_demos, 'src', demo)
 
@@ -95,15 +94,18 @@ def runtest(html, demo):
     args = [os.path.join('.', basename)]
     p = popen(args, env=env, cwd=dirname)
     try:
-        time.sleep(1)
+        window_name = args[0]
 
-        # http://stackoverflow.com/questions/151407/how-to-get-an-x11-window-from-a-process-id
+        for i in range(10):
+            time.sleep(1)
+            if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE) == 0:
+                break
+
         ref_image = os.path.join(options.results, demo.replace('/', '-') + '.ref.png')
-        #subprocess.call(['xwininfo', '-root', '-tree'])
         subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
 
     finally:
-        os.kill(p.pid, signal.SIGTERM)
+        p.send_signal(signal.SIGTERM)
 
     p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
@@ -139,16 +141,34 @@ def runtest(html, demo):
         if mo:
             image = mo.group(1)
     
-    image_tag(html, ref_image)
     if image:
         delta_image = os.path.join(options.results, demo.replace('/', '-') + '.diff.png')
-        p = popen(["compare", '-alpha', 'opaque', '-metric', 'AE', '-fuzz', '5%', ref_image, image, delta_image])
+        p = popen([
+            'compare',
+            '-alpha', 'opaque',
+            '-metric', 'AE',
+            '-fuzz', '5%',
+            '-dissimilarity-threshold', '1',
+            ref_image, image, delta_image
+        ], stderr = subprocess.PIPE)
         _, stderr = p.communicate()
-        image_tag(html, image)
-        image_tag(html, delta_image)
 
-    html.write('      </tr>\n')
-    html.flush()
+        try:
+            ae = int(stderr)
+        except ValueError:
+            ae = 9999
+        
+        if ae:
+            html.write('      <tr>\n')
+            image_tag(html, ref_image)
+            image_tag(html, image)
+            image_tag(html, delta_image)
+            html.write('      </tr>\n')
+            html.flush()
+
+            sys.stdout.write('FAIL\n')
+        else:
+            sys.stdout.write('PASS\n')
 
 
 tests = [
@@ -157,7 +177,7 @@ tests = [
     'trivial/clear-fbo-scissor',
     'trivial/clear-fbo-tex',
     'trivial/clear-random',
-    #'trivial/clear-repeat',
+    #'trivial/clear-repeat', # XXX: animated
     'trivial/clear-scissor',
     'trivial/clear-undefined',
     'trivial/createwin',
@@ -231,7 +251,7 @@ tests = [
     'trivial/quads',
     'trivial/quadstrip',
     'trivial/quadstrip-clip',
-    'trivial/quadstrip-cont',
+    #'trivial/quadstrip-cont', # XXX: animated
     'trivial/quadstrip-flat',
     'trivial/readpixels',
     'trivial/sub-tex',
@@ -270,7 +290,7 @@ tests = [
     'trivial/tri-orig',
     'trivial/tri-point-line-clipped',
     'trivial/tri-query',
-    'trivial/tri-repeat',
+    #'trivial/tri-repeat', # XXX: animated
     'trivial/tri-scissor-tri',
     'trivial/tri-square',
     'trivial/tri-stencil',
@@ -538,8 +558,8 @@ tests = [
     #'slang/cltest',
     #'slang/sotest',
     #'slang/vstest',
-    'tests/afsmultiarb',
-    'tests/antialias',
+    #'tests/afsmultiarb', # XXX: animated
+    #'tests/antialias', # XXX: animated
     'tests/arbfpspec',
     'tests/arbfptest1',
     'tests/arbfptexture',
@@ -549,21 +569,21 @@ tests = [
     'tests/arbnpot-mipmap',
     'tests/arbvptest1',
     'tests/arbvptest3',
-    'tests/arbvptorus',
-    'tests/arbvpwarpmesh',
+    #'tests/arbvptorus', # XXX: animated
+    #'tests/arbvpwarpmesh', # XXX: animated
     'tests/arraytexture',
     'tests/auxbuffer',
     'tests/blendxor',
     'tests/blitfb',
-    'tests/bufferobj',
+    #'tests/bufferobj', # XXX: animated
     'tests/bug_3050',
     'tests/bug_3101',
-    'tests/bug_3195',
+    #'tests/bug_3195', # XXX: animated
     'tests/bug_texstore_i8',
     'tests/bumpmap',
-    'tests/calibrate_rast',
+    #'tests/calibrate_rast', # XXX: animated
     'tests/condrender',
-    'tests/copypixrate',
+    #'tests/copypixrate', # XXX: animated
     'tests/cva',
     'tests/cva_huge',
     'tests/cylwrap',
@@ -573,9 +593,9 @@ tests = [
     'tests/exactrast',
     'tests/ext422square',
     'tests/fbotest1',
-    'tests/fbotest2',
+    #'tests/fbotest2', # XXX: animated
     'tests/fbotest3',
-    'tests/fillrate',
+    #'tests/fillrate', # XXX: animated
     'tests/floattex',
     'tests/fogcoord',
     'tests/fptest1',
@@ -586,7 +606,7 @@ tests = [
     'tests/invert',
     'tests/jkrahntest',
     'tests/lineclip',
-    'tests/manytex',
+    #'tests/manytex', # XXX: animated
     'tests/mapbufrange',
     'tests/minmag',
     'tests/mipgen',
@@ -597,7 +617,7 @@ tests = [
     'tests/mipmap_view',
     'tests/multipal',
     'tests/multitexarray',
-    'tests/multiwindow',
+    #'tests/multiwindow', # XXX: animated
     'tests/no_s3tc',
     'tests/occlude',
     'tests/packedpixels',
@@ -605,9 +625,9 @@ tests = [
     'tests/persp_hint',
     'tests/prim',
     'tests/prog_parameter',
-    'tests/quads',
-    'tests/random',
-    'tests/readrate',
+    #'tests/quads', # XXX: animated
+    #'tests/random', # XXX: animated
+    #'tests/readrate', # XXX: animated
     'tests/rubberband',
     'tests/scissor',
     'tests/scissor-viewport',
@@ -615,15 +635,15 @@ tests = [
     'tests/shader-interp',
     'tests/shader_api',
     'tests/shadow-sample',
-    'tests/sharedtex',
+    #'tests/sharedtex', # XXX: animated
     'tests/stencilreaddraw',
-    'tests/stencilwrap',
+    #'tests/stencilwrap', # XXX: animated
     'tests/step',
-    'tests/streaming_rect',
+    #'tests/streaming_rect', # XXX: animated
     'tests/subtex',
-    'tests/subtexrate',
+    #'tests/subtexrate', # XXX: animated
     'tests/tex1d',
-    'tests/texcmp',
+    #'tests/texcmp', # XXX: animated
     'tests/texcompress2',
     'tests/texcompsub',
     'tests/texdown',
@@ -631,7 +651,7 @@ tests = [
     'tests/texgenmix',
     'tests/texleak',
     'tests/texline',
-    'tests/texobj',
+    #'tests/texobj', # XXX: animated
     'tests/texobjshare',
     'tests/texrect',
     'tests/unfilledclip',
