@@ -84,34 +84,59 @@ def runtest(html, demo):
     app = os.path.join(options.mesa_demos, 'src', demo)
 
     dirname, basename = os.path.split(app)
-    
+
     trace = os.path.abspath(os.path.join(options.results, demo.replace('/', '-') + '.trace'))
 
     env = os.environ.copy()
     env['LD_PRELOAD'] = os.path.abspath(os.path.join(options.build, 'glxtrace.so'))
     env['TRACE_FILE'] = trace
-    
+
     args = [os.path.join('.', basename)]
+    window_name = args[0]
+
+    p = popen(args, cwd=dirname)
+    for i in range(6):
+        time.sleep(0.5)
+        if p.poll() is not None:
+            break
+        if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+            break
+    if p.returncode is None:
+        p.terminate()
+    elif p.returncode:
+        sys.stdout.write('SKIP (app)\n')
+        return
+
+    ref_image = os.path.join(options.results, demo.replace('/', '-') + '.ref.png')
     p = popen(args, env=env, cwd=dirname)
     try:
-        window_name = args[0]
-
         for i in range(10):
-            time.sleep(1)
-            if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE) == 0:
+            time.sleep(0.5)
+            if p.poll() is not None:
+                break
+            if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
                 break
 
-        ref_image = os.path.join(options.results, demo.replace('/', '-') + '.ref.png')
-        subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
-
+        if p.returncode is None:
+            subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
     finally:
-        p.send_signal(signal.SIGTERM)
+        if p.returncode is None:
+            p.terminate()
+            p.wait()
+        elif p.returncode:
+            print p.returncode
+            sys.stdout.write('FAIL (trace)\n')
+            return
 
     p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
+    if p.returncode != 0:
+        sys.stdout.write('FAIL (tracedump)\n')
+        return
 
     call_re = re.compile('^([0-9]+) (\w+)\(')
-    double_buffer = False
+    swapbuffers = 0
+    flushes = 0
     for orig_line in stdout.split('\n'):
         line = ansi_strip(orig_line)
         mo = call_re.match(line)
@@ -121,26 +146,37 @@ def runtest(html, demo):
             if function_name in ignored_function_names:
                 continue
             if function_name == 'glXSwapBuffers':
-                double_buffer = True
+                swapbuffers += 1
+            if function_name in ('glFlush', 'glFinish'):
+                flushes += 1
         #print orig_line
 
     args = [os.path.join(options.build, 'glretrace')]
-    if double_buffer:
+    if swapbuffers:
         args += ['-db']
+        frames = swapbuffers
     else:
         args += ['-sb']
-    snapshot_prefix = os.path.join(options.results, demo.replace('/', '-') + '.')
-    args += ['-s', snapshot_prefix]
+        frames = flushes
+    if os.path.exists(ref_image) and frames < 10:
+        snapshot_prefix = os.path.join(options.results, demo.replace('/', '-') + '.')
+        args += ['-s', snapshot_prefix]
+    else:
+        snapshot_prefix = None
     args += [trace]
     p = popen(args, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
+    if p.returncode != 0:
+        sys.stdout.write('FAIL (glretrace)\n')
+        return
+
     image_re = re.compile('^Wrote (.*\.png)$')
     image = None
     for line in stdout.split('\n'):
         mo = image_re.match(line)
         if mo:
             image = mo.group(1)
-    
+
     if image:
         delta_image = os.path.join(options.results, demo.replace('/', '-') + '.diff.png')
         p = popen([
@@ -157,7 +193,7 @@ def runtest(html, demo):
             ae = int(stderr)
         except ValueError:
             ae = 9999
-        
+
         if ae:
             html.write('      <tr>\n')
             image_tag(html, ref_image)
@@ -166,9 +202,10 @@ def runtest(html, demo):
             html.write('      </tr>\n')
             html.flush()
 
-            sys.stdout.write('FAIL\n')
-        else:
-            sys.stdout.write('PASS\n')
+            sys.stdout.write('FAIL (snapshot)\n')
+            return
+
+    sys.stdout.write('PASS\n')
 
 
 tests = [
@@ -177,7 +214,7 @@ tests = [
     'trivial/clear-fbo-scissor',
     'trivial/clear-fbo-tex',
     'trivial/clear-random',
-    #'trivial/clear-repeat', # XXX: animated
+    'trivial/clear-repeat',
     'trivial/clear-scissor',
     'trivial/clear-undefined',
     'trivial/createwin',
@@ -251,7 +288,7 @@ tests = [
     'trivial/quads',
     'trivial/quadstrip',
     'trivial/quadstrip-clip',
-    #'trivial/quadstrip-cont', # XXX: animated
+    'trivial/quadstrip-cont',
     'trivial/quadstrip-flat',
     'trivial/readpixels',
     'trivial/sub-tex',
@@ -290,7 +327,7 @@ tests = [
     'trivial/tri-orig',
     'trivial/tri-point-line-clipped',
     'trivial/tri-query',
-    #'trivial/tri-repeat', # XXX: animated
+    'trivial/tri-repeat',
     'trivial/tri-scissor-tri',
     'trivial/tri-square',
     'trivial/tri-stencil',
@@ -342,103 +379,108 @@ tests = [
     'trivial/vp-tri-tex',
     'trivial/vp-unfilled',
 
-    #'demos/arbfplight',
-    #'demos/arbfslight',
-    #'demos/arbocclude',
-    #'demos/arbocclude2',
-    #'demos/bounce',
-    #'demos/clearspd',
-    #'demos/copypix',
-    #'demos/cubemap',
-    #'demos/dinoshade',
-    #'demos/dissolve',
-    #'demos/drawpix',
-    #'demos/engine',
-    #'demos/fbo_firecube',
-    #'demos/fbotexture',
-    #'demos/fire',
-    #'demos/fogcoord',
-    #'demos/fplight',
-    #'demos/fslight',
-    #'demos/gamma',
-    #'demos/gearbox',
-    #'demos/gears',
-    #'demos/geartrain',
-    #'demos/glinfo',
-    #'demos/gloss',
-    #'demos/gltestperf',
-    #'demos/ipers',
-    #'demos/isosurf',
-    #'demos/lodbias',
-    #'demos/morph3d',
-    #'demos/multiarb',
-    #'demos/paltex',
-    #'demos/pointblast',
-    #'demos/projtex',
-    #'demos/rain',
-    #'demos/ray',
-    #'demos/readpix',
-    #'demos/reflect',
-    #'demos/renormal',
-    #'demos/shadowtex',
-    #'demos/singlebuffer',
-    #'demos/spectex',
-    #'demos/spriteblast',
-    #'demos/stex3d',
-    #'demos/teapot',
-    #'demos/terrain',
-    #'demos/tessdemo',
-    #'demos/texcyl',
-    #'demos/texenv',
-    #'demos/textures',
-    #'demos/trispd',
-    #'demos/tunnel',
-    #'demos/tunnel2',
-    #'demos/vao_demo',
-    #'demos/winpos',
-    #'fp/fp-tri',
-    #'fp/point-position',
-    #'fp/tri-depth',
-    #'fp/tri-depth2',
-    #'fp/tri-depthwrite',
-    #'fp/tri-depthwrite2',
-    #'fp/tri-param',
-    #'fp/tri-tex',
+    'demos/arbfplight',
+    'demos/arbfslight',
+    'demos/arbocclude',
+    'demos/arbocclude2',
+    'demos/bounce',
+    'demos/clearspd',
+    'demos/copypix',
+    'demos/cubemap',
+    'demos/dinoshade',
+    'demos/dissolve',
+    'demos/drawpix',
+    'demos/engine',
+    'demos/fbo_firecube',
+    'demos/fbotexture',
+    'demos/fire',
+    'demos/fogcoord',
+    'demos/fplight',
+    'demos/fslight',
+    'demos/gamma',
+    'demos/gearbox',
+    'demos/gears',
+    'demos/geartrain',
+    'demos/glinfo',
+    'demos/gloss',
+    'demos/gltestperf',
+    'demos/ipers',
+    'demos/isosurf',
+    'demos/lodbias',
+    'demos/morph3d',
+    'demos/multiarb',
+    'demos/paltex',
+    'demos/pointblast',
+    'demos/projtex',
+    'demos/rain',
+    'demos/ray',
+    'demos/readpix',
+    'demos/reflect',
+    'demos/renormal',
+    'demos/shadowtex',
+    'demos/singlebuffer',
+    'demos/spectex',
+    'demos/spriteblast',
+    'demos/stex3d',
+    'demos/teapot',
+    'demos/terrain',
+    'demos/tessdemo',
+    'demos/texcyl',
+    'demos/texenv',
+    'demos/textures',
+    'demos/trispd',
+    'demos/tunnel',
+    'demos/tunnel2',
+    'demos/vao_demo',
+    'demos/winpos',
+
+    #'fp/fp-tri', # XXX: parameterized
+    'fp/point-position',
+    'fp/tri-depth',
+    'fp/tri-depth2',
+    'fp/tri-depthwrite',
+    'fp/tri-depthwrite2',
+    'fp/tri-param',
+    'fp/tri-tex',
+
     #'fpglsl/fp-tri',
-    #'glsl/array',
-    #'glsl/bezier',
-    #'glsl/bitmap',
-    #'glsl/brick',
-    #'glsl/bump',
-    #'glsl/convolutions',
-    #'glsl/deriv',
-    #'glsl/fragcoord',
-    #'glsl/fsraytrace',
-    #'glsl/geom-sprites',
-    #'glsl/geom-stipple-lines',
-    #'glsl/geom-wide-lines',
-    #'glsl/identity',
-    #'glsl/linktest',
-    #'glsl/mandelbrot',
-    #'glsl/multinoise',
-    #'glsl/multitex',
-    #'glsl/noise',
-    #'glsl/noise2',
-    #'glsl/pointcoord',
-    #'glsl/points',
-    #'glsl/samplers',
-    #'glsl/shadow_sampler',
-    #'glsl/shtest',
-    #'glsl/skinning',
-    #'glsl/texaaline',
-    #'glsl/texdemo1',
-    #'glsl/toyball',
-    #'glsl/trirast',
-    #'glsl/twoside',
-    #'glsl/vert-or-frag-only',
-    #'glsl/vert-tex',
-    #'glsl/vsraytrace',
+
+    'glsl/array',
+    'glsl/bezier',
+    'glsl/bitmap',
+    'glsl/brick',
+    'glsl/bump',
+    'glsl/convolutions',
+    'glsl/deriv',
+    'glsl/fragcoord',
+    'glsl/fsraytrace',
+    'glsl/geom-sprites',
+    'glsl/geom-stipple-lines',
+    'glsl/geom-wide-lines',
+    'glsl/identity',
+    'glsl/linktest',
+    'glsl/mandelbrot',
+    'glsl/multinoise',
+    'glsl/multitex',
+    'glsl/noise',
+    'glsl/noise2',
+    'glsl/pointcoord',
+    'glsl/points',
+    'glsl/samplers',
+    'glsl/shadow_sampler',
+    'glsl/shtest',
+    'glsl/skinning',
+    'glsl/texaaline',
+    'glsl/texdemo1',
+    'glsl/toyball',
+    'glsl/trirast',
+    'glsl/twoside',
+    'glsl/vert-or-frag-only',
+    'glsl/vert-tex',
+    'glsl/vsraytrace',
+
     #'gs/gs-tri',
+
     #'perf/copytex',
     #'perf/drawoverhead',
     #'perf/fbobind',
@@ -449,117 +491,121 @@ tests = [
     #'perf/teximage',
     #'perf/vbo',
     #'perf/vertexrate',
-    #'redbook/aaindex',
-    #'redbook/aapoly',
-    #'redbook/aargb',
-    #'redbook/accanti',
-    #'redbook/accpersp',
-    #'redbook/alpha',
-    #'redbook/alpha3D',
-    #'redbook/anti',
-    #'redbook/bezcurve',
-    #'redbook/bezmesh',
-    #'redbook/checker',
-    #'redbook/clip',
-    #'redbook/colormat',
-    #'redbook/combiner',
-    #'redbook/convolution',
-    #'redbook/cube',
-    #'redbook/cubemap',
-    #'redbook/depthcue',
-    #'redbook/dof',
-    #'redbook/double',
-    #'redbook/drawf',
-    #'redbook/feedback',
-    #'redbook/fog',
-    #'redbook/fogcoord',
-    #'redbook/fogindex',
-    #'redbook/font',
-    #'redbook/hello',
-    #'redbook/histogram',
-    #'redbook/image',
-    #'redbook/light',
-    #'redbook/lines',
-    #'redbook/list',
-    #'redbook/material',
-    #'redbook/minmax',
-    #'redbook/mipmap',
-    #'redbook/model',
-    #'redbook/movelight',
-    #'redbook/multisamp',
-    #'redbook/multitex',
-    #'redbook/mvarray',
-    #'redbook/nurbs',
-    #'redbook/pickdepth',
-    #'redbook/picksquare',
-    #'redbook/plane',
-    #'redbook/planet',
-    #'redbook/pointp',
-    #'redbook/polyoff',
-    #'redbook/polys',
-    #'redbook/quadric',
-    #'redbook/robot',
-    #'redbook/sccolorlight',
-    #'redbook/scene',
-    #'redbook/scenebamb',
-    #'redbook/sceneflat',
-    #'redbook/select',
-    #'redbook/shadowmap',
-    #'redbook/smooth',
-    #'redbook/stencil',
-    #'redbook/stroke',
-    #'redbook/surface',
-    #'redbook/surfpoints',
-    #'redbook/teaambient',
-    #'redbook/teapots',
-    #'redbook/tess',
-    #'redbook/tesswind',
-    #'redbook/texbind',
-    #'redbook/texgen',
-    #'redbook/texprox',
-    #'redbook/texsub',
-    #'redbook/texture3d',
-    #'redbook/texturesurf',
-    #'redbook/torus',
-    #'redbook/trim',
-    #'redbook/unproject',
-    #'redbook/varray',
-    #'redbook/wrap',
-    #'samples/accum',
-    #'samples/bitmap1',
-    #'samples/bitmap2',
-    #'samples/blendeq',
-    #'samples/blendxor',
-    #'samples/copy',
-    #'samples/cursor',
-    #'samples/depth',
-    #'samples/eval',
-    #'samples/fog',
-    #'samples/font',
-    #'samples/line',
-    #'samples/logo',
-    #'samples/nurb',
-    #'samples/oglinfo',
-    #'samples/olympic',
-    #'samples/overlay',
-    #'samples/point',
-    #'samples/prim',
-    #'samples/quad',
-    #'samples/rgbtoppm',
-    #'samples/select',
-    #'samples/shape',
-    #'samples/sphere',
-    #'samples/star',
-    #'samples/stencil',
-    #'samples/stretch',
-    #'samples/texture',
-    #'samples/tri',
-    #'samples/wave',
+
+    'redbook/aaindex',
+    'redbook/aapoly',
+    'redbook/aargb',
+    'redbook/accanti',
+    'redbook/accpersp',
+    'redbook/alpha',
+    'redbook/alpha3D',
+    'redbook/anti',
+    'redbook/bezcurve',
+    'redbook/bezmesh',
+    'redbook/checker',
+    'redbook/clip',
+    'redbook/colormat',
+    'redbook/combiner',
+    'redbook/convolution',
+    'redbook/cube',
+    'redbook/cubemap',
+    'redbook/depthcue',
+    'redbook/dof',
+    'redbook/double',
+    'redbook/drawf',
+    'redbook/feedback',
+    'redbook/fog',
+    'redbook/fogcoord',
+    'redbook/fogindex',
+    'redbook/font',
+    'redbook/hello',
+    'redbook/histogram',
+    'redbook/image',
+    'redbook/light',
+    'redbook/lines',
+    'redbook/list',
+    'redbook/material',
+    'redbook/minmax',
+    'redbook/mipmap',
+    'redbook/model',
+    'redbook/movelight',
+    'redbook/multisamp',
+    'redbook/multitex',
+    'redbook/mvarray',
+    'redbook/nurbs',
+    'redbook/pickdepth',
+    'redbook/picksquare',
+    'redbook/plane',
+    'redbook/planet',
+    'redbook/pointp',
+    'redbook/polyoff',
+    'redbook/polys',
+    'redbook/quadric',
+    'redbook/robot',
+    'redbook/sccolorlight',
+    'redbook/scene',
+    'redbook/scenebamb',
+    'redbook/sceneflat',
+    'redbook/select',
+    'redbook/shadowmap',
+    'redbook/smooth',
+    'redbook/stencil',
+    'redbook/stroke',
+    'redbook/surface',
+    'redbook/surfpoints',
+    'redbook/teaambient',
+    'redbook/teapots',
+    'redbook/tess',
+    'redbook/tesswind',
+    'redbook/texbind',
+    'redbook/texgen',
+    'redbook/texprox',
+    'redbook/texsub',
+    'redbook/texture3d',
+    'redbook/texturesurf',
+    'redbook/torus',
+    'redbook/trim',
+    'redbook/unproject',
+    'redbook/varray',
+    'redbook/wrap',
+
+    'samples/accum',
+    'samples/bitmap1',
+    'samples/bitmap2',
+    'samples/blendeq',
+    'samples/blendxor',
+    'samples/copy',
+    'samples/cursor',
+    'samples/depth',
+    'samples/eval',
+    'samples/fog',
+    'samples/font',
+    'samples/line',
+    'samples/logo',
+    'samples/nurb',
+    'samples/oglinfo',
+    'samples/olympic',
+    'samples/overlay',
+    'samples/point',
+    'samples/prim',
+    'samples/quad',
+    'samples/rgbtoppm',
+    'samples/select',
+    'samples/shape',
+    'samples/sphere',
+    'samples/star',
+    'samples/stencil',
+    'samples/stretch',
+    'samples/texture',
+    'samples/tri',
+    'samples/wave',
+
     #'slang/cltest',
     #'slang/sotest',
     #'slang/vstest',
-    #'tests/afsmultiarb', # XXX: animated
-    #'tests/antialias', # XXX: animated
+
+    'tests/afsmultiarb',
+    'tests/antialias',
     'tests/arbfpspec',
     'tests/arbfptest1',
     'tests/arbfptexture',
@@ -569,21 +615,21 @@ tests = [
     'tests/arbnpot-mipmap',
     'tests/arbvptest1',
     'tests/arbvptest3',
-    #'tests/arbvptorus', # XXX: animated
-    #'tests/arbvpwarpmesh', # XXX: animated
+    'tests/arbvptorus',
+    'tests/arbvpwarpmesh',
     'tests/arraytexture',
     'tests/auxbuffer',
     'tests/blendxor',
     'tests/blitfb',
-    #'tests/bufferobj', # XXX: animated
+    'tests/bufferobj',
     'tests/bug_3050',
     'tests/bug_3101',
-    #'tests/bug_3195', # XXX: animated
+    'tests/bug_3195',
     'tests/bug_texstore_i8',
     'tests/bumpmap',
-    #'tests/calibrate_rast', # XXX: animated
+    'tests/calibrate_rast',
     'tests/condrender',
-    #'tests/copypixrate', # XXX: animated
+    #'tests/copypixrate', # XXX: benchmark
     'tests/cva',
     'tests/cva_huge',
     'tests/cylwrap',
@@ -593,9 +639,9 @@ tests = [
     'tests/exactrast',
     'tests/ext422square',
     'tests/fbotest1',
-    #'tests/fbotest2', # XXX: animated
+    'tests/fbotest2',
     'tests/fbotest3',
-    #'tests/fillrate', # XXX: animated
+    #'tests/fillrate', # XXX: benchmark
     'tests/floattex',
     'tests/fogcoord',
     'tests/fptest1',
@@ -606,7 +652,7 @@ tests = [
     'tests/invert',
     'tests/jkrahntest',
     'tests/lineclip',
-    #'tests/manytex', # XXX: animated
+    'tests/manytex',
     'tests/mapbufrange',
     'tests/minmag',
     'tests/mipgen',
@@ -617,7 +663,7 @@ tests = [
     'tests/mipmap_view',
     'tests/multipal',
     'tests/multitexarray',
-    #'tests/multiwindow', # XXX: animated
+    'tests/multiwindow',
     'tests/no_s3tc',
     'tests/occlude',
     'tests/packedpixels',
@@ -625,9 +671,9 @@ tests = [
     'tests/persp_hint',
     'tests/prim',
     'tests/prog_parameter',
-    #'tests/quads', # XXX: animated
-    #'tests/random', # XXX: animated
-    #'tests/readrate', # XXX: animated
+    'tests/quads',
+    'tests/random',
+    #'tests/readrate', # XXX: benchmark
     'tests/rubberband',
     'tests/scissor',
     'tests/scissor-viewport',
@@ -635,15 +681,15 @@ tests = [
     'tests/shader-interp',
     'tests/shader_api',
     'tests/shadow-sample',
-    #'tests/sharedtex', # XXX: animated
+    'tests/sharedtex',
     'tests/stencilreaddraw',
-    #'tests/stencilwrap', # XXX: animated
+    'tests/stencilwrap',
     'tests/step',
-    #'tests/streaming_rect', # XXX: animated
+    'tests/streaming_rect',
     'tests/subtex',
-    #'tests/subtexrate', # XXX: animated
+    #'tests/subtexrate', # XXX: benchmark
     'tests/tex1d',
-    #'tests/texcmp', # XXX: animated
+    'tests/texcmp',
     'tests/texcompress2',
     'tests/texcompsub',
     'tests/texdown',
@@ -651,7 +697,7 @@ tests = [
     'tests/texgenmix',
     'tests/texleak',
     'tests/texline',
-    #'tests/texobj', # XXX: animated
+    'tests/texobj',
     'tests/texobjshare',
     'tests/texrect',
     'tests/unfilledclip',
@@ -668,39 +714,41 @@ tests = [
     'tests/zcomp',
     'tests/zdrawpix',
     'tests/zreaddraw',
+
     #'vp/vp-tris',
     #'vpglsl/vp-tris',
-    #'xdemos/corender',
-    #'xdemos/glsync',
-    #'xdemos/glthreads',
-    #'xdemos/glxcontexts',
-    #'xdemos/glxdemo',
-    #'xdemos/glxgears',
-    #'xdemos/glxgears_fbconfig',
-    #'xdemos/glxgears_pixmap',
-    #'xdemos/glxheads',
-    #'xdemos/glxinfo',
-    #'xdemos/glxpbdemo',
-    #'xdemos/glxpixmap',
-    #'xdemos/glxsnoop',
-    #'xdemos/glxswapcontrol',
-    #'xdemos/manywin',
-    #'xdemos/msctest',
-    #'xdemos/multictx',
-    #'xdemos/offset',
-    #'xdemos/omlsync',
-    #'xdemos/opencloseopen',
-    #'xdemos/overlay',
-    #'xdemos/pbdemo',
-    #'xdemos/pbinfo',
-    #'xdemos/shape',
-    #'xdemos/sharedtex',
-    #'xdemos/sharedtex_mt',
-    #'xdemos/texture_from_pixmap',
-    #'xdemos/wincopy',
-    #'xdemos/xfont',
-    #'xdemos/xrotfontdemo',
-    #'xdemos/yuvrect_client',
+
+    'xdemos/corender',
+    'xdemos/glsync',
+    #'xdemos/glthreads', # XXX: multithreaded
+    'xdemos/glxcontexts',
+    'xdemos/glxdemo',
+    'xdemos/glxgears',
+    'xdemos/glxgears_fbconfig',
+    'xdemos/glxgears_pixmap',
+    'xdemos/glxheads',
+    'xdemos/glxinfo',
+    'xdemos/glxpbdemo',
+    'xdemos/glxpixmap',
+    'xdemos/glxsnoop',
+    'xdemos/glxswapcontrol',
+    'xdemos/manywin',
+    'xdemos/msctest',
+    'xdemos/multictx',
+    'xdemos/offset',
+    'xdemos/omlsync',
+    'xdemos/opencloseopen',
+    'xdemos/overlay',
+    'xdemos/pbdemo',
+    'xdemos/pbinfo',
+    'xdemos/shape',
+    'xdemos/sharedtex',
+    #'xdemos/sharedtex_mt', # XXX: multithreaded
+    'xdemos/texture_from_pixmap',
+    'xdemos/wincopy',
+    'xdemos/xfont',
+    'xdemos/xrotfontdemo',
+    'xdemos/yuvrect_client',
 ]
 
 
@@ -723,7 +771,7 @@ def main():
         help='path to apitrace build [default=%default]')
     optparser.add_option(
         '--results', metavar='PATH',
-        type='string', dest='results', default='.',
+        type='string', dest='results', default='results',
         help='results directory [default=%default]')
     optparser.add_option(
         '--mesa-demos', metavar='PATH',
@@ -737,14 +785,24 @@ def main():
     if not os.path.exists(options.results):
         os.makedirs(options.results)
 
+    if args:
+        testlist = []
+        for arg in args:
+            if arg.endswith('/'):
+                for test in tests:
+                    if test.startswith(arg):
+                        testlist.append(test)
+            else:
+                testlist.append(arg)
+    else:
+        testlist = tests
+
     html = open(os.path.join(options.results, 'index.html'), 'wt')
     html.write('<html>\n')
     html.write('  <body>\n')
     html.write('    <table border="1">\n')
     html.write('      <tr><th>Ref</th><th>Src</th><th>&Delta;</th></tr>\n')
-    if not args:
-        args = tests
-    for test in args:
+    for test in testlist:
        runtest(html, test)
     html.write('    </table>\n')
     html.write('  </body>\n')
