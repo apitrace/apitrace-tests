@@ -129,15 +129,11 @@ def runtest(html, demo):
             return
 
     p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
-    if p.returncode != 0:
-        sys.stdout.write('FAIL (tracedump)\n')
-        return
-
     call_re = re.compile('^([0-9]+) (\w+)\(')
     swapbuffers = 0
     flushes = 0
-    for orig_line in stdout.split('\n'):
+    for orig_line in p.stdout:
+        orig_line = orig_line.rstrip()
         line = ansi_strip(orig_line)
         mo = call_re.match(line)
         if mo:
@@ -150,6 +146,10 @@ def runtest(html, demo):
             if function_name in ('glFlush', 'glFinish'):
                 flushes += 1
         #print orig_line
+    p.wait()
+    if p.returncode != 0:
+        sys.stdout.write('FAIL (tracedump)\n')
+        return
 
     args = [os.path.join(options.build, 'glretrace')]
     if swapbuffers:
@@ -165,17 +165,17 @@ def runtest(html, demo):
         snapshot_prefix = None
     args += [trace]
     p = popen(args, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
-    if p.returncode != 0:
-        sys.stdout.write('FAIL (glretrace)\n')
-        return
-
     image_re = re.compile('^Wrote (.*\.png)$')
     image = None
-    for line in stdout.split('\n'):
+    for line in p.stdout:
+        line = line.rstrip()
         mo = image_re.match(line)
         if mo:
             image = mo.group(1)
+    p.wait()
+    if p.returncode != 0:
+        sys.stdout.write('FAIL (glretrace)\n')
+        return
 
     if image:
         delta_image = os.path.join(options.results, demo.replace('/', '-') + '.diff.png')
