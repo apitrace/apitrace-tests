@@ -32,180 +32,25 @@
 import os.path
 import optparse
 import sys
-import subprocess
-import time
-import re
-import signal
+
+from test import Report, TestCase
 
 
-ansi_re = re.compile('\x1b\[[0-9]{1,2}(;[0-9]{1,2}){0,2}m')
-
-
-def ansi_strip(s):
-    # http://www.theeggeadventure.com/wikimedia/index.php/Linux_Tips#Use_sed_to_remove_ANSI_colors
-    return ansi_re.sub('', s)
-
-
-def popen(command, *args, **kwargs):
-    if 'cwd' in kwargs:
-        sys.stdout.write('cd %s && ' % kwargs['cwd'])
-    if 'env' in kwargs:
-        for name, value in kwargs['env'].iteritems():
-            if value != os.environ.get(name, None):
-                sys.stdout.write('%s=%s ' % (name, value))
-    sys.stdout.write(' '.join(command) + '\n')
-    sys.stdout.flush()
-    return subprocess.Popen(command, *args, **kwargs)
-
-
-ignored_function_names = set([
-    'glGetString',
-    'glXGetCurrentDisplay',
-    'glXGetClientString',
-    'glXGetProcAddress',
-    'glXGetProcAddressARB',
-    'glXQueryVersion',
-    'glXGetVisualFromFBConfig',
-    'glXChooseFBConfig',
-    'glXCreateNewContext',
-    'glXMakeContextCurrent',
-    'glXQueryExtension',
-    'glXIsDirect',
-])
-
-
-def image_tag(html, image):
-    url = os.path.relpath(image, options.results)
-    html.write('        <td><a href="%s"><img src="%s"/></a></td>\n' % (url, url))
-
-
-def runtest(html, demo):
-
+def runtest(report, demo):
     app = os.path.join(options.mesa_demos, 'src', demo)
-
     dirname, basename = os.path.split(app)
-
-    trace = os.path.abspath(os.path.join(options.results, demo.replace('/', '-') + '.trace'))
-
-    env = os.environ.copy()
-    env['LD_PRELOAD'] = os.path.abspath(os.path.join(options.build, 'glxtrace.so'))
-    env['TRACE_FILE'] = trace
-
+    name = demo.replace('/', '-')
     args = [os.path.join('.', basename)]
-    window_name = args[0]
 
-    p = popen(args, cwd=dirname)
-    for i in range(6):
-        time.sleep(0.5)
-        if p.poll() is not None:
-            break
-        if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-            break
-    if p.returncode is None:
-        p.terminate()
-    elif p.returncode:
-        sys.stdout.write('SKIP (app)\n')
-        return
+    test = TestCase(
+        name = name,
+        args = args,
+        cwd = dirname,
+        build = options.build,
+        results = options.results,
+    )
+    test.run(report)
 
-    ref_image = os.path.join(options.results, demo.replace('/', '-') + '.ref.png')
-    p = popen(args, env=env, cwd=dirname)
-    try:
-        for i in range(10):
-            time.sleep(0.5)
-            if p.poll() is not None:
-                break
-            if subprocess.call(['xwininfo', '-name', window_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
-                break
-
-        if p.returncode is None:
-            subprocess.call("xwd -name '%s' | xwdtopnm | pnmtopng > '%s'" % (args[0], ref_image), shell=True)
-    finally:
-        if p.returncode is None:
-            p.terminate()
-            p.wait()
-        elif p.returncode:
-            print p.returncode
-            sys.stdout.write('FAIL (trace)\n')
-            return
-
-    p = popen([os.path.join(options.build, 'tracedump'), trace], stdout=subprocess.PIPE)
-    call_re = re.compile('^([0-9]+) (\w+)\(')
-    swapbuffers = 0
-    flushes = 0
-    for orig_line in p.stdout:
-        orig_line = orig_line.rstrip()
-        line = ansi_strip(orig_line)
-        mo = call_re.match(line)
-        if mo:
-            call_no = int(mo.group(1))
-            function_name = mo.group(2)
-            if function_name in ignored_function_names:
-                continue
-            if function_name == 'glXSwapBuffers':
-                swapbuffers += 1
-            if function_name in ('glFlush', 'glFinish'):
-                flushes += 1
-        #print orig_line
-    p.wait()
-    if p.returncode != 0:
-        sys.stdout.write('FAIL (tracedump)\n')
-        return
-
-    args = [os.path.join(options.build, 'glretrace')]
-    if swapbuffers:
-        args += ['-db']
-        frames = swapbuffers
-    else:
-        args += ['-sb']
-        frames = flushes
-    if os.path.exists(ref_image) and frames < 10:
-        snapshot_prefix = os.path.join(options.results, demo.replace('/', '-') + '.')
-        args += ['-s', snapshot_prefix]
-    else:
-        snapshot_prefix = None
-    args += [trace]
-    p = popen(args, stdout=subprocess.PIPE)
-    image_re = re.compile('^Wrote (.*\.png)$')
-    image = None
-    for line in p.stdout:
-        line = line.rstrip()
-        mo = image_re.match(line)
-        if mo:
-            image = mo.group(1)
-    p.wait()
-    if p.returncode != 0:
-        sys.stdout.write('FAIL (glretrace)\n')
-        return
-
-    if image:
-        delta_image = os.path.join(options.results, demo.replace('/', '-') + '.diff.png')
-        p = popen([
-            'compare',
-            '-alpha', 'opaque',
-            '-metric', 'AE',
-            '-fuzz', '5%',
-            '-dissimilarity-threshold', '1',
-            ref_image, image, delta_image
-        ], stderr = subprocess.PIPE)
-        _, stderr = p.communicate()
-
-        try:
-            ae = int(stderr)
-        except ValueError:
-            ae = 9999
-
-        if ae:
-            html.write('      <tr>\n')
-            image_tag(html, ref_image)
-            image_tag(html, image)
-            image_tag(html, delta_image)
-            html.write('      </tr>\n')
-            html.flush()
-
-            sys.stdout.write('FAIL (snapshot)\n')
-            return
-
-    sys.stdout.write('PASS\n')
 
 
 tests = [
@@ -387,6 +232,7 @@ tests = [
     'demos/clearspd',
     'demos/copypix',
     'demos/cubemap',
+    'demos/cuberender',
     'demos/dinoshade',
     'demos/dissolve',
     'demos/drawpix',
@@ -782,8 +628,6 @@ def main():
 
     if not options.mesa_demos:
         optparser.error('path to Mesa demos not specified')
-    if not os.path.exists(options.results):
-        os.makedirs(options.results)
 
     if args:
         testlist = []
@@ -797,16 +641,9 @@ def main():
     else:
         testlist = tests
 
-    html = open(os.path.join(options.results, 'index.html'), 'wt')
-    html.write('<html>\n')
-    html.write('  <body>\n')
-    html.write('    <table border="1">\n')
-    html.write('      <tr><th>Ref</th><th>Src</th><th>&Delta;</th></tr>\n')
+    report = Report(options.results)
     for test in testlist:
-       runtest(html, test)
-    html.write('    </table>\n')
-    html.write('  </body>\n')
-    html.write('</html>\n')
+       runtest(report, test)
 
 
 if __name__ == '__main__':
