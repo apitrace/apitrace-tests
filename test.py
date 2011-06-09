@@ -111,7 +111,7 @@ class Report:
 
 class TestCase:
 
-    def __init__(self, name, args, cwd=None, build = '.', results = '.'):
+    def __init__(self, name, args, cwd=None, build=None, results = '.'):
         self.name = name
         self.args = args
         self.cwd = cwd
@@ -121,14 +121,20 @@ class TestCase:
         if not os.path.exists(results):
             os.makedirs(results)
 
+
+    def _get_build_path(self, path):
+        if self.build is not None:
+            path = os.path.abspath(os.path.join(self.build, path))
+            if not os.path.exists(path):
+                sys.stderr.write('error: %s does not exist\n' % path)
+                sys.exit(1)
+        return path
+
     def run(self, report):
 
         trace = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
 
-        ld_preload = os.path.abspath(os.path.join(self.build, 'glxtrace.so'))
-        if not os.path.exists(ld_preload):
-            sys.stderr.write('error: could not find %s\n' % ld_preload)
-            sys.exit(1)
+        ld_preload = self._get_build_path('glxtrace.so')
 
         env = os.environ.copy()
         env['LD_PRELOAD'] = ld_preload
@@ -166,11 +172,10 @@ class TestCase:
                 p.terminate()
                 p.wait()
             elif p.returncode:
-                print p.returncode
                 sys.stdout.write('FAIL (trace)\n')
                 return
 
-        p = popen([os.path.join(self.build, 'tracedump'), trace], stdout=subprocess.PIPE)
+        p = popen([self._get_build_path('tracedump'), trace], stdout=subprocess.PIPE)
         call_re = re.compile('^([0-9]+) (\w+)\(')
         swapbuffers = 0
         flushes = 0
@@ -187,13 +192,12 @@ class TestCase:
                     swapbuffers += 1
                 if function_name in ('glFlush', 'glFinish'):
                     flushes += 1
-            #print orig_line
         p.wait()
         if p.returncode != 0:
             sys.stdout.write('FAIL (tracedump)\n')
             return
 
-        args = [os.path.join(self.build, 'glretrace')]
+        args = [self._get_build_path('glretrace')]
         if swapbuffers:
             args += ['-db']
             frames = swapbuffers
@@ -250,15 +254,15 @@ def main():
         usage='\n\t%prog [options] -- program [args] ...',
         version='%%prog')
     optparser.add_option(
-        '--build', metavar='PATH',
-        type='string', dest='build', default='.',
-        help='path to apitrace build [default=%default]')
+        '-B', '--build', metavar='PATH',
+        type='string', dest='build', default=None,
+        help='path to apitrace build')
     optparser.add_option(
-        '--cwd', metavar='PATH',
-        type='string', dest='cwd', default='.',
-        help='change directory [default=%default]')
+        '-C', '--directory', metavar='PATH',
+        type='string', dest='cwd', default=None,
+        help='change to directory')
     optparser.add_option(
-        '--results', metavar='PATH',
+        '-R', '--results', metavar='PATH',
         type='string', dest='results', default='results',
         help='results directory [default=%default]')
 
