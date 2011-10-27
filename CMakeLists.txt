@@ -51,5 +51,11 @@ if (MSVC)
 	add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
 endif ()
 
+
+set (APITRACE_BINARY_DIR "${CMAKE_BINARY_DIR}/.." CACHE PATH "apitrace build directory")
+
+
+enable_testing()
+
 add_subdirectory (apps)
 

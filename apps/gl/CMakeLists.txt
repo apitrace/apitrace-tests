@@ -20,5 +20,12 @@ set (targets
 foreach (target ${targets})
 	add_executable (${subdir}_${target} ${target}.c)
 	set_target_properties (${subdir}_${target} PROPERTIES OUTPUT_NAME ${target})
-	install (TARGETS ${subdir}_${target} DESTINATION ${subdir})
+
+    add_test(
+        NAME ${subdir}_${target}
+        COMMAND python ${CMAKE_SOURCE_DIR}/driver.py
+            --build ${APITRACE_BINARY_DIR}
+            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt
+            ${CMAKE_CURRENT_BINARY_DIR}/${target}
+    )
 endforeach (target)
