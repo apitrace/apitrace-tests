@@ -84,6 +84,12 @@ class TestCase:
     def trace(self):
         if self.trace_file is None:
             self.trace_file = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
+        if os.path.exists(self.trace_file):
+            os.remove(self.trace_file)
+        else:
+            trace_dir = os.path.dirname(self.trace_file)
+            if not os.path.exists(trace_dir):
+                os.makedirs(trace_dir)
 
         env = os.environ.copy()
         
