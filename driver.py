@@ -24,14 +24,13 @@
 #
 ##########################################################################/
 
-'''Common test suite code.'''
+'''Main test driver.'''
 
 
-import math
 import optparse
 import os.path
+import platform
 import re
-import signal
 import subprocess
 import sys
 import time
@@ -62,6 +61,8 @@ class TestCase:
 
     max_frames = None
 
+    trace_file = None
+
     def __init__(self, name, args, cwd=None, build=None, results = '.'):
         self.name = name
         self.args = args
@@ -78,15 +79,26 @@ class TestCase:
         p = popen(self.args, cwd=self.cwd)
         p.wait()
         if p.returncode:
-            sys.stdout.write('SKIP (application faied)\n')
-            sys.exit(0)
+            self.skip('application returned code %i' % p.returncode)
 
     def trace(self):
-        self.trace_file = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
-        ld_preload = _get_build_path('glxtrace.so')
+        if self.trace_file is None:
+            self.trace_file = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
 
         env = os.environ.copy()
-        env['LD_PRELOAD'] = ld_preload
+        
+        system = platform.system()
+        if system == 'Windows':
+            # TODO
+            self.skip('tracing not supported on Windows')
+            wrapper = _get_build_path('wrappers/opengl32.dll')
+        elif system == 'Darwin':
+            wrapper = _get_build_path('wrappers/OpenGL')
+            env['DYLD_LIBRARY_PATH'] = os.path.dirname(wrapper)
+        else:
+            wrapper = _get_build_path('glxtrace.so')
+            env['LD_PRELOAD'] = wrapper
+
         env['TRACE_FILE'] = self.trace_file
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
@@ -95,8 +107,7 @@ class TestCase:
         p.wait()
 
         if not os.path.exists(self.trace_file):
-            sys.stdout.write('FAIL (trace file missing)\n')
-            sys.exit(1)
+            self.fail('no trace file generated\n')
     
     call_re = re.compile(r'^([0-9]+) (\w+)\(')
 
@@ -130,18 +141,16 @@ class TestCase:
                         ref_line = ref.readline().rstrip()
         p.wait()
         if p.returncode != 0:
-            sys.stdout.write('FAIL (tracedump)\n')
-            sys.exit(1)
+            self.fail('tracedump returned code %i' % p.returncode)
         if ref_line:
-            sys.stdout.write('FAIL expected %s\n' % ref_line)
-
+            self.fail('missing call %' % ref_line)
 
     def run(self):
         self.standalone()
         self.trace()
         self.dump()
 
-        sys.stdout.write('PASS\n')
+        self.pass_()
         return
 
         ref_prefix = os.path.abspath(os.path.join(self.results, self.name + '.ref.'))
@@ -195,6 +204,23 @@ class TestCase:
                 sys.stdout.write('FAIL (snapshot)\n')
                 return
 
+    def fail(self, reason=None):
+        self._exit('FAIL', 1, reason)
+
+    def skip(self, reason=None):
+        self._exit('SKIP', 0, reason)
+
+    def pass_(self, reason=None):
+        self._exit('PASS', 0, reason)
+
+    def _exit(self, status, code, reason=None):
+        if reason is None:
+            reason = ''
+        else:
+            reason = ' (%s)' % reason
+        sys.stdout.write('%s%s\n' % (status, reason))
+        sys.exit(code)
+
 
 
 def main():
@@ -214,7 +240,7 @@ def main():
         help='change to directory')
     optparser.add_option(
         '-R', '--results', metavar='PATH',
-        type='string', dest='results', default='results',
+        type='string', dest='results', default='.',
         help='results directory [default=%default]')
     optparser.add_option(
         '--ref-dump', metavar='PATH',

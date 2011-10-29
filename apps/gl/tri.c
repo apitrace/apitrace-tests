@@ -38,21 +38,12 @@
 #endif
 
 
-#define CI_OFFSET_1 16
-#define CI_OFFSET_2 32
-
-
 static GLboolean doubleBuffer = GL_TRUE;
 static int win;
 
 static void Init(void)
 {
-   fprintf(stdout, "GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
-   fprintf(stdout, "GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
-   fprintf(stdout, "GL_VENDOR     = %s\n", (char *) glGetString(GL_VENDOR));
-   fflush(stdout);
-
-   glClearColor(0.3, 0.1, 0.3, 0.0);
+   glClearColor(0.3, 0.1, 0.3, 1.0);
 }
 
 static void Reshape(int width, int height)
@@ -88,32 +79,11 @@ static void Draw(void)
    glutDestroyWindow(win);
 }
 
-static GLenum Args(int argc, char **argv)
-{
-   GLint i;
-
-   for (i = 1; i < argc; i++) {
-      if (strcmp(argv[i], "-sb") == 0) {
-         doubleBuffer = GL_FALSE;
-      } else if (strcmp(argv[i], "-db") == 0) {
-         doubleBuffer = GL_TRUE;
-      } else {
-         fprintf(stderr, "%s (Bad option).\n", argv[i]);
-         return GL_FALSE;
-      }
-   }
-   return GL_TRUE;
-}
-
 int main(int argc, char **argv)
 {
    GLenum type;
 
    glutInit(&argc, argv);
-
-   if (Args(argc, argv) == GL_FALSE) {
-      exit(1);
-   }
 
    glutInitWindowPosition(0, 0);
    glutInitWindowSize( 250, 250);
