@@ -77,6 +77,8 @@ static void Draw(void)
    }
    
    glutDestroyWindow(win);
+
+   exit(0);
 }
 
 int main(int argc, char **argv)
