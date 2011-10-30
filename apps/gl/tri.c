@@ -75,7 +75,7 @@ static void Draw(void)
    if (doubleBuffer) {
       glutSwapBuffers();
    }
-   
+
    glutDestroyWindow(win);
 
    exit(0);
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
    glutInit(&argc, argv);
 
    glutInitWindowPosition(0, 0);
-   glutInitWindowSize( 250, 250);
+   glutInitWindowSize(250, 250);
 
    type = GLUT_RGB | GLUT_ALPHA;
    type |= (doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE;

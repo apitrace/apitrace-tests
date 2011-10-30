@@ -141,15 +141,15 @@ class TestCase:
                 if function_name in ('glFlush', 'glFinish'):
                     flushes += 1
                 src_line = line[mo.start(2):]
-                sys.stdout.write(src_line + '\n')
                 if ref_line:
                     if src_line == ref_line:
+                        sys.stdout.write(src_line + '\n')
                         ref_line = ref.readline().rstrip()
         p.wait()
         if p.returncode != 0:
             self.fail('tracedump returned code %i' % p.returncode)
         if ref_line:
-            self.fail('missing call %' % ref_line)
+            self.fail('missing call %s' % ref_line)
 
     def run(self):
         self.standalone()
