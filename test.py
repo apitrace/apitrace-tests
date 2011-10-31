@@ -244,7 +244,7 @@ class TestCase:
             sys.stdout.write('SKIP (no trace)\n')
             return
  
-        p = popen([self._get_build_path('tracedump'), trace], stdout=subprocess.PIPE)
+        p = popen([self._get_build_path('apitrace'), 'dump', '--color', trace], stdout=subprocess.PIPE)
         call_re = re.compile('^([0-9]+) (\w+)\(')
         swapbuffers = 0
         flushes = 0
@@ -263,7 +263,7 @@ class TestCase:
                     flushes += 1
         p.wait()
         if p.returncode != 0:
-            sys.stdout.write('FAIL (tracedump)\n')
+            sys.stdout.write('FAIL (apitrace dump)\n')
             return
 
         args = [self._get_build_path('glretrace')]

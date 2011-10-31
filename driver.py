@@ -130,7 +130,7 @@ class TestCase:
 
     def dump(self):
 
-        cmd = [_get_build_program('tracedump'), '--color=never', self.trace_file]
+        cmd = [_get_build_program('apitrace'), 'dump', '--color=never', self.trace_file]
         p = popen(cmd, stdout=subprocess.PIPE)
 
         swapbuffers = 0
@@ -158,7 +158,7 @@ class TestCase:
                         ref_line = ref.readline().rstrip()
         p.wait()
         if p.returncode != 0:
-            self.fail('tracedump returned code %i' % p.returncode)
+            self.fail('`apitrace dump` returned code %i' % p.returncode)
         if ref_line:
             self.fail('missing call %s' % ref_line)
 
