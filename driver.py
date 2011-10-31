@@ -31,6 +31,7 @@ import optparse
 import os.path
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -55,6 +56,11 @@ def _get_build_path(path):
         sys.stderr.write('error: %s does not exist\n' % path)
         sys.exit(1)
     return path
+
+def _get_build_program(program):
+    if platform.system() == 'Windows':
+        program += '.exe'
+    return _get_build_path(program)
 
 
 class TestCase:
@@ -94,10 +100,11 @@ class TestCase:
         env = os.environ.copy()
         
         system = platform.system()
+        local_wrapper = None
         if system == 'Windows':
-            # TODO
-            self.skip('tracing not supported on Windows')
             wrapper = _get_build_path('wrappers/opengl32.dll')
+            local_wrapper = os.path.join(os.path.dirname(self.args[0]), os.path.basename(wrapper))
+            shutil.copy(wrapper, local_wrapper)
         elif system == 'Darwin':
             wrapper = _get_build_path('wrappers/OpenGL')
             env['DYLD_LIBRARY_PATH'] = os.path.dirname(wrapper)
@@ -109,8 +116,12 @@ class TestCase:
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
 
-        p = popen(self.args, env=env, cwd=self.cwd)
-        p.wait()
+        try:
+            p = popen(self.args, env=env, cwd=self.cwd)
+            p.wait()
+        finally:
+            if local_wrapper is not None:
+                os.remove(local_wrapper)
 
         if not os.path.exists(self.trace_file):
             self.fail('no trace file generated\n')
@@ -119,7 +130,7 @@ class TestCase:
 
     def dump(self):
 
-        cmd = [_get_build_path('tracedump'), '--color=never', self.trace_file]
+        cmd = [_get_build_program('tracedump'), '--color=never', self.trace_file]
         p = popen(cmd, stdout=subprocess.PIPE)
 
         swapbuffers = 0

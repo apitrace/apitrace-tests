@@ -28,6 +28,6 @@ foreach (target ${targets})
         COMMAND python ${CMAKE_SOURCE_DIR}/driver.py
             --build ${APITRACE_BINARY_DIR}
             --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt
-            ${CMAKE_CURRENT_BINARY_DIR}/${target}
+            "$<TARGET_FILE:${subdir}_${target}>"
     )
 endforeach (target)
