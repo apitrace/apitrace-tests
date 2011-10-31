@@ -16,6 +16,7 @@ set (subdir gl)
 set (targets
     tri
     gremedy
+    varray
 )
 
 foreach (target ${targets})
