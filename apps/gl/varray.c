@@ -89,8 +89,8 @@ static void setupPointers(void)
    glEnableClientState(GL_VERTEX_ARRAY);
    glEnableClientState(GL_COLOR_ARRAY);
 
-   glVertexPointer(2, GL_INT, 0, vertices);
-   glColorPointer(3, GL_FLOAT, 0, colors);
+   glVertexPointer(2, GL_INT, 2 * sizeof(GLint), vertices);
+   glColorPointer(3, GL_FLOAT, 3 * sizeof(GLfloat), colors);
 }
 
 static void setupInterleave(void)
