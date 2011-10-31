@@ -44,6 +44,35 @@
 static int win;
 
 
+/**
+ * Identical to gluCheckExtension, which is not part of GLU on Windows.
+ */
+static GLboolean
+checkExtension(const char *extName, const GLubyte *extString)
+{
+   const char *p = (const char *)extString;
+   const char *q = extName;
+   char c;
+   do {
+       c = *p++;
+       if (c == '\0' || c == ' ') {
+           if (q && *q == '\0') {
+               return GL_TRUE;
+           } else {
+               q = extName;
+           }
+       } else {
+           if (q && *q == c) {
+               ++q;
+           } else {
+               q = 0;
+           }
+       }
+   } while (c);
+   return GL_FALSE;
+}
+
+
 static void checkGlError(const char *call) {
    GLenum error = glGetError();
    if (error != GL_NO_ERROR) {
@@ -60,8 +89,8 @@ static void Init(void)
       
    extensions = glGetString(GL_EXTENSIONS);
    checkGlError("glGetString(GL_EXTENSIONS)");
-   has_GL_GREMEDY_string_marker = gluCheckExtension("GL_GREMEDY_string_marker", extensions);
-   has_GL_GREMEDY_frame_terminator = gluCheckExtension("GL_GREMEDY_string_marker", extensions);
+   has_GL_GREMEDY_string_marker = checkExtension("GL_GREMEDY_string_marker", extensions);
+   has_GL_GREMEDY_frame_terminator = checkExtension("GL_GREMEDY_string_marker", extensions);
 
    if (GLEW_VERSION_3_0) {
       GLint has_GL3_GREMEDY_string_marker = 0;
