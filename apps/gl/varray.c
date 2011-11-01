@@ -54,18 +54,44 @@
 #  include <GL/glut.h>
 #endif
 
+enum SetupMethod {
+   POINTER,
+   INTERLEAVED,
+};
 
-#define POINTER 1
-#define INTERLEAVED 2
+enum DerefMethod {
+   DRAWARRAYS,
+   ARRAYELEMENT,
+   DRAWELEMENTS,
+};
 
-#define DRAWARRAY 1
-#define ARRAYELEMENT  2
-#define DRAWELEMENTS 3
-
-static int setupMethod = POINTER;
-static int derefMethod = DRAWARRAY;
+static enum SetupMethod setupMethod = POINTER;
+static enum DerefMethod derefMethod = DRAWARRAYS;
 
 static int win;
+
+static void parseArgs(int argc, char** argv)
+{
+   int i;
+
+   for (i = 1; i < argc; ++i) {
+      const char *arg = argv[i];
+      if (strcmp(arg, "pointer") == 0) {
+         setupMethod = POINTER;
+      } else if (strcmp(arg, "interleaved") == 0) {
+         setupMethod = INTERLEAVED;
+      } else if (strcmp(arg, "DRAWARRAYS") == 0) {
+         derefMethod = DRAWARRAYS;
+      } else if (strcmp(arg, "arrayelement") == 0) {
+         derefMethod = ARRAYELEMENT;
+      } else if (strcmp(arg, "drawelements") == 0) {
+         derefMethod = DRAWELEMENTS;
+      } else {
+         fprintf(stderr, "error: unknown arg %s\n", arg);
+         exit(1);
+      }
+   }
+}
 
 static void setupPointers(void)
 {
@@ -96,12 +122,12 @@ static void setupPointers(void)
 static void setupInterleave(void)
 {
    static GLfloat intertwined[] = {
-       1.0, 0.2, 1.0, 100.0, 100.0, 0.0,
-       1.0, 0.2, 0.2,   0.0, 200.0, 0.0,
-       1.0, 1.0, 0.2, 100.0, 300.0, 0.0,
-       0.2, 1.0, 0.2, 200.0, 300.0, 0.0,
-       0.2, 1.0, 1.0, 300.0, 200.0, 0.0,
-       0.2, 0.2, 1.0, 200.0, 100.0, 0.0
+       1.0 , 0.2 , 0.2 ,  25.0,  25.0, 0.0,
+       0.2 , 0.2 , 1.0 , 100.0, 325.0, 0.0,
+       0.8 , 1.0 , 0.2 , 175.0,  25.0, 0.0,
+       0.75, 0.75, 0.75, 175.0, 325.0, 0.0,
+       0.35, 0.35, 0.35, 250.0,  25.0, 0.0,
+       0.5 , 0.5 , 0.5 , 325.0, 325.0, 0.0
    };
 
    glInterleavedArrays(GL_C3F_V3F, 0, intertwined);
@@ -118,7 +144,7 @@ static void display(void)
 {
    glClear(GL_COLOR_BUFFER_BIT);
 
-   if (derefMethod == DRAWARRAY)
+   if (derefMethod == DRAWARRAYS)
       glDrawArrays(GL_TRIANGLES, 0, 6);
    else if (derefMethod == ARRAYELEMENT) {
       glBegin(GL_TRIANGLES);
