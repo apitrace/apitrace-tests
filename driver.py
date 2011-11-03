@@ -97,6 +97,7 @@ class TestCase:
             if not os.path.exists(trace_dir):
                 os.makedirs(trace_dir)
 
+        cmd = self.args
         env = os.environ.copy()
         
         system = platform.system()
@@ -105,19 +106,19 @@ class TestCase:
             wrapper = _get_build_path('wrappers/opengl32.dll')
             local_wrapper = os.path.join(os.path.dirname(self.args[0]), os.path.basename(wrapper))
             shutil.copy(wrapper, local_wrapper)
-        elif system == 'Darwin':
-            wrapper = _get_build_path('wrappers/OpenGL')
-            env['DYLD_LIBRARY_PATH'] = os.path.dirname(wrapper)
+            env['TRACE_FILE'] = self.trace_file
         else:
-            wrapper = _get_build_path('glxtrace.so')
-            env['LD_PRELOAD'] = wrapper
-
-        env['TRACE_FILE'] = self.trace_file
+            apitrace = _get_build_program('apitrace')
+            cmd = [
+                apitrace, 'trace', 
+                '-o', self.trace_file,
+                '--'
+            ] + cmd
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
 
         try:
-            p = popen(self.args, env=env, cwd=self.cwd)
+            p = popen(cmd, env=env, cwd=self.cwd)
             p.wait()
         finally:
             if local_wrapper is not None:
