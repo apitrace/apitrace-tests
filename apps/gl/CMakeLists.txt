@@ -19,15 +19,61 @@ set (targets
     varray
 )
 
+function (ADD_APP_TEST)
+    cmake_parse_arguments(
+        TEST
+        # Options
+        ""
+        # One value args
+        "NAME;TARGET;REF"
+        # Multi value args
+        "ARGS"
+        ${ARGN}
+    )
+
+    add_test(
+        NAME ${TEST_NAME}
+        COMMAND
+        python ${CMAKE_SOURCE_DIR}/driver.py
+            --build ${APITRACE_BINARY_DIR}
+            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}
+            "$<TARGET_FILE:${TEST_TARGET}>"
+            ${TEST_ARGS}
+    )
+endfunction ()
+
 foreach (target ${targets})
     add_executable (${subdir}_${target} ${target}.c)
     set_target_properties (${subdir}_${target} PROPERTIES OUTPUT_NAME ${target})
 
-    add_test(
-        NAME ${subdir}_${target}
-        COMMAND python ${CMAKE_SOURCE_DIR}/driver.py
-            --build ${APITRACE_BINARY_DIR}
-            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt
-            "$<TARGET_FILE:${subdir}_${target}>"
-    )
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt)
+        add_test(
+            NAME ${subdir}_${target}
+            COMMAND python ${CMAKE_SOURCE_DIR}/driver.py
+                --build ${APITRACE_BINARY_DIR}
+                --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt
+                "$<TARGET_FILE:${subdir}_${target}>"
+        )
+    endif ()
 endforeach (target)
+
+add_app_test (
+    NAME "gl_varray_drawarrays"
+    TARGET ${subdir}_varray
+    REF varray_drawarrays.ref.txt
+    ARGS pointer drawarrays
+)
+
+add_app_test (
+    NAME "gl_varray_elements"
+    TARGET ${subdir}_varray
+    REF varray_drawelements.ref.txt
+    ARGS pointer drawelements
+)
+
+add_app_test (
+    NAME "gl_varray_interleaved"
+    TARGET ${subdir}_varray
+    REF varray_interleaved.ref.txt
+    ARGS interleaved drawarrays
+)

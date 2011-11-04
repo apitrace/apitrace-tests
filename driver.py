@@ -138,6 +138,7 @@ class TestCase:
         flushes = 0
 
         ref_line = ''
+        src_lines = []
         if self.ref_dump is not None:
             ref = open(self.ref_dump, 'rt')
             ref_line = ref.readline().rstrip()
@@ -157,11 +158,18 @@ class TestCase:
                     if src_line == ref_line:
                         sys.stdout.write(src_line + '\n')
                         ref_line = ref.readline().rstrip()
+                        src_lines = []
+                    else:
+                        src_lines.append(src_line)
+
         p.wait()
         if p.returncode != 0:
             self.fail('`apitrace dump` returned code %i' % p.returncode)
         if ref_line:
-            self.fail('missing call %s' % ref_line)
+            if src_lines:
+                self.fail('missing call `%s` (found `%s`)' % (ref_line, src_lines[0]))
+            else:
+                self.fail('missing call %s' % ref_line)
 
     def run(self):
         self.standalone()
