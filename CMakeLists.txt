@@ -10,6 +10,8 @@ if (NOT CMAKE_BUILD_TYPE)
        FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
+include (CMakeParseArguments)
+
 find_package (OpenGL REQUIRED)
 find_package (GLUT)
 
