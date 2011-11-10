@@ -65,8 +65,8 @@ def _get_build_program(program):
 
 class TestCase:
 
+    api = 'gl'
     max_frames = None
-
     trace_file = None
 
     def __init__(self, name, args, cwd=None, build=None, results = '.'):
@@ -111,7 +111,8 @@ class TestCase:
             apitrace = _get_build_program('apitrace')
             cmd = [
                 apitrace, 'trace', 
-                '-o', self.trace_file,
+                '--api', self.api,
+                '--output', self.trace_file,
                 '--'
             ] + cmd
         if self.max_frames is not None:
@@ -257,6 +258,10 @@ def main():
         usage='\n\t%prog [options] -- program [args] ...',
         version='%%prog')
     optparser.add_option(
+        '-a', '--api', metavar='API',
+        type='string', dest='api', default='gl',
+        help='api to trace')
+    optparser.add_option(
         '-B', '--build', metavar='PATH',
         type='string', dest='build', default='..',
         help='path to apitrace build')
@@ -284,6 +289,7 @@ def main():
         build = options.build,
         results = options.results,
     )
+    test.api = options.api
     test.ref_dump = options.ref_dump
 
     test.run()

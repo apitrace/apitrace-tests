@@ -15,13 +15,8 @@ include (CMakeParseArguments)
 find_package (OpenGL REQUIRED)
 find_package (GLUT)
 
-find_library (GLEW_glew_LIBRARY GLEW
-	/usr/lib
-)
-
-find_path (GLEW_INCLUDE_DIR GL/glew.h
-      /usr/include/GL
-)
+find_path (GLEW_INCLUDE_DIR GL/glew.h /usr/include/GL)
+find_library (GLEW_glew_LIBRARY GLEW /usr/lib)
 
 if (UNIX)
 	link_libraries(m)
