@@ -413,6 +413,7 @@ event_loop(Display *dpy, Window win,
       if (redraw) {
          draw();
          eglSwapBuffers(egl_dpy, egl_surf);
+	 exit(0);
       }
    }
 }

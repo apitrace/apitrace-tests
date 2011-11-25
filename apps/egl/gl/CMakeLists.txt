@@ -18,8 +18,8 @@ foreach (target ${targets})
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt)
         add_app_test(
             NAME ${api}_${target}
-	    TARGET ${api}_${target}
-	    REF ${target}.ref.txt
+            TARGET ${api}_${target}
+            REF ${target}.ref.txt
         )
     endif ()
 endforeach (target)

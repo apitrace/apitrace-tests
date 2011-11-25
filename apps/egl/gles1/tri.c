@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <GLES/gl.h>  /* use OpenGL ES 1.x */
 #include <GLES/glext.h>
 #include <EGL/egl.h>
@@ -43,6 +44,13 @@
 
 
 static GLfloat view_rotx = 0.0, view_roty = 0.0, view_rotz = 0.0;
+
+
+static void
+idle(void)
+{
+   exit(0);
+}
 
 
 static void
@@ -109,6 +117,8 @@ draw(void)
    }
 
    glPopMatrix();
+
+   eglutIdleFunc(idle);
 }
 
 

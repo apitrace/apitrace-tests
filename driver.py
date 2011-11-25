@@ -87,6 +87,13 @@ class TestCase:
         if p.returncode:
             self.skip('application returned code %i' % p.returncode)
 
+    api_map = {
+        'gl': 'gl',
+        'egl': 'egl',
+        'gles1': 'egl',
+        'gles2': 'egl',
+    }
+
     def trace(self):
         if self.trace_file is None:
             self.trace_file = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
@@ -111,7 +118,7 @@ class TestCase:
             apitrace = _get_build_program('apitrace')
             cmd = [
                 apitrace, 'trace', 
-                '--api', self.api,
+                '--api', self.api_map[self.api],
                 '--output', self.trace_file,
                 '--'
             ] + cmd
@@ -145,8 +152,8 @@ class TestCase:
             ref_line = ref.readline().rstrip()
         for line in p.stdout:
             line = line.rstrip()
+	    print line
             mo = self.call_re.match(line)
-            assert mo
             if mo:
                 call_no = int(mo.group(1))
                 function_name = mo.group(2)
@@ -155,13 +162,15 @@ class TestCase:
                 if function_name in ('glFlush', 'glFinish'):
                     flushes += 1
                 src_line = line[mo.start(2):]
-                if ref_line:
-                    if src_line == ref_line:
-                        sys.stdout.write(src_line + '\n')
-                        ref_line = ref.readline().rstrip()
-                        src_lines = []
-                    else:
-                        src_lines.append(src_line)
+            else:
+                src_line = line
+            if ref_line:
+                if src_line == ref_line:
+                    sys.stdout.write(src_line + '\n')
+                    ref_line = ref.readline().rstrip()
+                    src_lines = []
+                else:
+                    src_lines.append(src_line)
 
         p.wait()
         if p.returncode != 0:

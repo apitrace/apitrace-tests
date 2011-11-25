@@ -44,9 +44,17 @@ static type_ClearColor fn_ClearColor;
 static type_Clear fn_Clear;
 
 static void
+idle(void)
+{
+   exit(0);
+}
+
+static void
 draw(void)
 {
    fn_Clear(GL_COLOR_BUFFER_BIT);
+
+   eglutIdleFunc(idle);
 }
 
 static void *
