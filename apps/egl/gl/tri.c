@@ -38,6 +38,12 @@ static GLfloat view_rotx = 0.0, view_roty = 0.0, view_rotz = 0.0;
 
 
 static void
+idle(void)
+{
+   exit(0);
+}
+
+static void
 draw(void)
 {
    static const GLfloat verts[3][2] = {
@@ -71,6 +77,8 @@ draw(void)
    }
 
    glPopMatrix();
+
+   eglutIdleFunc(idle);
 }
 
 

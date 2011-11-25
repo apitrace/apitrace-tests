@@ -19,41 +19,15 @@ set (targets
     varray
 )
 
-function (ADD_APP_TEST)
-    cmake_parse_arguments(
-        TEST
-        # Options
-        ""
-        # One value args
-        "NAME;TARGET;REF"
-        # Multi value args
-        "ARGS"
-        ${ARGN}
-    )
-
-    add_test(
-        NAME ${TEST_NAME}
-        COMMAND
-        python ${CMAKE_SOURCE_DIR}/driver.py
-            --build ${APITRACE_BINARY_DIR}
-            --api ${api}
-            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}
-            "$<TARGET_FILE:${TEST_TARGET}>"
-            ${TEST_ARGS}
-    )
-endfunction ()
-
 foreach (target ${targets})
     add_executable (${api}_${target} ${target}.c)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
 
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt)
-        add_test(
+        add_app_test(
             NAME ${api}_${target}
-            COMMAND python ${CMAKE_SOURCE_DIR}/driver.py
-                --build ${APITRACE_BINARY_DIR}
-                --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt
-                "$<TARGET_FILE:${api}_${target}>"
+	    TARGET ${api}_${target}
+	    REF ${target}.ref.txt
         )
     endif ()
 endforeach (target)
