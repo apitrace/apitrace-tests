@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 
 project (apitrace-tests)
 
+include (FindPkgConfig)
+
 # Set default built type
 if (NOT CMAKE_BUILD_TYPE)
    set (CMAKE_BUILD_TYPE Debug
@@ -17,6 +19,13 @@ find_package (GLUT)
 
 find_path (GLEW_INCLUDE_DIR GL/glew.h /usr/include/GL)
 find_library (GLEW_glew_LIBRARY GLEW /usr/lib)
+
+if (NOT WIN32)
+	pkg_check_modules (EGL egl)
+	pkg_check_modules (GLESV1 glesv1_cm)
+	pkg_check_modules (GLESV2 glesv2)
+	pkg_check_modules (VG vg)
+endif ()
 
 if (UNIX)
 	link_libraries(m)

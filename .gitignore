@@ -1,5 +1,8 @@
 .*.sw?
+*.a
+*.o
 *.pyc
+*.so
 CMakeCache.txt
 CMakeFiles
 CTestTestfile.cmake
