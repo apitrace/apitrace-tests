@@ -8,6 +8,7 @@ set (api egl)
 
 set (targets
     tri
+    tri_glsl
 )
 
 foreach (target ${targets})

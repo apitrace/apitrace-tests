@@ -7,7 +7,7 @@ include_directories(
 set (api gles2)
 
 set (targets
-    tri
+    tri_glsl
 )
 
 if (X11_FOUND)
