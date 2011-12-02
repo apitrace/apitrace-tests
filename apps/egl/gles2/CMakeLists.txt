@@ -4,7 +4,7 @@ include_directories(
     ${GLESV2_INCLUDE_DIRS}
 )
 
-set (api gles2)
+set (api egl_gles2)
 
 set (targets
     tri_glsl

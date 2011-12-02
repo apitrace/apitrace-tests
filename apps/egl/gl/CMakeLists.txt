@@ -4,7 +4,7 @@ include_directories(
     ${OPENGL_INCLUDE_PATH}
 )
 
-set (api egl)
+set (api egl_gl)
 
 set (targets
     tri

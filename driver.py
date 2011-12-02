@@ -89,9 +89,9 @@ class TestCase:
 
     api_map = {
         'gl': 'gl',
-        'egl': 'egl',
-        'gles1': 'egl',
-        'gles2': 'egl',
+        'egl_gl': 'egl',
+        'egl_gles1': 'egl',
+        'egl_gles2': 'egl',
     }
 
     def trace(self):

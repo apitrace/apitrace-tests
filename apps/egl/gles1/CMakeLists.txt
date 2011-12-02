@@ -4,7 +4,7 @@ include_directories(
     ${GLESV1_INCLUDE_DIRS}
 )
 
-set (api gles1)
+set (api egl_gles1)
 
 set (targets
     clear
