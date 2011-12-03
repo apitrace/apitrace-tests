@@ -181,10 +181,20 @@ class TestCase:
             else:
                 self.fail('missing call %s' % ref_line)
 
+    def retrace(self):
+        retrace = self.api_map[self.api] + 'retrace'
+        args = [_get_build_path(retrace)]
+        args += [self.trace_file]
+        p = popen(args, stdout=subprocess.PIPE)
+        p.wait()
+        if p.returncode != 0:
+            self.fail('`%s` returned code %i' % (retrace, p.returncode))
+
     def run(self):
         self.standalone()
         self.trace()
         self.dump()
+        self.retrace()
 
         self.pass_()
         return
@@ -197,7 +207,9 @@ class TestCase:
         if not os.path.isfile(trace):
             sys.stdout.write('SKIP (no trace)\n')
             return
-        args = [_get_build_path('glretrace')]
+
+        retrace = self.api_map[self.api] + 'retrace'
+        args = [_get_build_path(retrace)]
         if swapbuffers:
             args += ['-db']
             frames = swapbuffers
