@@ -75,4 +75,5 @@ endif ()
 enable_testing()
 
 add_subdirectory (apps)
+add_subdirectory (traces)
 

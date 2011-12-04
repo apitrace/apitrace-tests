@@ -65,24 +65,20 @@ def _get_build_program(program):
 
 class TestCase:
 
+    cmd = None
+    cwd = None
+
     api = 'gl'
     max_frames = None
     trace_file = None
 
-    def __init__(self, name, args, cwd=None, build=None, results = '.'):
-        self.name = name
-        self.args = args
-        self.cwd = cwd
-        self.build = build
-        self.results = results
-
-        if not os.path.exists(results):
-            os.makedirs(results)
-
     expected_dump = None
 
     def standalone(self):
-        p = popen(self.args, cwd=self.cwd)
+        if not self.cmd:
+            return
+
+        p = popen(self.cmd, cwd=self.cwd)
         p.wait()
         if p.returncode:
             self.skip('application returned code %i' % p.returncode)
@@ -95,8 +91,12 @@ class TestCase:
     }
 
     def trace(self):
+        if not self.cmd:
+            return
+
         if self.trace_file is None:
-            self.trace_file = os.path.abspath(os.path.join(self.results, self.name + '.trace'))
+            name = os.path.basename(self.cmd[0])
+            self.trace_file = os.path.abspath(os.path.join(self.results, name + '.trace'))
         if os.path.exists(self.trace_file):
             os.remove(self.trace_file)
         else:
@@ -104,14 +104,14 @@ class TestCase:
             if not os.path.exists(trace_dir):
                 os.makedirs(trace_dir)
 
-        cmd = self.args
+        cmd = self.cmd
         env = os.environ.copy()
         
         system = platform.system()
         local_wrapper = None
         if system == 'Windows':
             wrapper = _get_build_path('wrappers/opengl32.dll')
-            local_wrapper = os.path.join(os.path.dirname(self.args[0]), os.path.basename(wrapper))
+            local_wrapper = os.path.join(os.path.dirname(self.cmd[0]), os.path.basename(wrapper))
             shutil.copy(wrapper, local_wrapper)
             env['TRACE_FILE'] = self.trace_file
         else:
@@ -152,7 +152,7 @@ class TestCase:
             ref_line = ref.readline().rstrip()
         for line in p.stdout:
             line = line.rstrip()
-	    print line
+	    sys.stdout.write(line + '\n')
             mo = self.call_re.match(line)
             if mo:
                 call_no = int(mo.group(1))
@@ -276,7 +276,7 @@ def main():
 
     # Parse command line options
     optparser = optparse.OptionParser(
-        usage='\n\t%prog [options] -- program [args] ...',
+        usage='\n\t%prog [options] -- [TRACE|PROGRAM] ...',
         version='%%prog')
     optparser.add_option(
         '-a', '--api', metavar='API',
@@ -301,17 +301,21 @@ def main():
 
     (options, args) = optparser.parse_args(sys.argv[1:])
     if not args:
-        optparser.error('program must be specified')
+        optparser.error('an argument must be specified')
 
-    test = TestCase(
-        name = os.path.basename(args[0]), 
-        args = args,
-        cwd = options.cwd,
-        build = options.build,
-        results = options.results,
-    )
+    if not os.path.exists(options.results):
+        os.makedirs(options.results)
+
+    test = TestCase()
+
+    if args[0].endswith('.trace'):
+        test.trace_file = args[0]
+    else:
+        test.cmd = args
+    test.cwd = options.cwd
     test.api = options.api
     test.ref_dump = options.ref_dump
+    test.results = options.results
 
     test.run()
 
