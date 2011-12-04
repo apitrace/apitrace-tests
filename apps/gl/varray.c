@@ -80,7 +80,7 @@ static void parseArgs(int argc, char** argv)
          setupMethod = POINTER;
       } else if (strcmp(arg, "interleaved") == 0) {
          setupMethod = INTERLEAVED;
-      } else if (strcmp(arg, "DRAWARRAYS") == 0) {
+      } else if (strcmp(arg, "drawarrays") == 0) {
          derefMethod = DRAWARRAYS;
       } else if (strcmp(arg, "arrayelement") == 0) {
          derefMethod = ARRAYELEMENT;
