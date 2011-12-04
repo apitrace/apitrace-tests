@@ -35,6 +35,33 @@ import shutil
 import subprocess
 import sys
 import time
+import json
+import base64
+
+from PIL import Image
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+
+def _exit(status, code, reason=None):
+    if reason is None:
+        reason = ''
+    else:
+        reason = ' (%s)' % reason
+    sys.stdout.write('%s%s\n' % (status, reason))
+    sys.exit(code)
+
+def fail(reason=None):
+    _exit('FAIL', 1, reason)
+
+def skip(reason=None):
+    _exit('SKIP', 0, reason)
+
+def pass_(reason=None):
+    _exit('PASS', 0, reason)
 
 
 def popen(command, *args, **kwargs):
@@ -62,6 +89,105 @@ def _get_build_program(program):
         program += '.exe'
     return _get_build_path(program)
 
+def _get_source_path(path):
+    cache = _get_build_path('CMakeCache.txt')
+    for line in open(cache, 'rt'):
+        if line.startswith('CMAKE_HOME_DIRECTORY:INTERNAL='):
+            _, source_root = line.strip().split('=', 1)
+            return os.path.join(source_root, path)
+    return None
+
+
+class TraceChecker:
+
+    def __init__(self, srcStream, refFileName, verbose=False):
+        self.srcStream = srcStream
+        self.refFileName = refFileName
+        if refFileName:
+            self.refStream = open(refFileName, 'rt')
+        else:
+            self.refStream = None
+        self.verbose = verbose
+        self.doubleBuffer = False
+        self.callNo = 0
+        self.refLine = ''
+        self.images = []
+        self.states = []
+
+    call_re = re.compile(r'^([0-9]+) (\w+)\(')
+
+    def check(self):
+
+        swapbuffers = 0
+        flushes = 0
+
+        srcLines = []
+        self.consumeRefLine()
+        for line in self.srcStream:
+            line = line.rstrip()
+            if self.verbose:
+                sys.stdout.write(line + '\n')
+            mo = self.call_re.match(line)
+            if mo:
+                self.call_no = int(mo.group(1))
+                function_name = mo.group(2)
+                if function_name.find('SwapBuffers') != -1:
+                    swapbuffers += 1
+                if function_name in ('glFlush', 'glFinish'):
+                    flushes += 1
+                srcLine = line[mo.start(2):]
+            else:
+                srcLine = line
+            if self.refLine:
+                if srcLine == self.refLine:
+                    self.consumeRefLine()
+                    srcLines = []
+                else:
+                    srcLines.append(srcLine)
+
+        if self.refLine:
+            if srcLines:
+                fail('missing call `%s` (found `%s`)' % (self.refLine, srcLines[0]))
+            else:
+                fail('missing call %s' % self.refLine)
+
+        if swapbuffers:
+            self.doubleBuffer = True
+        else:
+            self.doubleBuffer = False
+
+    def consumeRefLine(self):
+        if not self.refStream:
+            self.refLine = ''
+            return
+
+        while True:
+            line = self.refStream.readline()
+            if not line:
+                break
+            line = line.rstrip()
+            if line.startswith('#'):
+                self.handlePragma(line)
+            else:
+                break
+        self.refLine = line
+
+    def handlePragma(self, line):
+        pragma, rest = line.split(None, 1)
+        if pragma == '#image':
+            imageFileName = self.getAbsPath(rest)
+            self.images.append((self.callNo, imageFileName))
+        elif pragma == '#state':
+            stateFileName = self.getAbsPath(rest)
+            self.states.append((self.callNo, stateFileName))
+        else:
+            assert False
+
+    def getAbsPath(self, path):
+        '''Get the absolute from a path relative to the reference filename'''
+        return os.path.abspath(os.path.join(os.path.dirname(self.refFileName), path))
+
+
 
 class TestCase:
 
@@ -72,16 +198,26 @@ class TestCase:
     max_frames = None
     trace_file = None
 
-    expected_dump = None
+    ref_dump = None
 
-    def standalone(self):
+    doubleBuffer = True
+
+    verbose = False
+
+    def __init__(self):
+        self.stateCache = {}
+    
+    def runApp(self):
+        '''Run the application standalone, skipping this test if it fails by
+        some reason.'''
+
         if not self.cmd:
             return
 
         p = popen(self.cmd, cwd=self.cwd)
         p.wait()
         if p.returncode:
-            self.skip('application returned code %i' % p.returncode)
+            skip('application returned code %i' % p.returncode)
 
     api_map = {
         'gl': 'gl',
@@ -90,7 +226,7 @@ class TestCase:
         'egl_gles2': 'egl',
     }
 
-    def trace(self):
+    def traceApp(self):
         if not self.cmd:
             return
 
@@ -133,142 +269,127 @@ class TestCase:
                 os.remove(local_wrapper)
 
         if not os.path.exists(self.trace_file):
-            self.fail('no trace file generated\n')
+            fail('no trace file generated\n')
     
-    call_re = re.compile(r'^([0-9]+) (\w+)\(')
-
-    def dump(self):
-
+    def checkTrace(self):
         cmd = [_get_build_program('apitrace'), 'dump', '--color=never', self.trace_file]
         p = popen(cmd, stdout=subprocess.PIPE)
 
-        swapbuffers = 0
-        flushes = 0
-
-        ref_line = ''
-        src_lines = []
-        if self.ref_dump is not None:
-            ref = open(self.ref_dump, 'rt')
-            ref_line = ref.readline().rstrip()
-        for line in p.stdout:
-            line = line.rstrip()
-	    sys.stdout.write(line + '\n')
-            mo = self.call_re.match(line)
-            if mo:
-                call_no = int(mo.group(1))
-                function_name = mo.group(2)
-                if function_name == 'glXSwapBuffers':
-                    swapbuffers += 1
-                if function_name in ('glFlush', 'glFinish'):
-                    flushes += 1
-                src_line = line[mo.start(2):]
-            else:
-                src_line = line
-            if ref_line:
-                if src_line == ref_line:
-                    sys.stdout.write(src_line + '\n')
-                    ref_line = ref.readline().rstrip()
-                    src_lines = []
-                else:
-                    src_lines.append(src_line)
-
+        checker = TraceChecker(p.stdout, self.ref_dump, self.verbose)
+        checker.check()
         p.wait()
         if p.returncode != 0:
-            self.fail('`apitrace dump` returned code %i' % p.returncode)
-        if ref_line:
-            if src_lines:
-                self.fail('missing call `%s` (found `%s`)' % (ref_line, src_lines[0]))
-            else:
-                self.fail('missing call %s' % ref_line)
+            fail('`apitrace dump` returned code %i' % p.returncode)
+
+        self.doubleBuffer = checker.doubleBuffer
+
+        for callNo, refImageFileName in checker.images:
+            self.checkImage(callNo, refImageFileName)
+        for callNo, refStateFileName in checker.states:
+            self.checkState(callNo, refStateFileName)
+
+    def checkImage(self, callNo, refImageFileName):
+        srcImage = self.getImage(callNo)
+        refImage = Image.open(refImageFileName)
+
+        from snapdiff import Comparer
+        comparer = Comparer(refImage, srcImage)
+        match = comparer.ae()
+        if not match:
+            prefix = '%s.%u' % (self.getNamePrefix(), callNo)
+            srcImageFileName = prefix + '.src.png'
+            diffImageFileName = prefix + '.diff.png'
+            comparer.write_diff(diffImageFileName)
+            fail('snapshot from call %u does not match %s' % (callNo, refImageFileName))
+
+    def checkState(self, callNo, refStateFileName):
+        srcState = self.getState(callNo)
+        refState = json.load(open(refStateFileName, 'rt'), strict=False)
+
+        from jsondiff import Comparer, Differ
+        comparer = Comparer(ignore_added = True)
+        match = comparer.visit(refState, srcState)
+        if not match:
+            prefix = '%s.%u' % (self.getNamePrefix(), callNo)
+            srcStateFileName = prefix + '.src.json'
+            diffStateFileName = prefix + '.diff.json'
+            self.saveState(srcState, srcStateFileName)
+            #diffStateFile = open(diffStateFileName, 'wt')
+            diffStateFile = sys.stdout
+            differ = Differ(diffStateFile, ignore_added = True)
+            differ.visit(refState, srcState)
+            fail('state from call %u does not match %s' % (callNo, refStateFileName))
+
+    def getNamePrefix(self):
+        name = os.path.basename(self.ref_dump)
+        try:
+            index = name.index('.')
+        except ValueError:
+            pass
+        else:
+            name = name[:index]
+        return name
+
+    def saveState(self, state, filename):
+        s = json.dumps(state, sort_keys=True, indent=2)
+        open(filename, 'wt').write(s)
 
     def retrace(self):
-        retrace = self.api_map[self.api] + 'retrace'
-        args = [_get_build_path(retrace)]
-        args += [self.trace_file]
-        p = popen(args, stdout=subprocess.PIPE)
+        p = self._retrace()
         p.wait()
         if p.returncode != 0:
-            self.fail('`%s` returned code %i' % (retrace, p.returncode))
+            fail('retrace failed with code %i' % (p.returncode))
+
+    def getImage(self, callNo):
+        state = self.getState(callNo)
+        framebuffer = state['framebuffer']
+        if self.doubleBuffer:
+            imageObj = framebuffer['GL_BACK']
+        else:
+            imageObj = framebuffer['GL_FRONT']
+        data = imageObj['__data__']
+        stream = StringIO(base64.b64decode(data))
+        im = Image.open(stream)
+        im.save('test.png')
+        return im
+
+    def getState(self, callNo):
+        try:
+            state = self.stateCache[callNo]
+        except KeyError:
+            pass
+        else:
+            return state
+
+        p = self._retrace(['-D', str(callNo)])
+        state = json.load(p.stdout, strict=False)
+        p.wait()
+        if p.returncode != 0:
+            fail('retrace returned code %i' % (p.returncode))
+
+        self.stateCache[callNo] = state
+
+        return state
+
+    def _retrace(self, args = None, stdout=subprocess.PIPE):
+        retrace = self.api_map[self.api] + 'retrace'
+        cmd = [_get_build_path(retrace)]
+        if self.doubleBuffer:
+            cmd += ['-db']
+        else:
+            cmd += ['-sb']
+        if args:
+            cmd += args
+        cmd += [self.trace_file]
+        return popen(cmd, stdout=stdout)
 
     def run(self):
-        self.standalone()
-        self.trace()
-        self.dump()
+        self.runApp()
+        self.traceApp()
+        self.checkTrace()
         self.retrace()
 
-        self.pass_()
-        return
-
-        ref_prefix = os.path.abspath(os.path.join(self.results, self.name + '.ref.'))
-        src_prefix = os.path.join(self.results, self.name + '.src.')
-        diff_prefix = os.path.join(self.results, self.name + '.diff.')
-
-
-        if not os.path.isfile(trace):
-            sys.stdout.write('SKIP (no trace)\n')
-            return
-
-        retrace = self.api_map[self.api] + 'retrace'
-        args = [_get_build_path(retrace)]
-        if swapbuffers:
-            args += ['-db']
-            frames = swapbuffers
-        else:
-            args += ['-sb']
-            frames = flushes
-        args += ['-s', src_prefix]
-        args += [trace]
-        p = popen(args, stdout=subprocess.PIPE)
-        image_re = re.compile(r'^Wrote (.*\.png)$')
-        images = []
-        for line in p.stdout:
-            line = line.rstrip()
-            mo = image_re.match(line)
-            if mo:
-                image = mo.group(1)
-                if image.startswith(src_prefix):
-                    image = image[len(src_prefix):]
-                    images.append(image)
-        p.wait()
-        if p.returncode != 0:
-            sys.stdout.write('FAIL (glretrace)\n')
-            return
-
-        for image in images:
-            ref_image = ref_prefix + image
-            src_image = src_prefix + image
-            diff_image = diff_prefix + image
-            
-            if not os.path.isfile(ref_image):
-                continue
-            assert os.path.isfile(src_image)
-
-            comparer = Comparer(ref_image, src_image)
-            match = comparer.ae()
-            sys.stdout.write('%s: %s bits\n' % (image, comparer.precision()))
-            if not match:
-                comparer.write_diff(diff_image)
-                #report.add_snapshot(ref_image, src_image, diff_image)
-                sys.stdout.write('FAIL (snapshot)\n')
-                return
-
-    def fail(self, reason=None):
-        self._exit('FAIL', 1, reason)
-
-    def skip(self, reason=None):
-        self._exit('SKIP', 0, reason)
-
-    def pass_(self, reason=None):
-        self._exit('PASS', 0, reason)
-
-    def _exit(self, status, code, reason=None):
-        if reason is None:
-            reason = ''
-        else:
-            reason = ' (%s)' % reason
-        sys.stdout.write('%s%s\n' % (status, reason))
-        sys.exit(code)
-
+        pass_()
 
 
 def main():
@@ -278,6 +399,11 @@ def main():
     optparser = optparse.OptionParser(
         usage='\n\t%prog [options] -- [TRACE|PROGRAM] ...',
         version='%%prog')
+    optparser.add_option(
+        '-v', '--verbose',
+        action="store_true",
+        dest="verbose", default=False,
+        help="verbose output")
     optparser.add_option(
         '-a', '--api', metavar='API',
         type='string', dest='api', default='gl',
@@ -306,7 +432,10 @@ def main():
     if not os.path.exists(options.results):
         os.makedirs(options.results)
 
+    sys.path.insert(0, _get_source_path('scripts'))
+
     test = TestCase()
+    test.verbose = options.verbose
 
     if args[0].endswith('.trace'):
         test.trace_file = args[0]

@@ -3,6 +3,9 @@
 *.o
 *.pyc
 *.so
+*.diff.*
+*.thumb.*
+index.html
 CMakeCache.txt
 CMakeFiles
 CTestTestfile.cmake
