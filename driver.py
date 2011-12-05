@@ -131,7 +131,8 @@ class TraceChecker:
             if mo:
                 self.call_no = int(mo.group(1))
                 function_name = mo.group(2)
-                if function_name.find('SwapBuffers') != -1:
+                if function_name.find('SwapBuffers') != -1 or \
+                   line.find('kCGLPFADoubleBuffer') != -1:
                     swapbuffers += 1
                 if function_name in ('glFlush', 'glFinish'):
                     flushes += 1
