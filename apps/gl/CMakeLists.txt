@@ -33,6 +33,12 @@ foreach (target ${targets})
 endforeach (target)
 
 add_app_test (
+    NAME "gl_default"
+    TARGET ${api}_tri
+    REF default.ref.txt
+)
+
+add_app_test (
     NAME "gl_varray_drawarrays"
     TARGET ${api}_varray
     REF varray_drawarrays.ref.txt
