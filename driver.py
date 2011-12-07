@@ -343,16 +343,27 @@ class TestCase:
 
     def getImage(self, callNo):
         state = self.getState(callNo)
-        framebuffer = state['framebuffer']
         if self.doubleBuffer:
-            imageObj = framebuffer['GL_BACK']
+            attachments = ['GL_BACK', 'GL_BACK_LEFT', 'GL_BACK_RIGHT', 'GL_COLOR_ATTACHMENT0']
         else:
-            imageObj = framebuffer['GL_FRONT']
+            attachments = ['GL_FRONT', 'GL_FRONT_LEFT', 'GL_FRONT_RIGHT', 'GL_COLOR_ATTACHMENT0']
+        imageObj = self.getFramebufferAttachment(state, attachments)
         data = imageObj['__data__']
         stream = StringIO(base64.b64decode(data))
         im = Image.open(stream)
         im.save('test.png')
         return im
+
+    def getFramebufferAttachment(self, state, attachments):
+        framebufferObj = state['framebuffer']
+        for attachment in attachments:
+            try:
+                attachmentObj = framebufferObj[attachment]
+            except KeyError:
+                pass
+            else:
+                return attachmentObj
+        raise Exception("no attachment found")
 
     def getState(self, callNo):
         try:
