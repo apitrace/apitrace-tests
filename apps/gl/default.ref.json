@@ -59,7 +59,7 @@
     "GL_STENCIL_WRITEMASK": -1,
     "GL_MATRIX_MODE": "GL_MODELVIEW",
     "GL_NORMALIZE": false,
-    "GL_VIEWPORT": [0, 0, 32, 32],
+    // GL_VIEWPORT depends on the drawable
     "GL_MODELVIEW_STACK_DEPTH": 1,
     "GL_PROJECTION_STACK_DEPTH": 1,
     "GL_TEXTURE_STACK_DEPTH": 1,
@@ -78,9 +78,10 @@
     "GL_LOGIC_OP_MODE": "GL_COPY",
     "GL_INDEX_LOGIC_OP": false,
     "GL_COLOR_LOGIC_OP": false,
+    // Some implementations return more GL_AUX_BUFFERS than requested
     "GL_DRAW_BUFFER": "GL_BACK",
     "GL_READ_BUFFER": "GL_BACK",
-    "GL_SCISSOR_BOX": [0, 0, 32, 32],
+    // GL_SCISSOR_BOX depends on the drawable
     "GL_SCISSOR_TEST": false,
     "GL_INDEX_CLEAR_VALUE": 0,
     "GL_INDEX_WRITEMASK": -1,
@@ -138,6 +139,8 @@
     "GL_ALPHA_BIAS": 0,
     "GL_DEPTH_SCALE": 1,
     "GL_DEPTH_BIAS": 0,
+    "GL_INDEX_BITS": 0,
+    // GL_xxx_BITS state can often vary
     "GL_NAME_STACK_DEPTH": 0,
     "GL_AUTO_NORMAL": false,
     "GL_MAP1_COLOR_4": false,
