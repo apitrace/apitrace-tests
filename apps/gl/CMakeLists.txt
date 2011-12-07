@@ -13,6 +13,12 @@ link_libraries (
 
 set (api gl)
 
+add_app_test (
+    NAME "gl_default"
+    TARGET ${api}_tri
+    REF default.ref.txt
+)
+
 set (targets
     tri
     gremedy
@@ -31,12 +37,6 @@ foreach (target ${targets})
         )
     endif ()
 endforeach (target)
-
-add_app_test (
-    NAME "gl_default"
-    TARGET ${api}_tri
-    REF default.ref.txt
-)
 
 add_app_test (
     NAME "gl_varray_drawarrays"
