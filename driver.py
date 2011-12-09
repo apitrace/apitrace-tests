@@ -67,13 +67,24 @@ def pass_(reason=None):
 def popen(command, *args, **kwargs):
     if kwargs.get('cwd', None) is not None:
         sys.stdout.write('cd %s && ' % kwargs['cwd'])
-    if 'env' in kwargs:
-        for name, value in kwargs['env'].iteritems():
+
+    try:
+        env = kwargs.pop('env')
+    except KeyError:
+        env = None
+    else:
+        names = env.keys()
+        names.sort()
+        for name in names:
+            value = env[name]
             if value != os.environ.get(name, None):
                 sys.stdout.write('%s=%s ' % (name, value))
+            env[name] = str(value)
+
     sys.stdout.write(' '.join(command) + '\n')
     sys.stdout.flush()
-    return subprocess.Popen(command, *args, **kwargs)
+
+    return subprocess.Popen(command, *args, env=env, **kwargs)
 
 
 def _get_build_path(path):
@@ -232,7 +243,7 @@ class TestCase:
             return
 
         if self.trace_file is None:
-            name = os.path.basename(self.cmd[0])
+            name, ext = os.path.splitext(os.path.basename(self.cmd[0]))
             self.trace_file = os.path.abspath(os.path.join(self.results, name + '.trace'))
         if os.path.exists(self.trace_file):
             os.remove(self.trace_file)
@@ -250,7 +261,7 @@ class TestCase:
             wrapper = _get_build_path('wrappers/opengl32.dll')
             local_wrapper = os.path.join(os.path.dirname(self.cmd[0]), os.path.basename(wrapper))
             shutil.copy(wrapper, local_wrapper)
-            env['TRACE_FILE'] = self.trace_file
+            env['TRACE_FILE'] = str(self.trace_file)
         else:
             apitrace = _get_build_program('apitrace')
             cmd = [
@@ -393,7 +404,7 @@ class TestCase:
 
     def _retrace(self, args = None, stdout=subprocess.PIPE):
         retrace = self.api_map[self.api] + 'retrace'
-        cmd = [_get_build_path(retrace)]
+        cmd = [_get_build_program(retrace)]
         if self.doubleBuffer:
             cmd += ['-db']
         else:
