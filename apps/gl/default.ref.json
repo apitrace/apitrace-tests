@@ -441,9 +441,6 @@
       "GL_VERTEX_ATTRIB_ARRAY_NORMALIZED": false,
       "GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING": 0
     },
-    "GL_TEXTURE_FILTER_CONTROL": {
-      "GL_TEXTURE_LOD_BIAS": 0
-    },
     "GL_TEXTURE0": {
       "GL_TEXTURE_1D": false,
       "GL_TEXTURE_BINDING_1D": 0,
@@ -454,7 +451,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE1": {
       "GL_TEXTURE_1D": false,
@@ -466,7 +489,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE2": {
       "GL_TEXTURE_1D": false,
@@ -478,7 +527,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE3": {
       "GL_TEXTURE_1D": false,
@@ -490,7 +565,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE4": {
       "GL_TEXTURE_1D": false,
@@ -502,7 +603,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE5": {
       "GL_TEXTURE_1D": false,
@@ -514,7 +641,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE6": {
       "GL_TEXTURE_1D": false,
@@ -526,7 +679,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE7": {
       "GL_TEXTURE_1D": false,
@@ -538,7 +717,33 @@
       "GL_TEXTURE_RECTANGLE": false,
       "GL_TEXTURE_BINDING_RECTANGLE": 0,
       "GL_TEXTURE_CUBE_MAP": false,
-      "GL_TEXTURE_BINDING_CUBE_MAP": 0
+      "GL_TEXTURE_BINDING_CUBE_MAP": 0,
+      "GL_TEXTURE_ENV": {
+        "GL_ALPHA_SCALE": 1,
+        "GL_TEXTURE_ENV_MODE": "GL_MODULATE",
+        "GL_TEXTURE_ENV_COLOR": [0, 0, 0, 0],
+        "GL_COMBINE_RGB": "GL_MODULATE",
+        "GL_COMBINE_ALPHA": "GL_MODULATE",
+        "GL_RGB_SCALE": 1,
+        "GL_SRC0_RGB": "GL_TEXTURE",
+        "GL_SRC1_RGB": "GL_PREVIOUS",
+        "GL_SRC2_RGB": "GL_CONSTANT",
+        "GL_SRC0_ALPHA": "GL_TEXTURE",
+        "GL_SRC1_ALPHA": "GL_PREVIOUS",
+        "GL_SRC2_ALPHA": "GL_CONSTANT",
+        "GL_OPERAND0_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND1_RGB": "GL_SRC_COLOR",
+        "GL_OPERAND2_RGB": "GL_SRC_ALPHA",
+        "GL_OPERAND0_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND1_ALPHA": "GL_SRC_ALPHA",
+        "GL_OPERAND2_ALPHA": "GL_SRC_ALPHA"
+      },
+      "GL_TEXTURE_FILTER_CONTROL": {
+        "GL_TEXTURE_LOD_BIAS": 0
+      },
+      "GL_POINT_SPRITE": {
+        "GL_COORD_REPLACE": false
+      }
     },
     "GL_TEXTURE8": {
       "GL_TEXTURE_1D": false,
