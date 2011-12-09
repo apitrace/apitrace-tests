@@ -338,7 +338,9 @@ class TestCase:
     def getRefState(self, refStateFileName):
         data = open(refStateFileName, 'rt').read()
         data = self.json_comment_re.sub('', data)
-        return json.loads(data, strict=False)
+        state = json.loads(data, strict=False)
+        self.adjustRefState(state)
+        return state
 
     def getNamePrefix(self):
         name = os.path.basename(self.ref_dump)
@@ -398,9 +400,62 @@ class TestCase:
         if p.returncode != 0:
             fail('retrace returned code %i' % (p.returncode))
 
+        self.adjustSrcState(state)
+
         self.stateCache[callNo] = state
 
         return state
+
+    def adjustSrcState(self, state):
+        # Do some adjustments on the obtained state to eliminate failures from
+        # bugs/issues outside of apitrace
+
+        try:
+            parameters = state['parameters']
+        except KeyError:
+            return
+
+        # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns -1
+        self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
+
+        # On Gallium 
+        if 'Gallium' in parameters['GL_RENDERER'].split():
+            # Gallium drivers have wrong defaults for draw/read buffer state
+            self.replaceState(parameters, 'GL_DRAW_BUFFER', 'GL_BACK_LEFT', 'GL_BACK')
+            self.replaceState(parameters, 'GL_DRAW_BUFFER0', 'GL_BACK_LEFT', 'GL_BACK')
+            self.replaceState(parameters, 'GL_READ_BUFFER', 'GL_BACK_LEFT', 'GL_BACK')
+            self.replaceState(parameters, 'GL_DRAW_BUFFER', 'GL_FRONT_LEFT', 'GL_FRONT')
+            self.replaceState(parameters, 'GL_DRAW_BUFFER0', 'GL_FRONT_LEFT', 'GL_FRONT')
+            self.replaceState(parameters, 'GL_READ_BUFFER', 'GL_FRONT_LEFT', 'GL_FRONT')
+
+    def adjustRefState(self, state):
+        # Do some adjustments on reference state to eliminate failures from
+        # bugs/issues outside of apitrace
+
+        try:
+            parameters = state['parameters']
+        except KeyError:
+            return
+
+        if platform.system() == 'Darwin' or True:
+            # Mac OS X drivers fail on GL_COLOR_SUM
+            # XXX: investigate this
+            self.removeState(parameters, 'GL_COLOR_SUM')
+
+    def replaceState(self, obj, key, srcValue, dstValue):
+        try:
+            value = obj[key]
+        except KeyError:
+            pass
+        else:
+            if value == srcValue:
+                obj[key] = dstValue
+
+    def removeState(self, obj, key):
+        try:
+            del obj[key]
+        except KeyError:
+            pass
 
     def _retrace(self, args = None, stdout=subprocess.PIPE):
         retrace = self.api_map[self.api] + 'retrace'
