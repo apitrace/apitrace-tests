@@ -140,7 +140,7 @@ class TraceChecker:
                 sys.stdout.write(line + '\n')
             mo = self.call_re.match(line)
             if mo:
-                self.call_no = int(mo.group(1))
+                self.callNo = int(mo.group(1))
                 function_name = mo.group(2)
                 if function_name.find('SwapBuffers') != -1 or \
                    line.find('kCGLPFADoubleBuffer') != -1:
@@ -310,6 +310,7 @@ class TestCase:
         if not match:
             prefix = '%s.%u' % (self.getNamePrefix(), callNo)
             srcImageFileName = prefix + '.src.png'
+            srcImage.save(srcImageFileName)
             diffImageFileName = prefix + '.diff.png'
             comparer.write_diff(diffImageFileName)
             fail('snapshot from call %u does not match %s' % (callNo, refImageFileName))

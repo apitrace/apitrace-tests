@@ -5,6 +5,8 @@
 *.so
 *.diff.*
 *.thumb.*
+*.src.*
+*.diff.*
 index.html
 CMakeCache.txt
 CMakeFiles
