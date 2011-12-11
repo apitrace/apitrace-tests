@@ -41,6 +41,23 @@
 static GLboolean doubleBuffer = GL_TRUE;
 static int win;
 
+static void parseArgs(int argc, char** argv)
+{
+   int i;
+
+   for (i = 1; i < argc; ++i) {
+      const char *arg = argv[i];
+      if (strcmp(arg, "-sb") == 0) {
+         doubleBuffer = GL_FALSE;
+      } else if (strcmp(arg, "-db") == 0) {
+         doubleBuffer = GL_TRUE;
+      } else {
+         fprintf(stderr, "error: unknown arg %s\n", arg);
+         exit(1);
+      }
+   }
+}
+
 static void Init(void)
 {
    glClearColor(0.3, 0.1, 0.3, 1.0);
@@ -84,6 +101,8 @@ static void Draw(void)
 int main(int argc, char **argv)
 {
    GLenum type;
+
+   parseArgs(argc, argv);
 
    glutInit(&argc, argv);
 

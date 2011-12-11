@@ -17,6 +17,7 @@ function (ADD_APP_TEST)
             --build ${APITRACE_BINARY_DIR}
             --api ${api}
             --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}
+            --
             "$<TARGET_FILE:${TEST_TARGET}>"
             ${TEST_ARGS}
     )
