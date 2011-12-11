@@ -333,14 +333,10 @@ class TestCase:
             differ.visit(refState, srcState)
             fail('state from call %u does not match %s' % (callNo, refStateFileName))
 
-    # Allo non-standard JS comments in JSON
-    json_comment_re = re.compile(r'//.*$', re.MULTILINE)
-
     def getRefState(self, refStateFileName):
-        data = open(refStateFileName, 'rt').read()
-        data = self.json_comment_re.sub('', data)
-        state = json.loads(data, strict=False)
-        self.adjustRefState(state)
+        stream = open(refStateFileName, 'rt')
+        from jsondiff import load
+        state = load(stream)
         return state
 
     def getNamePrefix(self):
