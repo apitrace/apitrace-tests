@@ -343,6 +343,7 @@ class TestCase:
         stream = open(refStateFileName, 'rt')
         from jsondiff import load
         state = load(stream)
+        self.adjustRefState(state)
         return state
 
     def getNamePrefix(self):
@@ -440,7 +441,7 @@ class TestCase:
         except KeyError:
             return
 
-        if platform.system() == 'Darwin' or True:
+        if platform.system() == 'Darwin':
             # Mac OS X drivers fail on GL_COLOR_SUM
             # XXX: investigate this
             self.removeState(parameters, 'GL_COLOR_SUM')
