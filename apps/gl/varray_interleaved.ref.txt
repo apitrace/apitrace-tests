@@ -1,4 +1,4 @@
-glClearColor(red = 0, green = 0, blue = 0, alpha = 0)
+glClearColor(red = 0, green = 0, blue = 0, alpha = 1)
 glShadeModel(mode = GL_SMOOTH)
 glEnableClientState(array = GL_VERTEX_ARRAY)
 glEnableClientState(array = GL_COLOR_ARRAY)

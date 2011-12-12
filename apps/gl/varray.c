@@ -135,7 +135,7 @@ static void setupInterleave(void)
 
 static void init(void)
 {
-   glClearColor(0.0, 0.0, 0.0, 0.0);
+   glClearColor(0.0, 0.0, 0.0, 1.0);
    glShadeModel(GL_SMOOTH);
    setupPointers();
 }
