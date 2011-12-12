@@ -216,6 +216,8 @@ class TestCase:
 
     verbose = False
 
+    threshold_precision = 12.0
+
     def __init__(self):
         self.stateCache = {}
     
@@ -312,8 +314,9 @@ class TestCase:
 
         from snapdiff import Comparer
         comparer = Comparer(refImage, srcImage)
-        match = comparer.ae()
-        if not match:
+        precision = comparer.precision()
+        sys.stdout.write('precision of %f bits against %s\n' % (precision, refImageFileName))
+        if precision < self.threshold_precision:
             prefix = '%s.%u' % (self.getNamePrefix(), callNo)
             srcImageFileName = prefix + '.src.png'
             srcImage.save(srcImageFileName)
