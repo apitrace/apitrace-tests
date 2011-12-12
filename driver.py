@@ -243,7 +243,13 @@ class TestCase:
             return
 
         if self.trace_file is None:
-            name, ext = os.path.splitext(os.path.basename(self.cmd[0]))
+            if self.ref_dump is not None:
+                name = self.ref_dump
+            else:
+                name = self.cmd[0]
+            name, ext = os.path.splitext(os.path.basename(name))
+            while ext:
+                name, ext = os.path.splitext(os.path.basename(name))
             self.trace_file = os.path.abspath(os.path.join(self.results, name + '.trace'))
         if os.path.exists(self.trace_file):
             os.remove(self.trace_file)
