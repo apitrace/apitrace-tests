@@ -314,7 +314,7 @@ class TestCase:
 
         from snapdiff import Comparer
         comparer = Comparer(refImage, srcImage)
-        precision = comparer.precision()
+        precision = comparer.precision(filter=True)
         sys.stdout.write('precision of %f bits against %s\n' % (precision, refImageFileName))
         if precision < self.threshold_precision:
             prefix = '%s.%u' % (self.getNamePrefix(), callNo)
