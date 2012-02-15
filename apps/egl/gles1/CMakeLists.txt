@@ -9,6 +9,7 @@ set (api egl_gles1)
 set (targets
     clear
     tri
+    debug_marker
 )
 
 foreach (target ${targets})
