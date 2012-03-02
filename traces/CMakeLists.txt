@@ -8,8 +8,8 @@ foreach (trace ${traces})
         NAME trace_${trace}
         COMMAND
         python ${CMAKE_SOURCE_DIR}/driver.py
-            --build ${APITRACE_BINARY_DIR}
+            --apitrace ${APITRACE_EXECUTABLE}
             --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${trace}.ref.txt
-            ${trace}.trace
+            ${CMAKE_CURRENT_SOURCE_DIR}/${trace}.trace
     )
 endforeach (trace)
