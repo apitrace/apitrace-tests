@@ -31,7 +31,6 @@ import optparse
 import os.path
 import platform
 import re
-import shutil
 import subprocess
 import sys
 import time
@@ -87,26 +86,52 @@ def popen(command, *args, **kwargs):
     return subprocess.Popen(command, *args, env=env, **kwargs)
 
 
-def _get_build_path(path):
-    if options.build is not None:
-        path = os.path.abspath(os.path.join(options.build, path))
+def which(executable):
+    dirs = os.environ['PATH'].split(os.path.pathsep)
+    for dir in dirs:
+        path = os.path.join(dir, executable)
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def _get_bin_path():
+    if os.path.exists(options.apitrace):
+        apitrace_abspath = os.path.abspath(options.apitrace)
+    else:
+        apitrace_abspath = which(options.apitrace)
+        if apitrace_abspath is None:
+            sys.stderr.write('error: could not determine the absolute path of\n' % options.apitrace)
+            sys.exit(1)
+    return os.path.dirname(apitrace_abspath)
+
+
+def _get_build_program(program):
+    bin_path = _get_bin_path()
+    if platform.system() == 'Windows':
+        program += '.exe'
+    path = os.path.join(bin_path, program)
     if not os.path.exists(path):
         sys.stderr.write('error: %s does not exist\n' % path)
         sys.exit(1)
     return path
 
-def _get_build_program(program):
-    if platform.system() == 'Windows':
-        program += '.exe'
-    return _get_build_path(program)
+def _get_scripts_path():
+    bin_path = _get_bin_path()
 
-def _get_source_path(path):
-    cache = _get_build_path('CMakeCache.txt')
-    for line in open(cache, 'rt'):
-        if line.startswith('CMAKE_HOME_DIRECTORY:INTERNAL='):
-            _, source_root = line.strip().split('=', 1)
-            return os.path.join(source_root, path)
-    return None
+    try_paths = [
+        'scripts',
+        '../lib/scripts',
+        '../lib/apitrace/scripts',
+    ]
+
+    for try_path in try_paths:
+        path = os.path.join(bin_path, try_path)
+        if os.path.exists(path):
+            return os.path.abspath(path)
+
+    sys.stderr.write('error: could not find scripts directory\n')
+    sys.exit(1)
 
 
 class TraceChecker:
@@ -263,36 +288,23 @@ class TestCase:
         cmd = self.cmd
         env = os.environ.copy()
         
-        system = platform.system()
-        local_wrapper = None
-        if system == 'Windows':
-            wrapper = _get_build_path('wrappers/opengl32.dll')
-            local_wrapper = os.path.join(os.path.dirname(self.cmd[0]), os.path.basename(wrapper))
-            shutil.copy(wrapper, local_wrapper)
-            env['TRACE_FILE'] = str(self.trace_file)
-        else:
-            apitrace = _get_build_program('apitrace')
-            cmd = [
-                apitrace, 'trace', 
-                '--api', self.api_map[self.api],
-                '--output', self.trace_file,
-                '--'
-            ] + cmd
+        cmd = [
+            options.apitrace, 'trace', 
+            '--api', self.api_map[self.api],
+            '--output', self.trace_file,
+            '--'
+        ] + cmd
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
 
-        try:
-            p = popen(cmd, env=env, cwd=self.cwd)
-            p.wait()
-        finally:
-            if local_wrapper is not None:
-                os.remove(local_wrapper)
+        p = popen(cmd, env=env, cwd=self.cwd)
+        p.wait()
 
         if not os.path.exists(self.trace_file):
             fail('no trace file generated\n')
     
     def checkTrace(self):
-        cmd = [_get_build_program('apitrace'), 'dump', '--color=never', self.trace_file]
+        cmd = [options.apitrace, 'dump', '--color=never', self.trace_file]
         p = popen(cmd, stdout=subprocess.PIPE)
 
         checker = TraceChecker(p.stdout, self.ref_dump, self.verbose)
@@ -488,6 +500,10 @@ class TestCase:
 def main():
     global options
 
+    default_apitrace = 'apitrace'
+    if platform.system() == 'Windows':
+        default_apitrace += '.exe'
+
     # Parse command line options
     optparser = optparse.OptionParser(
         usage='\n\t%prog [options] -- [TRACE|PROGRAM] ...',
@@ -502,9 +518,9 @@ def main():
         type='string', dest='api', default='gl',
         help='api to trace')
     optparser.add_option(
-        '-B', '--build', metavar='PATH',
-        type='string', dest='build', default='..',
-        help='path to apitrace build')
+        '--apitrace', metavar='PROGRAM',
+        type='string', dest='apitrace', default=default_apitrace,
+        help='path to apitrace executable')
     optparser.add_option(
         '-C', '--directory', metavar='PATH',
         type='string', dest='cwd', default=None,
@@ -525,7 +541,9 @@ def main():
     if not os.path.exists(options.results):
         os.makedirs(options.results)
 
-    sys.path.insert(0, _get_source_path('scripts'))
+    print _get_scripts_path()
+
+    sys.path.insert(0, _get_scripts_path())
 
     test = TestCase()
     test.verbose = options.verbose
