@@ -37,8 +37,6 @@ import time
 import json
 import base64
 
-from PIL import Image
-
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -321,6 +319,11 @@ class TestCase:
             self.checkState(callNo, refStateFileName)
 
     def checkImage(self, callNo, refImageFileName):
+        try:
+            from PIL import Image
+        except ImportError:
+            return
+
         srcImage = self.getImage(callNo)
         refImage = Image.open(refImageFileName)
 
@@ -382,6 +385,7 @@ class TestCase:
             fail('retrace failed with code %i' % (p.returncode))
 
     def getImage(self, callNo):
+        from PIL import Image
         state = self.getState(callNo)
         if self.doubleBuffer:
             attachments = ['GL_BACK', 'GL_BACK_LEFT', 'GL_BACK_RIGHT', 'GL_COLOR_ATTACHMENT0']
