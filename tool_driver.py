@@ -37,13 +37,9 @@ from base_driver import *
 
 class AsciiComparer:
 
-    def __init__(self, srcStream, refFileName, verbose=False):
+    def __init__(self, srcStream, refStream, verbose=False):
         self.srcStream = srcStream
-        self.refFileName = refFileName
-        if refFileName:
-            self.refStream = open(refFileName, 'rt')
-        else:
-            self.refStream = None
+        self.refStream = refStream
     
     def readLines(self, stream):
         lines = []
@@ -76,42 +72,29 @@ class AsciiComparer:
 
 class ToolDriver(Driver):
 
-    def runTool(self):
+    def runScript(self, refScript):
         '''Run the application standalone, skipping this test if it fails by
         some reason.'''
 
-        if self.options.ref_dump:
-            stdout = subprocess.PIPE
-        else:
-            stdout = None
+        refStream = open(refScript, 'rt')
 
-        cmd = [self.options.apitrace] + self.args
-        p = popen(cmd, cwd=options.cwd, stdout=stdout)
+        args = refStream.readline().split()
+        cmd = [self.options.apitrace] + args
+        cwd = os.path.dirname(os.path.abspath(refScript))
+        p = popen(cmd, cwd=cwd, stdout=subprocess.PIPE)
 
-        if self.options.ref_dump:
-            comparer = AsciiComparer(p.stdout, self.options.ref_dump, self.options.verbose)
-            comparer.compare()
+        comparer = AsciiComparer(p.stdout, refStream, self.options.verbose)
+        comparer.compare()
 
         p.wait()
         if p.returncode != 0:
             fail('tool returned code %i' % p.returncode)
     
-    def createOptParser(self):
-        optparser = Driver.createOptParser(self)
-
-        optparser.add_option(
-            '--ref-dump', metavar='PATH',
-            type='string', dest='ref_dump', default=None,
-            help='reference dump')
-
-        return optparser
-
     def run(self):
-        global options
+        self.parseOptions()
 
-        (options, args) = self.parseOptions()
-
-        self.runTool()
+        for arg in self.args:
+            self.runScript(arg)
 
         pass_()
 

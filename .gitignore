@@ -1,12 +1,13 @@
 .*.sw?
 *.a
+*.diff.*
+*.diff.*
 *.o
 *.pyc
 *.so
-*.diff.*
-*.thumb.*
 *.src.*
-*.diff.*
+*.thumb.*
+*.trace
 index.html
 CMakeCache.txt
 CMakeFiles

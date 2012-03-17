@@ -1,16 +1,11 @@
-set (traces
-    incomplete-call
-    zlib-no-eof
-)
+file (GLOB scripts RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.script)
 
-foreach (trace ${traces})
+foreach (script ${scripts})
     add_test(
-        NAME trace_${trace}
+        NAME ${script}
         COMMAND
         python ${CMAKE_SOURCE_DIR}/tool_driver.py
             --apitrace ${APITRACE_EXECUTABLE}
-            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${trace}.ref.txt
-            --
-            dump --call-nos=no ${CMAKE_CURRENT_SOURCE_DIR}/${trace}.trace
+            ${CMAKE_CURRENT_SOURCE_DIR}/${script}
     )
-endforeach (trace)
+endforeach (script)
