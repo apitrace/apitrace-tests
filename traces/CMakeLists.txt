@@ -1,5 +1,7 @@
 file (GLOB scripts RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.script)
 
+list (SORT scripts)
+
 foreach (script ${scripts})
     add_test(
         NAME ${script}
