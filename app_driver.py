@@ -24,10 +24,9 @@
 #
 ##########################################################################/
 
-'''Main test driver.'''
+'''Application test driver.'''
 
 
-import optparse
 import os.path
 import platform
 import re
@@ -43,93 +42,7 @@ except ImportError:
     from StringIO import StringIO
 
 
-def _exit(status, code, reason=None):
-    if reason is None:
-        reason = ''
-    else:
-        reason = ' (%s)' % reason
-    sys.stdout.write('%s%s\n' % (status, reason))
-    sys.exit(code)
-
-def fail(reason=None):
-    _exit('FAIL', 1, reason)
-
-def skip(reason=None):
-    _exit('SKIP', 0, reason)
-
-def pass_(reason=None):
-    _exit('PASS', 0, reason)
-
-
-def popen(command, *args, **kwargs):
-    if kwargs.get('cwd', None) is not None:
-        sys.stdout.write('cd %s && ' % kwargs['cwd'])
-
-    try:
-        env = kwargs.pop('env')
-    except KeyError:
-        env = None
-    else:
-        names = env.keys()
-        names.sort()
-        for name in names:
-            value = env[name]
-            if value != os.environ.get(name, None):
-                sys.stdout.write('%s=%s ' % (name, value))
-            env[name] = str(value)
-
-    sys.stdout.write(' '.join(command) + '\n')
-    sys.stdout.flush()
-
-    return subprocess.Popen(command, *args, env=env, **kwargs)
-
-
-def which(executable):
-    dirs = os.environ['PATH'].split(os.path.pathsep)
-    for dir in dirs:
-        path = os.path.join(dir, executable)
-        if os.path.exists(path):
-            return path
-    return None
-
-
-def _get_bin_path():
-    if os.path.exists(options.apitrace):
-        apitrace_abspath = os.path.abspath(options.apitrace)
-    else:
-        apitrace_abspath = which(options.apitrace)
-        if apitrace_abspath is None:
-            sys.stderr.write('error: could not determine the absolute path of\n' % options.apitrace)
-            sys.exit(1)
-    return os.path.dirname(apitrace_abspath)
-
-
-def _get_build_program(program):
-    bin_path = _get_bin_path()
-    if platform.system() == 'Windows':
-        program += '.exe'
-    path = os.path.join(bin_path, program)
-    if not os.path.exists(path):
-        sys.stderr.write('error: %s does not exist\n' % path)
-        sys.exit(1)
-    return path
-
-def _get_scripts_path():
-    bin_path = _get_bin_path()
-
-    try_paths = [
-        'scripts',
-        '../lib/scripts',
-        '../lib/apitrace/scripts',
-    ]
-
-    for try_path in try_paths:
-        path = os.path.join(bin_path, try_path)
-        if os.path.exists(path):
-            return os.path.abspath(path)
-
-    sys.stderr.write('error: could not find scripts directory\n')
-    sys.exit(1)
+from base_driver import *
 
 
 class TraceChecker:
@@ -482,7 +395,7 @@ class TestCase:
 
     def _retrace(self, args = None, stdout=subprocess.PIPE):
         retrace = self.api_map[self.api] + 'retrace'
-        cmd = [_get_build_program(retrace)]
+        cmd = [get_build_program(retrace)]
         if self.doubleBuffer:
             cmd += ['-db']
         else:
@@ -501,68 +414,45 @@ class TestCase:
         pass_()
 
 
-def main():
-    global options
+class AppMain(Main):
 
-    default_apitrace = 'apitrace'
-    if platform.system() == 'Windows':
-        default_apitrace += '.exe'
+    def createOptParser(self):
+        optparser = Main.createOptParser(self)
 
-    # Parse command line options
-    optparser = optparse.OptionParser(
-        usage='\n\t%prog [options] -- [TRACE|PROGRAM] ...',
-        version='%%prog')
-    optparser.add_option(
-        '-v', '--verbose',
-        action="store_true",
-        dest="verbose", default=False,
-        help="verbose output")
-    optparser.add_option(
-        '-a', '--api', metavar='API',
-        type='string', dest='api', default='gl',
-        help='api to trace')
-    optparser.add_option(
-        '--apitrace', metavar='PROGRAM',
-        type='string', dest='apitrace', default=default_apitrace,
-        help='path to apitrace executable')
-    optparser.add_option(
-        '-C', '--directory', metavar='PATH',
-        type='string', dest='cwd', default=None,
-        help='change to directory')
-    optparser.add_option(
-        '-R', '--results', metavar='PATH',
-        type='string', dest='results', default='.',
-        help='results directory [default=%default]')
-    optparser.add_option(
-        '--ref-dump', metavar='PATH',
-        type='string', dest='ref_dump', default=None,
-        help='reference dump')
+        optparser.add_option(
+            '-a', '--api', metavar='API',
+            type='string', dest='api', default='gl',
+            help='api to trace')
+        optparser.add_option(
+            '-R', '--results', metavar='PATH',
+            type='string', dest='results', default='.',
+            help='results directory [default=%default]')
+        optparser.add_option(
+            '--ref-dump', metavar='PATH',
+            type='string', dest='ref_dump', default=None,
+            help='reference dump')
 
-    (options, args) = optparser.parse_args(sys.argv[1:])
-    if not args:
-        optparser.error('an argument must be specified')
+        return optparser
 
-    if not os.path.exists(options.results):
-        os.makedirs(options.results)
+    def main(self):
+        global options
 
-    print _get_scripts_path()
+        (options, args) = self.parseOptions()
 
-    sys.path.insert(0, _get_scripts_path())
+        if not os.path.exists(options.results):
+            os.makedirs(options.results)
 
-    test = TestCase()
-    test.verbose = options.verbose
+        test = TestCase()
+        test.verbose = options.verbose
 
-    if args[0].endswith('.trace'):
-        test.trace_file = args[0]
-    else:
         test.cmd = args
-    test.cwd = options.cwd
-    test.api = options.api
-    test.ref_dump = options.ref_dump
-    test.results = options.results
+        test.cwd = options.cwd
+        test.api = options.api
+        test.ref_dump = options.ref_dump
+        test.results = options.results
 
-    test.run()
+        test.run()
 
 
 if __name__ == '__main__':
-    main()
+    AppMain().main()

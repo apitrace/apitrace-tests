@@ -24,4 +24,5 @@ glEnd()
 glFlush()
 glFlush()
 glXSwapBuffers(dpy = 0x1da4360, drawable = 69206018)
+
 glXMakeContextCurrent(dpy = 0x1da4360, draw = 69206018, read = 69206018, ctx = 0x1e1cad0) = True
