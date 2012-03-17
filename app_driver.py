@@ -137,7 +137,7 @@ class TraceChecker:
 
 
 
-class TestCase:
+class AppDriver(Driver):
 
     cmd = None
     cwd = None
@@ -155,6 +155,7 @@ class TestCase:
     threshold_precision = 12.0
 
     def __init__(self):
+        Driver.__init__(self)
         self.stateCache = {}
     
     def runApp(self):
@@ -405,19 +406,8 @@ class TestCase:
         cmd += [self.trace_file]
         return popen(cmd, stdout=stdout)
 
-    def run(self):
-        self.runApp()
-        self.traceApp()
-        self.checkTrace()
-        self.retrace()
-
-        pass_()
-
-
-class AppMain(Main):
-
     def createOptParser(self):
-        optparser = Main.createOptParser(self)
+        optparser = Driver.createOptParser(self)
 
         optparser.add_option(
             '-a', '--api', metavar='API',
@@ -434,7 +424,7 @@ class AppMain(Main):
 
         return optparser
 
-    def main(self):
+    def run(self):
         global options
 
         (options, args) = self.parseOptions()
@@ -442,17 +432,20 @@ class AppMain(Main):
         if not os.path.exists(options.results):
             os.makedirs(options.results)
 
-        test = TestCase()
-        test.verbose = options.verbose
+        self.verbose = options.verbose
 
-        test.cmd = args
-        test.cwd = options.cwd
-        test.api = options.api
-        test.ref_dump = options.ref_dump
-        test.results = options.results
+        self.cmd = args
+        self.cwd = options.cwd
+        self.api = options.api
+        self.ref_dump = options.ref_dump
+        self.results = options.results
 
-        test.run()
+        self.runApp()
+        self.traceApp()
+        self.checkTrace()
+        self.retrace()
 
+        pass_()
 
 if __name__ == '__main__':
-    AppMain().main()
+    AppDriver().run()

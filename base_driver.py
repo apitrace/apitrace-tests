@@ -124,8 +124,10 @@ def get_scripts_path():
     sys.exit(1)
 
 
-class Main:
-    global options
+class Driver:
+
+    def __init__(self):
+        pass
 
     def createOptParser(self):
         default_apitrace = 'apitrace'
@@ -164,8 +166,11 @@ class Main:
 
         sys.path.insert(0, get_scripts_path())
 
+        self.options = options
+        self.args = args
+
         return options, args
 
-    def main(self):
+    def run(self):
         raise NotImplementedError
 

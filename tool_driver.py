@@ -74,50 +74,30 @@ class AsciiComparer:
 
 
 
-class TestCase:
+class ToolDriver(Driver):
 
-    cmd = None
-    cwd = None
-    ref_dump = None
-
-    verbose = False
-
-    def __init__(self):
-        pass
-    
     def runTool(self):
         '''Run the application standalone, skipping this test if it fails by
         some reason.'''
 
-        if not self.cmd:
-            return
-
-        if self.ref_dump:
+        if self.options.ref_dump:
             stdout = subprocess.PIPE
         else:
             stdout = None
 
-        cmd = [options.apitrace] + self.cmd
-        p = popen(cmd, cwd=self.cwd, stdout=stdout)
+        cmd = [self.options.apitrace] + self.args
+        p = popen(cmd, cwd=options.cwd, stdout=stdout)
 
-        if self.ref_dump:
-            comparer = AsciiComparer(p.stdout, self.ref_dump, self.verbose)
+        if self.options.ref_dump:
+            comparer = AsciiComparer(p.stdout, self.options.ref_dump, self.options.verbose)
             comparer.compare()
 
         p.wait()
         if p.returncode != 0:
             fail('tool returned code %i' % p.returncode)
-
-    def run(self):
-        self.runTool()
-
-        pass_()
-
-
-class ToolMain(Main):
-
+    
     def createOptParser(self):
-        optparser = Main.createOptParser(self)
+        optparser = Driver.createOptParser(self)
 
         optparser.add_option(
             '--ref-dump', metavar='PATH',
@@ -126,20 +106,15 @@ class ToolMain(Main):
 
         return optparser
 
-    def main(self):
+    def run(self):
         global options
 
         (options, args) = self.parseOptions()
 
-        test = TestCase()
-        test.verbose = options.verbose
+        self.runTool()
 
-        test.cmd = args
-        test.cwd = options.cwd
-        test.ref_dump = options.ref_dump
-
-        test.run()
+        pass_()
 
 
 if __name__ == '__main__':
-    ToolMain().main()
+    ToolDriver().run()
