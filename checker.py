@@ -348,20 +348,7 @@ class Parser:
 
 #######################################################################
 
-ID = 0
-NUMBER = 1
-HEXNUM = 2
-STRING = 3
-
-LPAREN = 4
-RPAREN = 5
-LCURLY = 6
-RCURLY = 7
-COMMA = 8
-AMP = 9
-EQUAL = 11
-
-BLOB = 12
+ID, NUMBER, HEXNUM, STRING, PRAGMA, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, BLOB = xrange(13)
 
 
 class CallScanner(Scanner):
@@ -382,6 +369,9 @@ class CallScanner(Scanner):
 
         # String IDs
         (STRING, r'"[^"\\]*(?:\\.[^"\\]*)*"', False),
+        
+        # Pragma
+        (PRAGMA, r'#[^\r\n]*', False),
     ]
 
     # symbol table
@@ -433,9 +423,22 @@ class CallParser(Parser):
 
     def parse(self):
         while not self.eof():
+            self.parse_element()
+
+    def parse_element(self):
+        if self.lookahead.type == PRAGMA:
+            # TODO
+            token = self.consume()
+            self.handlePragma(token.text)
+        else:
             self.parse_call()
 
     def parse_call(self):
+        while self.lookahead.type == PRAGMA:
+            # TODO
+            token = self.consume()
+            print token.text
+
         if self.lookahead.type == NUMBER:
             token = self.consume()
             callNo = int(token.text)
@@ -533,7 +536,7 @@ class CallParser(Parser):
         self.consume(rtype)
 
         return elements
-
+    
     def handleID(self, value):
         return LiteralValueMatcher(value)
 
@@ -562,6 +565,10 @@ class CallParser(Parser):
         if callNo is not None:
             sys.stdout.write('%u ' % callNo)
         sys.stdout.write(str(matcher))
+        sys.stdout.write('\n')
+
+    def handlePragma(self, line):
+        sys.stdout.write(line)
         sys.stdout.write('\n')
 
 
