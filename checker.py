@@ -37,6 +37,9 @@ class ValueMatcher:
     def __str__(self):
         raise NotImplementerError
 
+    def __repr__(self):
+        return str(self)
+
 
 class WildcardMatcher(ValueMatcher):
 
@@ -60,7 +63,6 @@ class LiteralValueMatcher(ValueMatcher):
 
 
 class ApproxValueMatcher(ValueMatcher):
-
 
     def __init__(self, refValue, tolerance = 2**-23):
         self.refValue = refValue
@@ -169,6 +171,8 @@ class TraceMatcher:
     def __str__(self):
         return ''.join(['%s\n' % refCall for refCall in self.refCalls])
 
+
+#######################################################################
 
 EOF = -1
 SKIP = -2
@@ -342,6 +346,8 @@ class Parser:
         return token
 
 
+#######################################################################
+
 ID = 0
 NUMBER = 1
 HEXNUM = 2
@@ -422,8 +428,11 @@ class CallParser(Parser):
         lexer = CallLexer(fp = stream)
         Parser.__init__(self, lexer)
 
+    def eof(self):
+        return self.match(EOF)
+
     def parse(self):
-        while not self.match(EOF):
+        while not self.eof():
             self.parse_call()
 
     def parse_call(self):
@@ -443,7 +452,7 @@ class CallParser(Parser):
         else:
             ret = None
 
-        self.handle_call(callNo, functionName, args, ret)
+        return self.handleCall(callNo, functionName, args, ret)
 
     def parse_pair(self):
         '''Parse a `name = value` pair.'''
@@ -474,36 +483,36 @@ class CallParser(Parser):
         if self.match(AMP):
             self.consume()
             value = [self.parse_value()]
-            return ArrayMatcher(value)
+            return self.handleArray(value)
         elif self.match(ID):
             token = self.consume()
             value = token.text
-            return LiteralValueMatcher(value)
+            return self.handleID(value)
         elif self.match(STRING):
             token = self.consume()
             value = token.text
-            return LiteralValueMatcher(value)
+            return self.handleString(value)
         elif self.match(NUMBER):
             token = self.consume()
             value = float(token.text)
-            return ApproxValueMatcher(value)
+            return self.handleFloat(value)
         elif self.match(HEXNUM):
             token = self.consume()
             value = int(token.text, 16)
-            return LiteralValueMatcher(value)
+            return self.handleInt(value)
         elif self.match(LCURLY):
             value = self.parse_sequence(LCURLY, RCURLY, self.parse_opt_pair)
             if len(value) and isinstance(value[0], tuple):
-                return StructMatcher(dict(value))
+                value = dict(value)
+                return self.handleStruct(value)
             else:
-                return ArrayMatcher(value)
+                return self.handleArray(value)
         elif self.match(BLOB):
             token = self.consume()
             self.consume(LPAREN)
             length = self.consume()
             self.consume(RPAREN)
-            # TODO
-            return WildcardMatcher()
+            return self.handleBlob()
         else:
             self.error()
 
@@ -525,7 +534,29 @@ class CallParser(Parser):
 
         return elements
 
-    def handle_call(self, callNo, functionName, args, ret):
+    def handleID(self, value):
+        return LiteralValueMatcher(value)
+
+    def handleInt(self, value):
+        return LiteralValueMatcher(value)
+
+    def handleFloat(self, value):
+        return ApproxValueMatcher(value)
+
+    def handleString(self, value):
+        return LiteralValueMatcher(value)
+
+    def handleArray(self, value):
+        return ArrayMatcher(value)
+
+    def handleStruct(self, value):
+        return StructMatcher(value)
+
+    def handleBlob(self, value):
+        # TODO
+        return WildcardMatcher()
+
+    def handleCall(self, callNo, functionName, args, ret):
         matcher = CallMatcher(functionName, args, ret)
 
         if callNo is not None:
