@@ -3,6 +3,6 @@
     "GL_DRAW_BUFFER": "GL_BACK",
     "GL_DRAW_BUFFER0": "GL_BACK",
     "GL_READ_BUFFER": "GL_BACK",
-    "GL_DOUBLEBUFFER": true
+    "GL_DOUBLEBUFFER": "GL_TRUE"
   }
 }
