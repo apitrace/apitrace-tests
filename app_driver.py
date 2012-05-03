@@ -175,6 +175,7 @@ class AppDriver(Driver):
         'egl_gl': 'egl',
         'egl_gles1': 'egl',
         'egl_gles2': 'egl',
+        'd3d8': 'd3d8',
         'd3d9': 'd3d9',
     }
 
@@ -235,6 +236,9 @@ class AppDriver(Driver):
             fail('`apitrace dump` returned code %i' % p.returncode)
 
         self.doubleBuffer = checker.doubleBuffer
+
+        if self.api not in self.api_retrace_map:
+            return
 
         for callNo, refImageFileName in checker.images:
             self.checkImage(callNo, refImageFileName)
@@ -302,6 +306,9 @@ class AppDriver(Driver):
         open(filename, 'wt').write(s)
 
     def retrace(self):
+        if self.api not in self.api_retrace_map:
+            return
+
         p = self._retrace()
         p.wait()
         if p.returncode != 0:
