@@ -2,7 +2,22 @@ cmake_minimum_required (VERSION 2.8)
 
 project (apitrace-tests)
 
+find_path (APITRACE_SOURCE_DIR NAMES cmake/FindDirectX.cmake PATHS .. ../.. DOC "apitrace source tree" NO_DEFAULT_PATH)
+if (NOT EXISTS ${APITRACE_SOURCE_DIR})
+    message (SEND_ERROR "Please specify path to apitrace source tree via APITRACE_SOURCE_DIR")
+endif ()
+
+find_program (APITRACE_EXECUTABLE NAMES apitrace PATHS ${APITRACE_SOURCE_DIR} DOC "apitrace executable")
+if (NOT EXISTS ${APITRACE_EXECUTABLE})
+    message (SEND_ERROR "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
+endif ()
+
 include (FindPkgConfig)
+
+if (APITRACE_SOURCE_DIR)
+    set (CMAKE_MODULE_PATH ${APITRACE_SOURCE_DIR}/cmake)
+    find_package (DirectX)
+endif ()
 
 # Set default built type
 if (NOT CMAKE_BUILD_TYPE)
@@ -63,8 +78,6 @@ if (MSVC)
 	add_definitions (-D_SCL_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 	add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
 endif ()
-
-find_program (APITRACE_EXECUTABLE apitrace DOC "apitrace executable")
 
 enable_testing()
 

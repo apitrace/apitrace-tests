@@ -8,7 +8,7 @@ In addition to apitrace requirements, it also requires:
 
 To run the test suite do on Unices:
 
-    cmake -DAPITRACE_EXECUTABLE=/path/to/apitrace -H. -B./build
+    cmake -DAPITRACE_SOURCE_DIR=/path/to/apitrace/tree -DAPITRACE_EXECUTABLE=/path/to/apitrace/build/apitrace -H. -B./build
     export CTEST_OUTPUT_ON_FAILURE=1
     make -C ./build all test
 

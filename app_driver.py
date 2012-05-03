@@ -170,11 +170,20 @@ class AppDriver(Driver):
         if p.returncode:
             skip('application returned code %i' % p.returncode)
 
-    api_map = {
+    api_trace_map = {
         'gl': 'gl',
         'egl_gl': 'egl',
         'egl_gles1': 'egl',
         'egl_gles2': 'egl',
+        'd3d9': 'd3d9',
+    }
+
+    api_retrace_map = {
+        'gl': 'glretrace',
+        'egl_gl': 'eglretrace',
+        'egl_gles1': 'eglretrace',
+        'egl_gles2': 'eglretrace',
+        'd3d9': 'd3dretrace',
     }
 
     def traceApp(self):
@@ -202,7 +211,7 @@ class AppDriver(Driver):
         
         cmd = [
             options.apitrace, 'trace', 
-            '--api', self.api_map[self.api],
+            '--api', self.api_trace_map[self.api],
             '--output', self.trace_file,
             '--'
         ] + cmd
@@ -395,7 +404,7 @@ class AppDriver(Driver):
             pass
 
     def _retrace(self, args = None, stdout=subprocess.PIPE):
-        retrace = self.api_map[self.api] + 'retrace'
+        retrace = self.api_retrace_map[self.api]
         cmd = [get_build_program(retrace)]
         if self.doubleBuffer:
             cmd += ['-db']

@@ -107,6 +107,9 @@ def get_build_program(program):
 
 
 def get_scripts_path():
+    if options.apitrace_source:
+        return os.path.join(options.apitrace_source, 'scripts')
+
     bin_path = get_bin_path()
 
     try_paths = [
@@ -147,6 +150,10 @@ class Driver:
             '--apitrace', metavar='PROGRAM',
             type='string', dest='apitrace', default=default_apitrace,
             help='path to apitrace executable')
+        optparser.add_option(
+            '--apitrace-source', metavar='PATH',
+            type='string', dest='apitrace_source',
+            help='path to apitrace source tree')
         optparser.add_option(
             '-C', '--directory', metavar='PATH',
             type='string', dest='cwd', default=None,
