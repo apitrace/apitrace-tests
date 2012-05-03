@@ -32,6 +32,10 @@ if (EGL_FOUND)
     add_subdirectory (egl)
 endif ()
 
+if (DirectX_D3D10_FOUND)
+    add_subdirectory (d3d10)
+endif ()
+
 if (DirectX_D3D9_FOUND)
     add_subdirectory (d3d9)
 endif ()
