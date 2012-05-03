@@ -81,7 +81,7 @@ class ToolDriver(Driver):
         args = refStream.readline().split()
         cmd = [self.options.apitrace] + args
         cwd = os.path.dirname(os.path.abspath(refScript))
-        p = popen(cmd, cwd=cwd, stdout=subprocess.PIPE)
+        p = popen(cmd, cwd=cwd, stdout=subprocess.PIPE, universal_newlines=True)
 
         comparer = AsciiComparer(p.stdout, refStream, self.options.verbose)
         comparer.compare()
