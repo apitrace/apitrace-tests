@@ -39,3 +39,7 @@ endif ()
 if (DirectX_D3D8_FOUND)
     add_subdirectory (d3d8)
 endif ()
+
+if (DirectX_D3D_FOUND)
+    add_subdirectory (d3d7)
+endif ()

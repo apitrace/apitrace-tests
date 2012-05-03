@@ -175,6 +175,7 @@ class AppDriver(Driver):
         'egl_gl': 'egl',
         'egl_gles1': 'egl',
         'egl_gles2': 'egl',
+        'd3d7': 'd3d7',
         'd3d8': 'd3d8',
         'd3d9': 'd3d9',
     }
