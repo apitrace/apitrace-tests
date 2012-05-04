@@ -33,7 +33,9 @@
 #include "compat.h"
 
 #include <d3d10.h>
-#include <d3d10shader.h>
+
+#include "tri_vs.h"
+#include "tri_ps.h"
 
 
 static IDXGISwapChain* g_pSwapChain = NULL;
@@ -129,38 +131,8 @@ int main(int argc, char *argv[]){
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
     g_pDevice->ClearRenderTargetView(pRenderTargetView, clearColor);
 
-    const char *szShader = 
-        "struct VS_OUTPUT {\n"
-        "    float4 Pos : SV_POSITION;\n"
-        "    float4 Color : COLOR0;\n"
-        "};\n"
-        "\n"
-        "VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR) {\n"
-        "    VS_OUTPUT Out;\n"
-        "    Out.Pos = Pos;\n"
-        "    Out.Color = Color;\n"
-        "    return Out;\n"
-        "}\n"
-        "\n"
-        "float4 PS(VS_OUTPUT In) : SV_Target {\n"
-        "    return In.Color;\n"
-        "}\n"
-    ;
-
-    ID3D10Blob *pVertexShaderBlob = NULL;
-    ID3D10Blob *pErrorMsgs = NULL;
-
-    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "VS", "vs_4_0", 0, &pVertexShaderBlob, &pErrorMsgs);
-    if (pErrorMsgs) {
-        fprintf(stderr, "%s\n", pErrorMsgs->GetBufferPointer());
-        pErrorMsgs->Release();
-    }
-    if (FAILED(hr)) {
-        return 1;
-    }
-
     ID3D10VertexShader * pVertexShader;
-    hr = g_pDevice->CreateVertexShader((DWORD*)pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pVertexShader);
+    hr = g_pDevice->CreateVertexShader(g_VS, sizeof g_VS, &pVertexShader);
 
     struct Vertex {
         float position[4];
@@ -175,29 +147,17 @@ int main(int argc, char *argv[]){
     ID3D10InputLayout *pVertexLayout = NULL;
     hr = g_pDevice->CreateInputLayout(InputElementDescs,
                                       2,
-                                      pVertexShaderBlob->GetBufferPointer(),
-                                      pVertexShaderBlob->GetBufferSize(),
+                                      g_VS,
+                                      sizeof g_VS,
                                       &pVertexLayout);
-    pVertexShaderBlob->Release();
 
     g_pDevice->IASetInputLayout(pVertexLayout);
 
-
-    ID3D10Blob *pPixelShaderBlob = NULL;
-    pErrorMsgs = NULL;
-    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "PS", "ps_4_0", 0, &pPixelShaderBlob, &pErrorMsgs);
-    if (pErrorMsgs) {
-        fprintf(stderr, "%s\n", pErrorMsgs->GetBufferPointer());
-        pErrorMsgs->Release();
-    }
+    ID3D10PixelShader * pPixelShader;
+    hr = g_pDevice->CreatePixelShader(g_PS, sizeof g_PS, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
     }
-
-    ID3D10PixelShader * pPixelShader;
-    hr = g_pDevice->CreatePixelShader((DWORD*)pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), &pPixelShader);
-    pPixelShaderBlob->Release();
-
 
     g_pDevice->VSSetShader(pVertexShader);
     g_pDevice->PSSetShader(pPixelShader);
