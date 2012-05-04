@@ -24,8 +24,10 @@
  **************************************************************************/
 
 
-#include <initguid.h>
+#include <stdio.h>
+#include <stddef.h>
 
+#include <initguid.h>
 #include <windows.h>
 
 #include "compat.h"
@@ -38,10 +40,10 @@ static IDXGISwapChain* g_pSwapChain = NULL;
 static ID3D10Device * g_pDevice = NULL;
 
 
-int WINAPI
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
-{
+int main(int argc, char *argv[]){
     HRESULT hr;
+
+    HINSTANCE hInstance = GetModuleHandle(NULL);
 
     WNDCLASSEX wc = {
         sizeof(WNDCLASSEX),
@@ -101,7 +103,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
     hr = D3D10CreateDeviceAndSwapChain(NULL,
                                        D3D10_DRIVER_TYPE_HARDWARE,
                                        NULL,
-                                       0,
+                                       D3D10_CREATE_DEVICE_DEBUG,
                                        D3D10_SDK_VERSION,
                                        &SwapChainDesc,
                                        &g_pSwapChain,
@@ -133,32 +135,41 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
         "    float4 Color : COLOR0;\n"
         "};\n"
         "\n"
-        "VS_OUTPUT VertexShader(float4 Pos : POSITION, float4 Color : COLOR) {\n"
+        "VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR) {\n"
         "    VS_OUTPUT Out;\n"
         "    Out.Pos = Pos;\n"
         "    Out.Color = Color;\n"
         "    return Out;\n"
         "}\n"
         "\n"
-        "float4 PixelShader(VS_OUTPUT In) : SV_Target {\n"
+        "float4 PS(VS_OUTPUT In) : SV_Target {\n"
         "    return In.Color;\n"
         "}\n"
     ;
 
-    ID3D10Blob *pVertexShaderBlob;
-    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "VertexShader", "vs_4_0", 0, &pVertexShaderBlob, NULL);
+    ID3D10Blob *pVertexShaderBlob = NULL;
+    ID3D10Blob *pErrorMsgs = NULL;
+
+    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "VS", "vs_4_0", 0, &pVertexShaderBlob, &pErrorMsgs);
+    if (pErrorMsgs) {
+        fprintf(stderr, "%s\n", pErrorMsgs->GetBufferPointer());
+        pErrorMsgs->Release();
+    }
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     ID3D10VertexShader * pVertexShader;
     hr = g_pDevice->CreateVertexShader((DWORD*)pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pVertexShader);
 
     struct Vertex {
-        float x, y, z;
-        float r, g, b, a;
+        float position[4];
+        float color[4];
     };
 
     D3D10_INPUT_ELEMENT_DESC InputElementDescs[] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(Vertex, position), D3D10_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color),    D3D10_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     ID3D10InputLayout *pVertexLayout = NULL;
@@ -172,8 +183,16 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
     g_pDevice->IASetInputLayout(pVertexLayout);
 
 
-    ID3D10Blob *pPixelShaderBlob;
-    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "PixelShader", "ps_4_0", 0, &pPixelShaderBlob, NULL);
+    ID3D10Blob *pPixelShaderBlob = NULL;
+    pErrorMsgs = NULL;
+    hr = D3D10CompileShader(szShader, strlen(szShader), NULL, NULL, NULL, "PS", "ps_4_0", 0, &pPixelShaderBlob, &pErrorMsgs);
+    if (pErrorMsgs) {
+        fprintf(stderr, "%s\n", pErrorMsgs->GetBufferPointer());
+        pErrorMsgs->Release();
+    }
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     ID3D10PixelShader * pPixelShader;
     hr = g_pDevice->CreatePixelShader((DWORD*)pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), &pPixelShader);
@@ -181,13 +200,12 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
 
 
     g_pDevice->VSSetShader(pVertexShader);
-    g_pDevice->GSSetShader(NULL);
     g_pDevice->PSSetShader(pPixelShader);
 
     static const Vertex vertices[] = {
-        { -0.9f, -0.9f, 0.5f,  0.8f, 0.0f, 0.0f, 0.1f },
-        {  0.9f, -0.9f, 0.5f,  0.0f, 0.9f, 0.0f, 0.1f },
-        {  0.0f,  0.9f, 0.5f,  0.0f, 0.0f, 0.7f, 0.1f },
+        { { -0.9f, -0.9f, 0.5f, 1.0f}, { 0.8f, 0.0f, 0.0f, 0.1f } },
+        { {  0.9f, -0.9f, 0.5f, 1.0f}, { 0.0f, 0.9f, 0.0f, 0.1f } },
+        { {  0.0f,  0.9f, 0.5f, 1.0f}, { 0.0f, 0.0f, 0.7f, 0.1f } },
     };
 
     D3D10_BUFFER_DESC BufferDesc;
@@ -224,7 +242,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
     RasterizerDesc.CullMode = D3D10_CULL_NONE;
     RasterizerDesc.FillMode = D3D10_FILL_SOLID;
     RasterizerDesc.FrontCounterClockwise = true;
-    ID3D10RasterizerState* pRasterizerState;
+    ID3D10RasterizerState* pRasterizerState = NULL;
     g_pDevice->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
     g_pDevice->RSSetState(pRasterizerState);
 
@@ -232,6 +250,28 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdSh
     g_pDevice->Draw(3, 0);
 
     g_pSwapChain->Present(0, 0);
+
+
+    ID3D10Buffer *pNullBuffer = NULL;
+    UINT NullStride = 0;
+    UINT NullOffset = 0;
+    g_pDevice->IASetVertexBuffers(0, 1, &pNullBuffer, &NullStride, &NullOffset);
+    pVertexBuffer->Release();
+
+    g_pDevice->OMSetRenderTargets(0, NULL, NULL);
+    pRenderTargetView->Release();
+
+    g_pDevice->IASetInputLayout(NULL);
+    pVertexLayout->Release();
+
+    g_pDevice->VSSetShader(NULL);
+    pVertexShader->Release();
+
+    g_pDevice->PSSetShader(NULL);
+    pPixelShader->Release();
+
+    g_pDevice->RSSetState(NULL);
+    pRasterizerState->Release();
 
     g_pSwapChain->Release();
     g_pSwapChain = NULL;
