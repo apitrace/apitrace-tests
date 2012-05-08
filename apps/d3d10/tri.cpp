@@ -133,14 +133,17 @@ int main(int argc, char *argv[]){
 
     ID3D10VertexShader * pVertexShader;
     hr = g_pDevice->CreateVertexShader(g_VS, sizeof g_VS, &pVertexShader);
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     struct Vertex {
         float position[4];
         float color[4];
     };
 
-    D3D10_INPUT_ELEMENT_DESC InputElementDescs[] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(Vertex, position), D3D10_INPUT_PER_VERTEX_DATA, 0 },
+    static const D3D10_INPUT_ELEMENT_DESC InputElementDescs[] = {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, position), D3D10_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color),    D3D10_INPUT_PER_VERTEX_DATA, 0 }
     };
 
@@ -150,6 +153,9 @@ int main(int argc, char *argv[]){
                                       g_VS,
                                       sizeof g_VS,
                                       &pVertexLayout);
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     g_pDevice->IASetInputLayout(pVertexLayout);
 
@@ -178,6 +184,9 @@ int main(int argc, char *argv[]){
 
     ID3D10Buffer *pVertexBuffer;
     hr = g_pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     void *pMap = NULL;
     pVertexBuffer->Map(D3D10_MAP_WRITE_DISCARD, 0, &pMap);
