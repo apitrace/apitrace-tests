@@ -1,13 +1,14 @@
 include_directories (
+    ${CMAKE_CURRENT_SOURCE_DIR}/../d3d10
     ${APITRACE_SOURCE_DIR}/dispatch
-    ${DirectX_D3D10_INCLUDE_DIR}
+    ${DirectX_D3D11_INCLUDE_DIR}
 )
 
 link_libraries (
-    ${DirectX_D3D10_LIBRARY}
+    ${DirectX_D3D11_LIBRARY}
 )
 
-set (api d3d10)
+set (api d3d11)
 
 set (targets
     tri
