@@ -10,18 +10,20 @@ function (ADD_APP_TEST)
         ${ARGN}
     )
 
-    add_test(
-        NAME app_${TEST_NAME}
-        COMMAND
-        python ${CMAKE_SOURCE_DIR}/app_driver.py
-            --apitrace ${APITRACE_EXECUTABLE}
-            --apitrace-source ${APITRACE_SOURCE_DIR}
-            --api ${api}
-            --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}
-            --
-            "$<TARGET_FILE:${TEST_TARGET}>"
-            ${TEST_ARGS}
-    )
+    if (APITRACE_EXECUTABLE AND APITRACE_SOURCE_DIR)
+        add_test(
+            NAME app_${TEST_NAME}
+            COMMAND
+            python ${CMAKE_SOURCE_DIR}/app_driver.py
+                --apitrace ${APITRACE_EXECUTABLE}
+                --apitrace-source ${APITRACE_SOURCE_DIR}
+                --api ${api}
+                --ref-dump ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}
+                --
+                "$<TARGET_FILE:${TEST_TARGET}>"
+                ${TEST_ARGS}
+        )
+    endif ()
 endfunction ()
 
 if (OPENGL_FOUND AND GLEW_FOUND AND GLUT_FOUND)

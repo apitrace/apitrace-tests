@@ -4,12 +4,12 @@ project (apitrace-tests)
 
 find_path (APITRACE_SOURCE_DIR NAMES cmake/FindDirectX.cmake PATHS .. ../.. DOC "apitrace source tree" NO_DEFAULT_PATH)
 if (NOT EXISTS ${APITRACE_SOURCE_DIR})
-    message (SEND_ERROR "Please specify path to apitrace source tree via APITRACE_SOURCE_DIR")
+    message (WARNING "Please specify path to apitrace source tree via APITRACE_SOURCE_DIR")
 endif ()
 
 find_program (APITRACE_EXECUTABLE NAMES apitrace PATHS ${APITRACE_SOURCE_DIR} DOC "apitrace executable")
 if (NOT EXISTS ${APITRACE_EXECUTABLE})
-    message (SEND_ERROR "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
+    message (WARNING "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
 endif ()
 
 include (FindPkgConfig)
