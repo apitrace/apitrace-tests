@@ -167,7 +167,7 @@ class AppDriver(Driver):
 
         p = popen(self.cmd, cwd=self.cwd)
         p.wait()
-        if p.returncode:
+        if p.returncode != 0:
             skip('application returned code %i' % p.returncode)
 
     api_trace_map = {
@@ -226,6 +226,8 @@ class AppDriver(Driver):
 
         p = popen(cmd, env=env, cwd=self.cwd)
         p.wait()
+        if p.returncode != 0:
+            fail('`apitrace trace` returned code %i' % p.returncode)
 
         if not os.path.exists(self.trace_file):
             fail('no trace file generated\n')
