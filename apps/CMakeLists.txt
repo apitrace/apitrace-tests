@@ -24,7 +24,7 @@ function (ADD_APP_TEST)
     )
 endfunction ()
 
-if (OPENGL_FOUND)
+if (OPENGL_FOUND AND GLEW_FOUND AND GLUT_FOUND)
     add_subdirectory (gl)
 endif ()
 

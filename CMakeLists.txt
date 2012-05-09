@@ -14,8 +14,10 @@ endif ()
 
 include (FindPkgConfig)
 
+set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
 if (APITRACE_SOURCE_DIR)
-    set (CMAKE_MODULE_PATH ${APITRACE_SOURCE_DIR}/cmake)
+    set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${APITRACE_SOURCE_DIR}/cmake)
     find_package (DirectX)
 endif ()
 
@@ -29,11 +31,9 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 include (CMakeParseArguments)
 
-find_package (OpenGL REQUIRED)
+find_package (OpenGL)
 find_package (GLUT)
-
-find_path (GLEW_INCLUDE_DIR GL/glew.h /usr/include/GL)
-find_library (GLEW_glew_LIBRARY GLEW /usr/lib)
+find_package (GLEW)
 
 if (NOT WIN32)
 	pkg_check_modules (EGL egl)
