@@ -32,6 +32,10 @@ if (EGL_FOUND)
     add_subdirectory (egl)
 endif ()
 
+if (DirectX_FXC_EXECUTABLE)
+    add_subdirectory (hlsl)
+endif ()
+
 if (DirectX_D3D11_FOUND)
     add_subdirectory (d3d11)
 endif ()
