@@ -103,12 +103,18 @@ int main(int argc, char *argv[]){
     SwapChainDesc.OutputWindow = hWnd;
     SwapChainDesc.Windowed = true;
 
+    static const D3D_FEATURE_LEVEL FeatureLevels[] = {
+        D3D_FEATURE_LEVEL_11_0,
+        D3D_FEATURE_LEVEL_10_1,
+        D3D_FEATURE_LEVEL_10_0
+    };
+
     hr = D3D11CreateDeviceAndSwapChain(NULL, /* pAdapter */
                                        D3D_DRIVER_TYPE_HARDWARE,
                                        NULL, /* Software */
                                        D3D11_CREATE_DEVICE_DEBUG,
-                                       NULL,
-                                       0,
+                                       FeatureLevels,
+                                       sizeof FeatureLevels / sizeof FeatureLevels[0],
                                        D3D11_SDK_VERSION,
                                        &SwapChainDesc,
                                        &g_pSwapChain,
