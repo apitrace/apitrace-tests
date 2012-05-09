@@ -181,6 +181,7 @@ class AppDriver(Driver):
         'd3d10': 'd3d10',
         'd3d10_1': 'd3d10_1',
         'd3d11': 'd3d11',
+        'd3d11_1': 'd3d11',
     }
 
     api_retrace_map = {

@@ -36,6 +36,10 @@ if (DirectX_FXC_EXECUTABLE)
     add_subdirectory (hlsl)
 endif ()
 
+if (DirectX_D3D11_1_FOUND)
+    add_subdirectory (d3d11_1)
+endif ()
+
 if (DirectX_D3D11_FOUND)
     add_subdirectory (d3d11)
 endif ()
