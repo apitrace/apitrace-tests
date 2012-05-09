@@ -1,5 +1,5 @@
 include_directories (
-    ${CMAKE_CURRENT_SOURCE_DIR}/../hlsl
+    ${CMAKE_CURRENT_SOURCE_DIR}/../d3dcommon
     ${APITRACE_SOURCE_DIR}/dispatch
     ${DirectX_D3D10_1_INCLUDE_DIR}
 )
