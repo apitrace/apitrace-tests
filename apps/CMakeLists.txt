@@ -40,6 +40,10 @@ if (DirectX_D3D11_FOUND)
     add_subdirectory (d3d11)
 endif ()
 
+if (DirectX_D3D10_1_FOUND)
+    add_subdirectory (d3d10_1)
+endif ()
+
 if (DirectX_D3D10_FOUND)
     add_subdirectory (d3d10)
 endif ()
