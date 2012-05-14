@@ -161,7 +161,7 @@ create_shaders(void)
    glCompileShader(fragShader);
    glGetShaderiv(fragShader, GL_COMPILE_STATUS, &stat);
    if (!stat) {
-      printf("Error: fragment shader did not compile!\n");
+      fprintf(stderr, "error: fragment shader did not compile!\n");
       exit(1);
    }
 
@@ -170,13 +170,15 @@ create_shaders(void)
    glCompileShader(vertShader);
    glGetShaderiv(vertShader, GL_COMPILE_STATUS, &stat);
    if (!stat) {
-      printf("Error: vertex shader did not compile!\n");
+      fprintf(stderr, "error: vertex shader did not compile!\n");
       exit(1);
    }
 
    program = glCreateProgram();
    glAttachShader(program, fragShader);
    glAttachShader(program, vertShader);
+   glBindAttribLocation(program, attr_pos, "pos");
+   glBindAttribLocation(program, attr_color, "color");
    glLinkProgram(program);
 
    glGetProgramiv(program, GL_LINK_STATUS, &stat);
@@ -184,28 +186,16 @@ create_shaders(void)
       char log[1000];
       GLsizei len;
       glGetProgramInfoLog(program, 1000, &len, log);
-      printf("Error: linking:\n%s\n", log);
+      fprintf(stderr, "error: linking:\n%s\n", log);
       exit(1);
    }
 
    glUseProgram(program);
 
-   if (1) {
-      /* test setting attrib locations */
-      glBindAttribLocation(program, attr_pos, "pos");
-      glBindAttribLocation(program, attr_color, "color");
-      glLinkProgram(program);  /* needed to put attribs into effect */
-   }
-   else {
-      /* test automatic attrib locations */
-      attr_pos = glGetAttribLocation(program, "pos");
-      attr_color = glGetAttribLocation(program, "color");
-   }
+   attr_pos = glGetAttribLocation(program, "pos");
+   attr_color = glGetAttribLocation(program, "color");
 
    u_matrix = glGetUniformLocation(program, "modelviewProjection");
-   printf("Uniform modelviewProjection at %d\n", u_matrix);
-   printf("Attrib pos at %d\n", attr_pos);
-   printf("Attrib color at %d\n", attr_color);
 }
 
 
@@ -272,7 +262,7 @@ make_x_window(Display *x_dpy, EGLDisplay egl_dpy,
    root = RootWindow( x_dpy, scrnum );
 
    if (!eglChooseConfig( egl_dpy, attribs, &config, 1, &num_configs)) {
-      printf("Error: couldn't get an EGL visual config\n");
+      fprintf(stderr, "error: couldn't get an EGL visual config\n");
       exit(1);
    }
 
@@ -280,7 +270,7 @@ make_x_window(Display *x_dpy, EGLDisplay egl_dpy,
    assert(num_configs > 0);
 
    if (!eglGetConfigAttrib(egl_dpy, config, EGL_NATIVE_VISUAL_ID, &vid)) {
-      printf("Error: eglGetConfigAttrib() failed\n");
+      fprintf(stderr, "error: eglGetConfigAttrib() failed\n");
       exit(1);
    }
 
@@ -288,7 +278,7 @@ make_x_window(Display *x_dpy, EGLDisplay egl_dpy,
    visTemplate.visualid = vid;
    visInfo = XGetVisualInfo(x_dpy, VisualIDMask, &visTemplate, &num_visuals);
    if (!visInfo) {
-      printf("Error: couldn't get X visual\n");
+      fprintf(stderr, "error: couldn't get X visual\n");
       exit(1);
    }
 
@@ -324,7 +314,7 @@ make_x_window(Display *x_dpy, EGLDisplay egl_dpy,
 
    ctx = eglCreateContext(egl_dpy, config, EGL_NO_CONTEXT, ctx_attribs );
    if (!ctx) {
-      printf("Error: eglCreateContext failed\n");
+      fprintf(stderr, "error: eglCreateContext failed\n");
       exit(1);
    }
 
@@ -339,7 +329,7 @@ make_x_window(Display *x_dpy, EGLDisplay egl_dpy,
 
    *surfRet = eglCreateWindowSurface(egl_dpy, config, win, NULL);
    if (!*surfRet) {
-      printf("Error: eglCreateWindowSurface failed\n");
+      fprintf(stderr, "error: eglCreateWindowSurface failed\n");
       exit(1);
    }
 
@@ -459,19 +449,19 @@ main(int argc, char *argv[])
 
    x_dpy = XOpenDisplay(dpyName);
    if (!x_dpy) {
-      printf("Error: couldn't open display %s\n",
+      fprintf(stderr, "error: couldn't open display %s\n",
 	     dpyName ? dpyName : getenv("DISPLAY"));
       return -1;
    }
 
    egl_dpy = eglGetDisplay(x_dpy);
    if (!egl_dpy) {
-      printf("Error: eglGetDisplay() failed\n");
+      fprintf(stderr, "error: eglGetDisplay() failed\n");
       return -1;
    }
 
    if (!eglInitialize(egl_dpy, &egl_major, &egl_minor)) {
-      printf("Error: eglInitialize() failed\n");
+      fprintf(stderr, "error: eglInitialize() failed\n");
       return -1;
    }
 
@@ -493,7 +483,7 @@ main(int argc, char *argv[])
 
    XMapWindow(x_dpy, win);
    if (!eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx)) {
-      printf("Error: eglMakeCurrent() failed\n");
+      fprintf(stderr, "error: eglMakeCurrent() failed\n");
       return -1;
    }
 

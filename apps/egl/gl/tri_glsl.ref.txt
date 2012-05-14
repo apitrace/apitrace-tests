@@ -23,16 +23,13 @@ glGetShaderiv(shader = 2, pname = GL_COMPILE_STATUS, params = &1)
 glCreateProgram() = 3
 glAttachShader(program = 3, shader = 1)
 glAttachShader(program = 3, shader = 2)
-glBindAttribLocation(program = 3, index = 1, name = "pos")
-glBindAttribLocation(program = 3, index = 0, name = "color")
+glBindAttribLocation(program = 3, index = 0, name = "pos")
+glBindAttribLocation(program = 3, index = 1, name = "color")
 glLinkProgram(program = 3)
 glGetProgramiv(program = 3, pname = GL_LINK_STATUS, params = &1)
 glUseProgram(program = 3)
-glBindAttribLocation(program = 3, index = 0, name = "pos")
-glBindAttribLocation(program = 3, index = 1, name = "color")
-glBindAttribLocation(program = 3, index = 0, name = "pos")
-glBindAttribLocation(program = 3, index = 1, name = "color")
-glLinkProgram(program = 3)
+glGetAttribLocation(program = 3, name = "pos") = 0
+glGetAttribLocation(program = 3, name = "color") = 1
 glGetUniformLocation(program = 3, name = "modelviewProjection") = 0
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glViewport(x = 0, y = 0, width = 300, height = 300)
