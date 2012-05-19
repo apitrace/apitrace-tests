@@ -58,7 +58,7 @@ class AsciiComparer:
             try:
                 refLine = refLines[lineNo]
             except IndexError:
-                fail('unexpected junk: %r' % self.srcLines[lineNo])
+                fail('unexpected junk: %r' % srcLines[lineNo])
 
             try:
                 srcLine = srcLines[lineNo]
@@ -77,10 +77,20 @@ class ToolDriver(Driver):
         some reason.'''
 
         refStream = open(refScript, 'rt')
-
-        args = refStream.readline().split()
-        cmd = [self.options.apitrace] + args
         cwd = os.path.dirname(os.path.abspath(refScript))
+
+        while True:
+            args = refStream.readline().split()
+            cmd = [self.options.apitrace] + args
+
+            if args[0] == 'dump':
+                break
+
+            p = popen(cmd, cwd=cwd, universal_newlines=True)
+            p.wait()
+            if p.returncode != 0:
+                fail('`apitrace %s` returned code %i' % (args[0], p.returncode))
+            
         p = popen(cmd, cwd=cwd, stdout=subprocess.PIPE, universal_newlines=True)
 
         comparer = AsciiComparer(p.stdout, refStream, self.options.verbose)
@@ -88,7 +98,7 @@ class ToolDriver(Driver):
 
         p.wait()
         if p.returncode != 0:
-            fail('tool returned code %i' % p.returncode)
+            fail('`apitrace %s` returned code %i' % (args[0], p.returncode))
     
     def run(self):
         self.parseOptions()
