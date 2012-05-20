@@ -375,18 +375,8 @@ class AppDriver(Driver):
         except KeyError:
             return
 
-        # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns -1
+        # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns 255
         self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
-
-        # On Gallium 
-        if 'Gallium' in parameters['GL_RENDERER'].split():
-            # Gallium drivers have wrong defaults for draw/read buffer state
-            self.replaceState(parameters, 'GL_DRAW_BUFFER', 'GL_BACK_LEFT', 'GL_BACK')
-            self.replaceState(parameters, 'GL_DRAW_BUFFER0', 'GL_BACK_LEFT', 'GL_BACK')
-            self.replaceState(parameters, 'GL_READ_BUFFER', 'GL_BACK_LEFT', 'GL_BACK')
-            self.replaceState(parameters, 'GL_DRAW_BUFFER', 'GL_FRONT_LEFT', 'GL_FRONT')
-            self.replaceState(parameters, 'GL_DRAW_BUFFER0', 'GL_FRONT_LEFT', 'GL_FRONT')
-            self.replaceState(parameters, 'GL_READ_BUFFER', 'GL_FRONT_LEFT', 'GL_FRONT')
 
     def adjustRefState(self, state):
         # Do some adjustments on reference state to eliminate failures from
