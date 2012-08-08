@@ -33,7 +33,17 @@ class CliDriver(Driver):
     def do_apitrace(self, args):
         cmd = [self.options.apitrace] + args[1:]
  
-        self.output = subprocess.check_output(cmd)
+        proc = subprocess.Popen(cmd, stdout = subprocess.PIPE)
+        self.output = proc.communicate()[0]
+
+        proc.wait()
+
+        if (self.expect_failure):
+            if (proc.returncode == 0):
+                fail("Command unexpectedly passed when expecting failure:\n    " + " ".join(cmd))
+        else:
+            if (proc.returncode != 0):
+                fail("Command failed (returned non-zero):\n    " + " ".join(cmd))
 
     def do_expect(self, args):
         expected = json.loads(" ".join(args[1:]))
@@ -68,6 +78,9 @@ class CliDriver(Driver):
         script = open(cli_script, 'rt')
 
         while True:
+
+            self.expect_failure = False
+
             line = script.readline()
 
             if (line == ''):
@@ -77,6 +90,10 @@ class CliDriver(Driver):
 
             if (len(cmd) == 0):
                 continue
+
+            if (cmd[0] == 'EXPECT_FAILURE:'):
+                self.expect_failure = True
+                cmd.pop(0)
 
             commands.get(cmd[0], self.unknown_command)(cmd)
 

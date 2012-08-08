@@ -10,8 +10,10 @@ test in the traces directory. Otherwise, a new test program can be
 written in this directory.
 
 The tests in this directory are found in files with names matching
-*.script. The scripts are simple line-based commands with the
-following meanings based on the first word of each line:
+*.script by convention. The scripts must be listed explicitly in the
+CMakeLists.txt file. Each script consists of simple line-based
+commands with the following meanings (based on the first word of each
+line):
 
   apitrace:     Execute the current apitrace executable being tested
   		with the given arguments. If apitrace returns a
@@ -26,6 +28,10 @@ following meanings based on the first word of each line:
                 interpreted locally. If this fails for any reason
                 other than "file does not exist" the test will fail.
 
-If none of the commands in the script cause the test to fail, then the
-test will pass.
+Commands can be prefixed with "EXPECT_FAILURE:" to indicate that a
+command is expected to return a non-zero value. In this case, a return
+value of zero from the command will cause the test to fail.
+
+If none of the commands in the script cause the test to fail (as
+described above), then the test will pass.
 

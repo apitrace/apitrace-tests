@@ -1,0 +1,4 @@
+rm_and_mkdir ./tri-out
+apitrace dump-images -o ./tri-out/tri tri.trace
+EXPECT_FAILURE: apitrace diff-images -v ./tri-ref-mismatch ./tri-out
+expect "Comparing ./tri-ref-mismatch/tri0000000027.png and ./tri-out/tri0000000027.png ... MISMATCH\n"
