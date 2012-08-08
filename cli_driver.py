@@ -1,0 +1,91 @@
+#!/usr/bin/env python
+
+# Copyright 2012 Intel Corporation
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+'''Test driver for scripts in the cli directory.'''
+
+import json, errno, shutil, subprocess
+
+from base_driver import *
+
+class CliDriver(Driver):
+
+    def do_apitrace(self, args):
+        cmd = [self.options.apitrace] + args[1:]
+ 
+        self.output = subprocess.check_output(cmd)
+
+    def do_expect(self, args):
+        expected = json.loads(" ".join(args[1:]))
+        if (self.output != expected):
+            fail("Unexpected output:\n    Expected: %s\n    Received: %s\n" % (expected, self.output))
+
+    def do_rm_and_mkdir(self, args):
+
+        # Operate only on local directories
+        dir = './' + args[1]
+
+        # Failing to delete a directory that doesn't exist is no failure
+        def rmtree_onerror(function, path, excinfo):
+            if excinfo[0] == OSError and excinfo[1].errno != errno.ENOENT:
+                raise
+
+        shutil.rmtree(dir, onerror = rmtree_onerror)
+        os.makedirs(dir)
+
+    def unknown_command(self, args):
+        fail('Broken test script: Unknown command: %s' % (args[0]))
+
+    def run_script(self, cli_script):
+        "Execute the commands in the given cli script."
+
+        commands = {
+            'apitrace': self.do_apitrace,
+            'expect': self.do_expect,
+            'rm_and_mkdir': self.do_rm_and_mkdir
+        }
+
+        script = open(cli_script, 'rt')
+
+        while True:
+            line = script.readline()
+
+            if (line == ''):
+                break
+
+            cmd = line.split()
+
+            if (len(cmd) == 0):
+                continue
+
+            commands.get(cmd[0], self.unknown_command)(cmd)
+
+    def run(self):
+        self.parseOptions()
+
+	self.run_script(self.args[0])
+
+        pass_()
+
+if __name__ == '__main__':
+    CliDriver().run()

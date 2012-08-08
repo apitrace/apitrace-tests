@@ -1,0 +1,4 @@
+rm_and_mkdir ./tri-out
+apitrace dump-images -o ./tri-out/tri tri.trace
+apitrace diff-images -v ./tri-ref ./tri-out
+expect "Comparing ./tri-ref/tri0000000027.png and ./tri-out/tri0000000027.png ... MATCH\n"
