@@ -24,3 +24,4 @@ endfunction ()
 
 add_cli_test(NAME "cli-diff-images.script")
 add_cli_test(NAME "cli-diff-images-mismatch.script")
+add_cli_test(NAME "cli-trim-single-swapbuffers.script")
