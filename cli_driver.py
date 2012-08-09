@@ -83,12 +83,14 @@ class CliDriver(Driver):
 
             line = script.readline()
 
+            # Exit loop on EOF
             if (line == ''):
                 break
 
             cmd = line.split()
 
-            if (len(cmd) == 0):
+            # Ignore blank lines and comments
+            if (len(cmd) == 0 or line[0] == '#'):
                 continue
 
             if (cmd[0] == 'EXPECT_FAILURE:'):

@@ -1,4 +1,18 @@
+# The first two steps are just as in cli-diff-images. Dump images from
+# a trace into an empty directory.
+
 rm_and_mkdir ./tri-out
 apitrace dump-images -o ./tri-out/tri tri.trace
+
+# Compare the dumped image with a doctored image to provoke a failure.
+# The EXPECT_FAILURE attribute causes the test driver to look for a
+# non-zero return value from apitrace and fail the test if it is not
+# seen.
+
 EXPECT_FAILURE: apitrace diff-images -v ./tri-ref-mismatch ./tri-out
+
+# In addition to getting the return value indicating an error, let's
+# also require that "apitrace diff-images" gave us the output we
+# expect.
+
 expect "Comparing ./tri-ref-mismatch/tri0000000027.png and ./tri-out/tri0000000027.png ... MISMATCH\n"

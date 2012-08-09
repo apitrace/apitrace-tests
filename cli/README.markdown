@@ -28,6 +28,8 @@ line):
                 interpreted locally. If this fails for any reason
                 other than "file does not exist" the test will fail.
 
+Note: Blank lines and lines beginning with '#' are ignored.
+
 Commands can be prefixed with "EXPECT_FAILURE:" to indicate that a
 command is expected to return a non-zero value. In this case, a return
 value of zero from the command will cause the test to fail.
