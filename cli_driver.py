@@ -33,6 +33,7 @@ class CliDriver(Driver):
     def do_apitrace(self, args):
         cmd = [self.options.apitrace] + args[1:]
  
+        print " ".join(cmd)
         proc = subprocess.Popen(cmd, stdout = subprocess.PIPE)
         self.output = proc.communicate()[0]
 
