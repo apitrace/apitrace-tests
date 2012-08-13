@@ -38,6 +38,66 @@ int width = 64;
 int height = 64;
 
 static void
+paint_rgb_using_clear (double r, double g, double b)
+{
+        glClearColor(r, g, b, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+}
+
+static void
+paint_rgb_using_glsl (double r, double g, double b)
+{
+	const char * vs_source =
+		"void main()\n"
+		"{\n"
+		"        gl_Position = ftransform();\n"
+		"}\n";
+	const char * fs_source =
+		"#version 120\n"
+		"uniform vec4 color;\n"
+		"void main()\n"
+		"{\n"
+		"        gl_FragColor = color;\n"
+		"}\n";
+
+	GLuint vs, fs, program;
+	GLint color;
+
+	vs = glCreateShader (GL_VERTEX_SHADER);
+	glShaderSource (vs, 1, &vs_source, NULL);
+	glCompileShader (vs);
+
+	fs = glCreateShader (GL_FRAGMENT_SHADER);
+	glShaderSource (fs, 1, &fs_source, NULL);
+	glCompileShader (fs);
+
+	program = glCreateProgram ();
+	glAttachShader (program, vs);
+	glAttachShader (program, fs);
+
+	glLinkProgram (program);
+	glUseProgram (program);
+
+	color = glGetUniformLocation (program, "color");
+
+	glUniform4f (color, r, g, b, 1.0);
+
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+	glOrtho (0, width, height, 0, 0, 1);
+	glMatrixMode (GL_MODELVIEW);
+
+	glBegin (GL_QUADS);
+	glVertex2f (0, 0);
+	glVertex2f (width, 0);
+	glVertex2f (width, height);
+	glVertex2f (0, height);
+	glEnd ();
+
+	glUseProgram (0);
+}
+
+static void
 draw (Display *dpy, Window window, int width, int height)
 {
 	GLenum glew_err;
@@ -54,6 +114,8 @@ draw (Display *dpy, Window window, int width, int height)
                 GLX_X_VISUAL_TYPE,	GLX_DIRECT_COLOR,
                 None
         };
+
+	/* Window and context setup. */
         XVisualInfo *visual_info = glXChooseVisual(dpy, 0, visual_attr);
         GLXContext ctx = glXCreateContext(dpy, visual_info, NULL, True);
         glXMakeCurrent(dpy, window, ctx);
@@ -67,11 +129,16 @@ draw (Display *dpy, Window window, int width, int height)
 	}
 
         glViewport(0, 0, width, height);
-        glClearColor(1, 0, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
 
+	/* Frame 1: Draw a solid (magenta) frame using glClear. */
+	paint_rgb_using_clear (1, 0, 1);
         glXSwapBuffers (dpy, window);
 
+	/* Frame 2: Draw a solid (yellow) frame using GLSL. */
+	paint_rgb_using_glsl (1, 1, 0);
+        glXSwapBuffers (dpy, window);
+
+	/* Cleanup */
         glXDestroyContext (dpy, ctx);
 }
 
