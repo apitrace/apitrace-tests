@@ -38,6 +38,37 @@ int width = 64;
 int height = 64;
 
 static void
+set_2d_projection (void)
+{
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+	glOrtho (0, width, height, 0, 0, 1);
+	glMatrixMode (GL_MODELVIEW);
+}
+
+static void
+draw_fullscreen_quad (void)
+{
+	glBegin (GL_QUADS);
+	glVertex2f (0, 0);
+	glVertex2f (width, 0);
+	glVertex2f (width, height);
+	glVertex2f (0, height);
+	glEnd ();
+}
+
+static void
+draw_fullscreen_textured_quad (void)
+{
+	glBegin (GL_QUADS);
+	glTexCoord2f(0, 0); glVertex2f (0, 0);
+	glTexCoord2f(1, 0); glVertex2f (width, 0);
+	glTexCoord2f(1, 1); glVertex2f (width, height);
+	glTexCoord2f(0, 1); glVertex2f (0, height);
+	glEnd ();
+}
+
+static void
 paint_rgb_using_clear (double r, double g, double b)
 {
         glClearColor(r, g, b, 1.0);
@@ -82,19 +113,35 @@ paint_rgb_using_glsl (double r, double g, double b)
 
 	glUniform4f (color, r, g, b, 1.0);
 
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
-	glOrtho (0, width, height, 0, 0, 1);
-	glMatrixMode (GL_MODELVIEW);
-
-	glBegin (GL_QUADS);
-	glVertex2f (0, 0);
-	glVertex2f (width, 0);
-	glVertex2f (width, height);
-	glVertex2f (0, height);
-	glEnd ();
+	draw_fullscreen_quad ();
 
 	glUseProgram (0);
+}
+
+static void
+paint_rgb_using_texture (double r, double g, double b)
+{
+	uint8_t data[3];
+	GLuint texture;
+
+	data[0] = (uint8_t) (255.0 * r);
+	data[1] = (uint8_t) (255.0 * g);
+	data[2] = (uint8_t) (255.0 * b);
+
+	glGenTextures (1, &texture);
+
+	glBindTexture (GL_TEXTURE_2D, texture);
+
+	glTexImage2D (GL_TEXTURE_2D,
+		      0, GL_COMPRESSED_RGBA,
+		      1, 1, 0,
+		      GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glEnable (GL_TEXTURE_2D);
+
+	draw_fullscreen_textured_quad ();
+
+	glDisable (GL_TEXTURE_2D);
 }
 
 static void
@@ -130,6 +177,8 @@ draw (Display *dpy, Window window, int width, int height)
 
         glViewport(0, 0, width, height);
 
+	set_2d_projection ();
+
 	/* Frame 1: Draw a solid (magenta) frame using glClear. */
 	paint_rgb_using_clear (1, 0, 1);
         glXSwapBuffers (dpy, window);
@@ -137,6 +186,10 @@ draw (Display *dpy, Window window, int width, int height)
 	/* Frame 2: Draw a solid (yellow) frame using GLSL. */
 	paint_rgb_using_glsl (1, 1, 0);
         glXSwapBuffers (dpy, window);
+
+	/* Frame 3: Draw a solid (cyan) frame using a texture. */
+	paint_rgb_using_texture (0, 1, 1);
+	glXSwapBuffers (dpy, window);
 
 	/* Cleanup */
         glXDestroyContext (dpy, ctx);
