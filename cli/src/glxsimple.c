@@ -147,6 +147,7 @@ paint_rgb_using_texture (double r, double g, double b)
 static void
 draw (Display *dpy, Window window, int width, int height)
 {
+	int i;
 	GLenum glew_err;
 
         int visual_attr[] = {
@@ -179,17 +180,26 @@ draw (Display *dpy, Window window, int width, int height)
 
 	set_2d_projection ();
 
-	/* Frame 1: Draw a solid (magenta) frame using glClear. */
-	paint_rgb_using_clear (1, 0, 1);
-        glXSwapBuffers (dpy, window);
+/* Simply count through some colors, frame by frame. */
+#define RGB(frame) (((frame+1)/4) % 2), (((frame+1)/2) % 2), ((frame+1) % 2)
 
-	/* Frame 2: Draw a solid (yellow) frame using GLSL. */
-	paint_rgb_using_glsl (1, 1, 0);
-        glXSwapBuffers (dpy, window);
+	int frame = 0;
+	for (i = 0; i < 2; i++) {
+		/* Frame: Draw a solid (magenta) frame using glClear. */
+		paint_rgb_using_clear (RGB(frame));
+		glXSwapBuffers (dpy, window);
+		frame++;
 
-	/* Frame 3: Draw a solid (cyan) frame using a texture. */
-	paint_rgb_using_texture (0, 1, 1);
-	glXSwapBuffers (dpy, window);
+		/* Frame: Draw a solid (yellow) frame using GLSL. */
+		paint_rgb_using_glsl (RGB(frame));
+		glXSwapBuffers (dpy, window);
+		frame++;
+
+		/* Frame: Draw a solid (cyan) frame using a texture. */
+		paint_rgb_using_texture (RGB(frame));
+		glXSwapBuffers (dpy, window);
+		frame++;
+	}
 
 	/* Cleanup */
         glXDestroyContext (dpy, ctx);
