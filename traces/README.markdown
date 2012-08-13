@@ -24,3 +24,6 @@ are used by the test scripts:
     any data from it.
 
 *   incomplete-call.trace:  trace with an incomplete call, with missing arguments
+
+*   glxsimple.trace: trace from a simple program showing drawing with
+    glClear, with GLSL shader, and with texture. See ../cli/src
