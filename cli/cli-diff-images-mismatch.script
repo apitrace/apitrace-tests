@@ -2,7 +2,7 @@
 # a trace into an empty directory.
 
 rm_and_mkdir ./tri-out
-apitrace dump-images -o ./tri-out/tri tri.trace
+apitrace dump-images --call-nos=no -o ./tri-out/tri tri.trace
 
 # Compare the dumped image with a doctored image to provoke a failure.
 # The EXPECT_FAILURE attribute causes the test driver to look for a
@@ -15,4 +15,4 @@ EXPECT_FAILURE: apitrace diff-images -v ./tri-ref-mismatch ./tri-out
 # also require that "apitrace diff-images" gave us the output we
 # expect.
 
-expect "Comparing ./tri-ref-mismatch/tri0000000027.png and ./tri-out/tri0000000027.png ... MISMATCH\n"
+expect "Comparing ./tri-ref-mismatch/tri0000000000.png and ./tri-out/tri0000000000.png ... MISMATCH\n"

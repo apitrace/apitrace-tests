@@ -4,7 +4,7 @@ rm_and_mkdir ./tri-out
 
 # Generate images for every frame (only 1) of a trace
 
-apitrace dump-images -o ./tri-out/tri tri.trace
+apitrace dump-images --call-nos=no -o ./tri-out/tri tri.trace
 
 # Compare the result of "apitrace dump-images" with our reference
 
@@ -15,4 +15,4 @@ apitrace diff-images -v ./tri-ref ./tri-out
 # the other then it would just silently return 0 and this test would
 # incorrectly pass.
 
-expect "Comparing ./tri-ref/tri0000000027.png and ./tri-out/tri0000000027.png ... MATCH\n"
+expect "Comparing ./tri-ref/tri0000000000.png and ./tri-out/tri0000000000.png ... MATCH\n"
