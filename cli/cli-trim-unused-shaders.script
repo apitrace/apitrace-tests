@@ -1,0 +1,26 @@
+# Generate reference images from unmodified trace.
+
+# We carefully generate images only for desired frames (dropping the
+# first frame that draws using shaders).
+
+rm_and_mkdir glxsimple-ref
+apitrace dump-images --calls=10,47,50,71,87,88 --call-nos=no -o ./glxsimple-ref/ glxsimple.trace
+
+# Trim to the same callset used to generate reference images
+
+apitrace trim --calls=10,47,50,71,87,88 glxsimple.trace
+
+# Verify that we actually trimmed what we wanted to
+
+apitrace diff --diff=diff glxsimple.trace glxsimple-trim.trace
+expect "12,40d11\n< glCreateShader(GL_VERTEX_SHADER) = 7\n< glShaderSource(7, 1, &\"void main()\n< {\n<         gl_Position = ftransform();\n< }\n< \", NULL)\n< glCompileShader(7)\n< glCreateShader(GL_FRAGMENT_SHADER) = 8\n< glShaderSource(8, 1, &\"#version 120\n< uniform vec4 color;\n< void main()\n< {\n<         gl_FragColor = color;\n< }\n< \", NULL)\n< glCompileShader(8)\n< glCreateProgram() = 9\n< glAttachShader(9, 7)\n< glAttachShader(9, 8)\n< glLinkProgram(9)\n< glUseProgram(9)\n< glGetUniformLocation(9, \"color\") = 0\n< glUniform4f(0, 0, 1, 0, 1)\n< glBegin(GL_QUADS)\n< glVertex2f(0, 0)\n< glVertex2f(64, 0)\n< glVertex2f(64, 64)\n< glVertex2f(0, 64)\n< glEnd()\n42,43d12\n< glXSwapBuffers(0x236a280, 41943041)\n< \n"
+
+# Generate output images for all frames in the trimmed trace
+
+rm_and_mkdir glxsimple-out
+apitrace dump-images --call-nos=no -o ./glxsimple-out/ glxsimple-trim.trace
+
+# Compare output to reference images
+
+apitrace diff-images -v ./glxsimple-ref ./glxsimple-out
+expect "Comparing ./glxsimple-ref/0000000000.png and ./glxsimple-out/0000000000.png ... MATCH\nComparing ./glxsimple-ref/0000000001.png and ./glxsimple-out/0000000001.png ... MATCH\nComparing ./glxsimple-ref/0000000002.png and ./glxsimple-out/0000000002.png ... MATCH\nComparing ./glxsimple-ref/0000000003.png and ./glxsimple-out/0000000003.png ... MATCH\nComparing ./glxsimple-ref/0000000004.png and ./glxsimple-out/0000000004.png ... MATCH\n"
