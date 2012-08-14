@@ -31,7 +31,7 @@ from base_driver import *
 class CliDriver(Driver):
 
     def do_apitrace(self, args):
-        cmd = [self.options.apitrace] + args[1:]
+        cmd = [self.options.apitrace] + args.split()
  
         print " ".join(cmd)
         proc = subprocess.Popen(cmd, stdout = subprocess.PIPE)
@@ -47,14 +47,16 @@ class CliDriver(Driver):
                 fail("Command failed (returned non-zero):\n    " + " ".join(cmd))
 
     def do_expect(self, args):
-        expected = json.loads(" ".join(args[1:]))
+        expected = json.loads(args)
         if (self.output != expected):
             fail("Unexpected output:\n    Expected: %s\n    Received: %s\n" % (expected, self.output))
 
     def do_rm_and_mkdir(self, args):
 
+        args = args.split()
+
         # Operate only on local directories
-        dir = './' + args[1]
+        dir = './' + args[0]
 
         # Failing to delete a directory that doesn't exist is no failure
         def rmtree_onerror(function, path, excinfo):
@@ -65,7 +67,7 @@ class CliDriver(Driver):
         os.makedirs(dir)
 
     def unknown_command(self, args):
-        fail('Broken test script: Unknown command: %s' % (args[0]))
+        fail('Broken test script: Unknown command: %s' % (args))
 
     def run_script(self, cli_script):
         "Execute the commands in the given cli script."
@@ -88,17 +90,27 @@ class CliDriver(Driver):
             if (line == ''):
                 break
 
-            cmd = line.split()
+            line = line.rstrip()
+
+            if " " in line:
+                (cmd, args) = line.split(None,1)
+            else:
+                cmd = line
+                args = ''
 
             # Ignore blank lines and comments
-            if (len(cmd) == 0 or line[0] == '#'):
+            if (len(cmd) == 0 or cmd == '\n' or cmd[0] == '#'):
                 continue
 
-            if (cmd[0] == 'EXPECT_FAILURE:'):
+            if (cmd == 'EXPECT_FAILURE:'):
                 self.expect_failure = True
-                cmd.pop(0)
+                if " " in args:
+                    (cmd, args) = args.split(None, 1)
+                else:
+                    cmd = args
+                    args = ''
 
-            commands.get(cmd[0], self.unknown_command)(cmd)
+            commands.get(cmd, self.unknown_command)(args)
 
     def run(self):
         self.parseOptions()
