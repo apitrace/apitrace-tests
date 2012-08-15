@@ -118,11 +118,11 @@ paint_rgb_using_glsl (double r, double g, double b)
 	glUseProgram (0);
 }
 
-static void
-paint_rgb_using_texture (double r, double g, double b)
+static GLuint
+create_rgb_texture (double r, double g, double b)
 {
 	uint8_t data[3];
-	GLuint texture;
+	GLuint texture = 0;
 
 	data[0] = (uint8_t) (255.0 * r);
 	data[1] = (uint8_t) (255.0 * g);
@@ -137,6 +137,14 @@ paint_rgb_using_texture (double r, double g, double b)
 		      1, 1, 0,
 		      GL_RGB, GL_UNSIGNED_BYTE, data);
 
+	return texture;
+}
+
+static void
+paint_using_texture (GLuint texture)
+{
+	glBindTexture (GL_TEXTURE_2D, texture);
+
 	glEnable (GL_TEXTURE_2D);
 
 	draw_fullscreen_textured_quad ();
@@ -147,8 +155,10 @@ paint_rgb_using_texture (double r, double g, double b)
 static void
 draw (Display *dpy, Window window, int width, int height)
 {
+#define PASSES 2
 	int i;
 	GLenum glew_err;
+	GLuint texture[PASSES];
 
         int visual_attr[] = {
                 GLX_RGBA,
@@ -184,22 +194,29 @@ draw (Display *dpy, Window window, int width, int height)
 #define RGB(frame) (((frame+1)/4) % 2), (((frame+1)/2) % 2), ((frame+1) % 2)
 
 	int frame = 0;
-	for (i = 0; i < 2; i++) {
-		/* Frame: Draw a solid (magenta) frame using glClear. */
+	for (i = 0; i < PASSES; i++) {
+
+		/* Frame: Draw a solid frame using glClear. */
 		paint_rgb_using_clear (RGB(frame));
 		glXSwapBuffers (dpy, window);
 		frame++;
 
-		/* Frame: Draw a solid (yellow) frame using GLSL. */
+		/* Frame: Draw a solid frame using GLSL. */
 		paint_rgb_using_glsl (RGB(frame));
 		glXSwapBuffers (dpy, window);
 		frame++;
 
-		/* Frame: Draw a solid (cyan) frame using a texture. */
-		paint_rgb_using_texture (RGB(frame));
+		/* Frame: Draw a solid frame using a texture. */
+		texture[i] = create_rgb_texture (RGB(frame));
+		paint_using_texture (texture[i]);
 		glXSwapBuffers (dpy, window);
 		frame++;
 	}
+
+	/* Draw another frame with a re-used texture. */
+	paint_using_texture (texture[0]);
+	glXSwapBuffers (dpy, window);
+	frame++;
 
 	/* Cleanup */
         glXDestroyContext (dpy, ctx);
