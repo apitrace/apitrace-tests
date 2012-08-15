@@ -103,4 +103,5 @@ add_subdirectory (traces)
 # condition here.
 if (OPENGL_FOUND)
     add_subdirectory (cli)
+    add_subdirectory (trim_stress)
 endif ()

@@ -1,0 +1,5 @@
+!*.trace
+*-ref/
+*-out
+*-index.html
+*.trace.trim
