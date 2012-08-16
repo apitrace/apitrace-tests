@@ -13,7 +13,7 @@ apitrace trim --calls=10,31,50,71,87,88 glxsimple.trace
 # Verify that we actually trimmed what we wanted to
 
 apitrace diff --diff=diff glxsimple.trace glxsimple-trim.trace
-expect "44,46d43\n< glGenTextures(1, &1)\n< glBindTexture(GL_TEXTURE_2D, 1)\n< glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, blob(3))\n48,57d44\n< glBegin(GL_QUADS)\n< glTexCoord2f(0, 0)\n< glVertex2f(0, 0)\n< glTexCoord2f(1, 0)\n< glVertex2f(64, 0)\n< glTexCoord2f(1, 1)\n< glVertex2f(64, 64)\n< glTexCoord2f(0, 1)\n< glVertex2f(0, 64)\n< glEnd()\n59,60d45\n< glXSwapBuffers(0x236a280, 41943041)\n< \n"
+expect "44d43\n< glGenTextures(1, &1)\n46d44\n< glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, blob(3))\n48,57d45\n< glBegin(GL_QUADS)\n< glTexCoord2f(0, 0)\n< glVertex2f(0, 0)\n< glTexCoord2f(1, 0)\n< glVertex2f(64, 0)\n< glTexCoord2f(1, 1)\n< glVertex2f(64, 64)\n< glTexCoord2f(0, 1)\n< glVertex2f(0, 64)\n< glEnd()\n59,60d46\n< glXSwapBuffers(0x236a280, 41943041)\n< \n"
 
 # Generate output images for all frames in the trimmed trace
 
