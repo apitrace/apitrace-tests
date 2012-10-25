@@ -1,13 +1,25 @@
-add_custom_command (
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/tri_vs.h
-    COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /T vs_4_0 /E VS /Fh ${CMAKE_CURRENT_SOURCE_DIR}/tri_vs.h ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
-    DEPENDS tri.fx
-)
+set (HEADERS)
 
-add_custom_command (
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/tri_ps.h
-    COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /T ps_4_0 /E PS /Fh ${CMAKE_CURRENT_SOURCE_DIR}/tri_ps.h ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
-    DEPENDS tri.fx
-)
+macro (fxc VS_PROFILE PS_PROFILE)
+    set (VS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/tri_${VS_PROFILE}.h)
+    set (PS_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/tri_${PS_PROFILE}.h)
 
-add_custom_target (hlsl DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tri_vs.h ${CMAKE_CURRENT_SOURCE_DIR}/tri_ps.h)
+    add_custom_command (
+        OUTPUT ${VS_HEADER}
+        COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /Qstrip_reflect /T ${VS_PROFILE} /E VS /Fh ${VS_HEADER} ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
+        DEPENDS tri.fx
+    )
+
+    add_custom_command (
+        OUTPUT ${PS_HEADER}
+        COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /Qstrip_reflect /T ${PS_PROFILE} /E PS /Fh ${PS_HEADER} ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
+        DEPENDS tri.fx
+    )
+
+    set (HEADERS ${HEADERS} ${VS_HEADER} ${PS_HEADER})
+endmacro ()
+
+fxc (vs_4_0 ps_4_0)
+fxc (vs_4_0_level_9_1 ps_4_0_level_9_1)
+
+add_custom_target (hlsl DEPENDS ${HEADERS})

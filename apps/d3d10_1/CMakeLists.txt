@@ -11,6 +11,7 @@ set (api d3d10_1)
 
 set (targets
     tri
+    tri_level_9_1
 )
 
 foreach (target ${targets})

@@ -34,8 +34,8 @@
 
 #include <d3d11_1.h>
 
-#include "tri_vs.h"
-#include "tri_ps.h"
+#include "tri_vs_4_0.h"
+#include "tri_ps_4_0.h"
 
 
 static IDXGISwapChain* g_pSwapChain = NULL;
@@ -91,6 +91,11 @@ int main(int argc, char *argv[]){
 
     ShowWindow(hWnd, SW_SHOW);
 
+    UINT Flags = 0;
+    if (LoadLibraryA("d3d11sdklayers")) {
+        Flags |= D3D11_CREATE_DEVICE_DEBUG;
+    }
+
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
     SwapChainDesc.BufferDesc.Width = WindowWidth;
@@ -115,7 +120,7 @@ int main(int argc, char *argv[]){
     hr = D3D11CreateDeviceAndSwapChain(NULL, /* pAdapter */
                                        D3D_DRIVER_TYPE_HARDWARE,
                                        NULL, /* Software */
-                                       D3D11_CREATE_DEVICE_DEBUG,
+                                       Flags,
                                        FeatureLevels,
                                        sizeof FeatureLevels / sizeof FeatureLevels[0],
                                        D3D11_SDK_VERSION,
@@ -235,8 +240,12 @@ int main(int argc, char *argv[]){
     RasterizerDesc.CullMode = D3D11_CULL_NONE;
     RasterizerDesc.FillMode = D3D11_FILL_SOLID;
     RasterizerDesc.FrontCounterClockwise = true;
+    RasterizerDesc.DepthClipEnable = true;
     ID3D11RasterizerState* pRasterizerState = NULL;
-    g_pDevice1->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
+    hr = g_pDevice1->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
+    if (FAILED(hr)) {
+        return 1;
+    }
     g_pDeviceContext1->RSSetState(pRasterizerState);
 
     g_pDeviceContext1->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

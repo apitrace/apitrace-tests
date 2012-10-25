@@ -34,8 +34,8 @@
 
 #include <d3d10_1.h>
 
-#include "tri_vs_4_0.h"
-#include "tri_ps_4_0.h"
+#include "tri_vs_4_0_level_9_1.h"
+#include "tri_ps_4_0_level_9_1.h"
 
 
 static IDXGISwapChain* g_pSwapChain = NULL;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]){
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
     SwapChainDesc.BufferDesc.Width = WindowWidth;
     SwapChainDesc.BufferDesc.Height = WindowHeight;
-    SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;;
+    SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;;
     SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
     SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
     SwapChainDesc.SampleDesc.Quality = 0;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
                                         D3D10_DRIVER_TYPE_HARDWARE,
                                         NULL,
                                         Flags,
-                                        D3D10_FEATURE_LEVEL_10_0,
+                                        D3D10_FEATURE_LEVEL_9_1,
                                         D3D10_1_SDK_VERSION,
                                         &SwapChainDesc,
                                         &g_pSwapChain,
