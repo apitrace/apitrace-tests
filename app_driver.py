@@ -414,7 +414,8 @@ class AppDriver(Driver):
 
     def _retrace(self, args = None, stdout=subprocess.PIPE):
         retrace = self.api_retrace_map[self.api]
-        cmd = [get_build_program(retrace)]
+        #cmd = [get_build_program(retrace)]
+        cmd = [options.apitrace, 'retrace']
         if self.doubleBuffer:
             cmd += ['-db']
         else:
