@@ -42,16 +42,14 @@ except ImportError:
     from StringIO import StringIO
 
 
+import tracematch
 from base_driver import *
 
 
-import checker
-
-
-class RefTraceParser(checker.RefTraceParser):
+class RefTraceParser(tracematch.RefTraceParser):
 
     def __init__(self, fileName):
-        checker.RefTraceParser.__init__(self, open(fileName, 'rt'))
+        tracematch.RefTraceParser.__init__(self, open(fileName, 'rt'))
         self.fileName = fileName
         self.images = []
         self.states = []
@@ -62,7 +60,7 @@ class RefTraceParser(checker.RefTraceParser):
             lastCall = self.calls[-1]
             if lastCall.callNo is None:
                 paramName = 'pragma%u' % self.pragmaNo
-                lastCall.callNo = checker.WildcardMatcher(paramName)
+                lastCall.callNo = tracematch.WildcardMatcher(paramName)
             else:
                 paramName = lastCall.callNo.name
         else:
@@ -84,14 +82,14 @@ class RefTraceParser(checker.RefTraceParser):
         return os.path.abspath(os.path.join(os.path.dirname(self.fileName), path))
 
 
-class SrcTraceParser(checker.SrcTraceParser):
+class SrcTraceParser(tracematch.SrcTraceParser):
 
     def __init__(self, stream):
-        checker.SrcTraceParser.__init__(self, stream)
+        tracematch.SrcTraceParser.__init__(self, stream)
         self.swapbuffers = 0
 
     def handleCall(self, callNo, functionName, args, ret):
-        checker.SrcTraceParser.handleCall(self, callNo, functionName, args, ret)
+        tracematch.SrcTraceParser.handleCall(self, callNo, functionName, args, ret)
 
         if functionName.find('SwapBuffers') != -1 or \
            repr(args).find('kCGLPFADoubleBuffer') != -1:
@@ -119,7 +117,7 @@ class TraceChecker:
 
             try:
                 mo = refTrace.match(srcTrace)
-            except checker.TraceMismatch, ex:
+            except tracematch.TraceMismatch, ex:
                 self.fail(str(ex))
 
             for paramName, imageFileName in refParser.images:
