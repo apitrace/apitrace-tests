@@ -202,6 +202,11 @@ class CallMatcher(Matcher):
         return s
 
 
+class TraceMismatch(Exception):
+
+    pass
+
+
 class TraceMatcher:
 
     def __init__(self, calls):
@@ -217,9 +222,9 @@ class TraceMatcher:
                     srcCall = srcCalls.next()
                 except StopIteration:
                     if skippedSrcCalls:
-                        raise Exception('missing call `%s` (found `%s`)' % (refCall, skippedSrcCalls[0]))
+                        raise TraceMismatch('missing call `%s` (found `%s`)' % (refCall, skippedSrcCalls[0]))
                     else:
-                        raise Exception('missing call %s' % refCall)
+                        raise TraceMismatch('missing call %s' % refCall)
                 if refCall.match(srcCall, mo):
                     break
                 else:
@@ -490,17 +495,12 @@ class TraceParser(Parser):
 
     def parse_element(self):
         if self.lookahead.type == PRAGMA:
-            # TODO
             token = self.consume()
             self.handlePragma(token.text)
         else:
             self.parse_call()
 
     def parse_call(self):
-        while self.lookahead.type == PRAGMA:
-            # TODO
-            token = self.consume()
-
         if self.lookahead.type == NUMBER:
             token = self.consume()
             callNo = self.handleInt(int(token.text))
@@ -649,7 +649,7 @@ class TraceParser(Parser):
         raise NotImplementedError
 
     def handlePragma(self, line):
-        pass
+        raise NotImplementedError
 
 
 class RefTraceParser(TraceParser):
@@ -689,6 +689,9 @@ class RefTraceParser(TraceParser):
     def handleCall(self, callNo, functionName, args, ret):
         call = CallMatcher(callNo, functionName, args, ret)
         self.calls.append(call)
+    
+    def handlePragma(self, line):
+        pass
 
 
 class SrcTraceParser(TraceParser):
