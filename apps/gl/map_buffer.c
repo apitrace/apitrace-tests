@@ -86,6 +86,8 @@ init(void)
 	
     glMapBufferRange(target, 100, 200, GL_MAP_READ_BIT);
 	glUnmapBuffer(target);
+
+    glDeleteBuffers(2, buffers);
 }
 
 int main(int argc, char** argv)

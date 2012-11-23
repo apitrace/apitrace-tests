@@ -27,7 +27,9 @@
 
 import sys
 import optparse
+import os
 import re
+import subprocess
 
 
 class MatchObject:
@@ -122,6 +124,19 @@ class BitmaskMatcher(Matcher):
         return ' | '.join(map(str, self.refElements))
 
 
+class OffsetMatcher(Matcher):
+
+    def __init__(self, refValue, offset):
+        self.refValue = refValue
+        self.offset = offset
+
+    def match(self, value, mo):
+        return self.refValue.match(value - self.offset, mo)
+
+    def __str__(self):
+        return '%s + %i' % (self.refValue, self.offset)
+
+
 class ArrayMatcher(Matcher):
 
     def __init__(self, refElements):
@@ -212,10 +227,12 @@ class TraceMatcher:
     def __init__(self, calls):
         self.calls = calls
 
-    def match(self, trace):
+    def match(self, calls, verbose = False):
         mo = MatchObject()
-        srcCalls = iter(trace.calls)
+        srcCalls = iter(calls)
         for refCall in self.calls:
+            if verbose:
+                print refCall
             skippedSrcCalls = []
             while True:
                 try:
@@ -225,6 +242,8 @@ class TraceMatcher:
                         raise TraceMismatch('missing call `%s` (found `%s`)' % (refCall, skippedSrcCalls[0]))
                     else:
                         raise TraceMismatch('missing call %s' % refCall)
+                if verbose:
+                    print '\t%s %s%r = %r' % srcCall
                 if refCall.match(srcCall, mo):
                     break
                 else:
@@ -411,7 +430,7 @@ class Parser:
 
 #######################################################################
 
-ID, NUMBER, HEXNUM, STRING, WILDCARD, PRAGMA, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, VERT, BLOB = xrange(15)
+ID, NUMBER, HEXNUM, STRING, WILDCARD, PRAGMA, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB = xrange(16)
 
 
 class CallScanner(Scanner):
@@ -449,6 +468,7 @@ class CallScanner(Scanner):
         ',': COMMA,
         '&': AMP,
         '=': EQUAL,
+        '+': PLUS,
         '|': VERT,
     }
 
@@ -556,6 +576,17 @@ class TraceParser(Parser):
                 value = self._parse_value()
                 flags.append(value)
             return self.handleBitmask(flags)
+        elif self.match(PLUS):
+            self.consume()
+            if self.match(NUMBER):
+                token = self.consume()
+                offset = int(token.text)
+            elif self.match(HEXNUM):
+                token = self.consume()
+                offset = int(token.text, 16)
+            else:
+                assert 0
+            return self.handleOffset(value, offset)
         else:
             return value
 
@@ -574,8 +605,12 @@ class TraceParser(Parser):
             return self.handleString(value)
         elif self.match(NUMBER):
             token = self.consume()
-            value = float(token.text)
-            return self.handleFloat(value)
+            if '.' in token.text:
+                value = float(token.text)
+                return self.handleFloat(value)
+            else:
+                value = int(token.text)
+                return self.handleInt(value)
         elif self.match(HEXNUM):
             token = self.consume()
             value = int(token.text, 16)
@@ -633,6 +668,9 @@ class TraceParser(Parser):
     def handleBitmask(self, value):
         raise NotImplementedError
 
+    def handleOffset(self, value, offset):
+        raise NotImplementedError
+
     def handleArray(self, value):
         raise NotImplementedError
 
@@ -677,6 +715,9 @@ class RefTraceParser(TraceParser):
     def handleBitmask(self, value):
         return BitmaskMatcher(value)
 
+    def handleOffset(self, value, offset):
+        return OffsetMatcher(value, offset)
+
     def handleArray(self, value):
         return ArrayMatcher(value)
 
@@ -702,7 +743,7 @@ class SrcTraceParser(TraceParser):
 
     def parse(self):
         TraceParser.parse(self)
-        return TraceMatcher(self.calls)
+        return self.calls
 
     def handleID(self, value):
         return value
@@ -733,29 +774,57 @@ class SrcTraceParser(TraceParser):
 def main():
     # Parse command line options
     optparser = optparse.OptionParser(
-        usage='\n\t%prog [OPTIONS] REF_TRACE SRC_TRACE',
+        usage='\n\t%prog [OPTIONS] REF_TXT SRC_TRACE',
         version='%%prog')
+    optparser.add_option(
+        '--apitrace', metavar='PROGRAM',
+        type='string', dest='apitrace', default=os.environ.get('APITRACE', 'apitrace'),
+        help='path to apitrace executable')
     optparser.add_option(
         '-v', '--verbose',
         action="store_true",
-        dest="verbose", default=False,
+        dest="verbose", default=True,
         help="verbose output")
     (options, args) = optparser.parse_args(sys.argv[1:])
 
     if len(args) != 2:
         optparser.error('wrong number of arguments')
 
-    refParser = RefTraceParser(open(args[0], 'rt'))
-    refTrace = refParser.parse()
-    sys.stdout.write(str(refTrace))
-    srcParser = SrcTraceParser(open(args[1], 'rt'))
-    srcTrace = srcParser.parse()
-    mo = refTrace.match(srcTrace)
+    refFileName, srcFileName = args
 
-    paramNames = mo.params.keys()
-    paramNames.sort()
-    for paramName in paramNames:
-        print '%s = %r' % (paramName, mo.params[paramName])
+    refStream = open(refFileName, 'rt')
+    refParser = RefTraceParser(refStream)
+    refTrace = refParser.parse()
+    if options.verbose:
+        sys.stdout.write('// Reference\n')
+        sys.stdout.write(str(refTrace))
+        sys.stdout.write('\n')
+
+    if srcFileName.endswith('.trace'):
+        cmd = [options.apitrace, 'dump', '--color=never', srcFileName]
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        srcStream = p.stdout
+    else:
+        srcStream = open(srcFileName, 'rt')
+    srcParser = SrcTraceParser(srcStream)
+    srcTrace = srcParser.parse()
+    if options.verbose:
+        sys.stdout.write('// Source\n')
+        sys.stdout.write(''.join(['%s %s%r = %r\n' % call for call in srcTrace]))
+        sys.stdout.write('\n')
+
+    if options.verbose:
+        sys.stdout.write('// Matching\n')
+    mo = refTrace.match(srcTrace, options.verbose)
+    if options.verbose:
+        sys.stdout.write('\n')
+
+    if options.verbose:
+        sys.stdout.write('// Parameters\n')
+        paramNames = mo.params.keys()
+        paramNames.sort()
+        for paramName in paramNames:
+            print '%s = %r' % (paramName, mo.params[paramName])
 
 
 if __name__ == '__main__':
