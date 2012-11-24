@@ -430,7 +430,7 @@ class Parser:
 
 #######################################################################
 
-ID, NUMBER, HEXNUM, STRING, WILDCARD, PRAGMA, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB = xrange(16)
+ID, NUMBER, HEXNUM, STRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB = xrange(15)
 
 
 class CallScanner(Scanner):
@@ -454,9 +454,6 @@ class CallScanner(Scanner):
         
         # Wildcard
         (WILDCARD, r'<[^>]*>', False),
-        
-        # Pragma
-        (PRAGMA, r'#[^\r\n]*', False),
     ]
 
     # symbol table
@@ -510,15 +507,8 @@ class TraceParser(Parser):
 
     def parse(self):
         while not self.eof():
-            self.parse_element()
-        return TraceMatcher(self.calls)
-
-    def parse_element(self):
-        if self.lookahead.type == PRAGMA:
-            token = self.consume()
-            self.handlePragma(token.text)
-        else:
             self.parse_call()
+        return TraceMatcher(self.calls)
 
     def parse_call(self):
         if self.lookahead.type == NUMBER:
@@ -686,14 +676,11 @@ class TraceParser(Parser):
     def handleCall(self, callNo, functionName, args, ret):
         raise NotImplementedError
 
-    def handlePragma(self, line):
-        raise NotImplementedError
-
 
 class RefTraceParser(TraceParser):
 
-    def __init__(self, stream):
-        TraceParser.__init__(self, stream)
+    def __init__(self, fileName):
+        TraceParser.__init__(self, open(fileName, 'rt'))
         self.calls = []
 
     def parse(self):
@@ -730,9 +717,6 @@ class RefTraceParser(TraceParser):
     def handleCall(self, callNo, functionName, args, ret):
         call = CallMatcher(callNo, functionName, args, ret)
         self.calls.append(call)
-    
-    def handlePragma(self, line):
-        pass
 
 
 class SrcTraceParser(TraceParser):
@@ -792,8 +776,7 @@ def main():
 
     refFileName, srcFileName = args
 
-    refStream = open(refFileName, 'rt')
-    refParser = RefTraceParser(refStream)
+    refParser = RefTraceParser(refFileName)
     refTrace = refParser.parse()
     if options.verbose:
         sys.stdout.write('// Reference\n')

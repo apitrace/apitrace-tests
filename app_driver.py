@@ -46,42 +46,6 @@ import tracematch
 from base_driver import *
 
 
-class RefTraceParser(tracematch.RefTraceParser):
-
-    def __init__(self, fileName):
-        tracematch.RefTraceParser.__init__(self, open(fileName, 'rt'))
-        self.fileName = fileName
-        self.images = []
-        self.states = []
-        self.pragmaNo = 0
-
-    def handlePragma(self, line):
-        if self.calls:
-            lastCall = self.calls[-1]
-            if lastCall.callNo is None:
-                paramName = 'pragma%u' % self.pragmaNo
-                lastCall.callNo = tracematch.WildcardMatcher(paramName)
-            else:
-                paramName = lastCall.callNo.name
-        else:
-            paramName = 0
-            self.pragmaNo += 1
-
-        pragma, rest = line.split(None, 1)
-        if pragma == '#image':
-            imageFileName = self.getAbsPath(rest)
-            self.images.append((paramName, imageFileName))
-        elif pragma == '#state':
-            stateFileName = self.getAbsPath(rest)
-            self.states.append((paramName, stateFileName))
-        else:
-            assert False
-
-    def getAbsPath(self, path):
-        '''Get the absolute from a path relative to the reference filename'''
-        return os.path.abspath(os.path.join(os.path.dirname(self.fileName), path))
-
-
 class SrcTraceParser(tracematch.SrcTraceParser):
 
     def __init__(self, stream):
@@ -94,44 +58,6 @@ class SrcTraceParser(tracematch.SrcTraceParser):
         if functionName.find('SwapBuffers') != -1 or \
            repr(args).find('kCGLPFADoubleBuffer') != -1:
             self.swapbuffers += 1
-
-
-class TraceChecker:
-
-    def __init__(self, srcStream, refFileName):
-        self.srcStream = srcStream
-        self.refFileName = refFileName
-        self.doubleBuffer = False
-        self.callNo = 0
-        self.images = []
-        self.states = []
-
-    def check(self):
-        srcParser = SrcTraceParser(self.srcStream)
-        srcTrace = srcParser.parse()
-        self.doubleBuffer = srcParser.swapbuffers > 0
-
-        if self.refFileName:
-            refParser = RefTraceParser(self.refFileName)
-            refTrace = refParser.parse()
-
-            try:
-                mo = refTrace.match(srcTrace)
-            except tracematch.TraceMismatch, ex:
-                self.fail(str(ex))
-
-            for paramName, imageFileName in refParser.images:
-                if isinstance(paramName, int):
-                    callNo = paramName
-                else:
-                    callNo = mo.params[paramName]
-                self.images.append((callNo, imageFileName))
-            for paramName, stateFileName in refParser.states:
-                if isinstance(paramName, int):
-                    callNo = paramName
-                else:
-                    callNo = mo.params[paramName]
-                self.states.append((callNo, stateFileName))
 
 
 class AppDriver(Driver):
@@ -162,10 +88,15 @@ class AppDriver(Driver):
         if not self.cmd:
             return
 
+        sys.stderr.write('Run application...\n')
+
         p = popen(self.cmd, cwd=self.cwd)
         p.wait()
         if p.returncode != 0:
             skip('application returned code %i' % p.returncode)
+
+        sys.stdout.flush()
+        sys.stderr.write('\n')
 
     api_trace_map = {
         'gl': 'gl',
@@ -197,6 +128,8 @@ class AppDriver(Driver):
     def traceApp(self):
         if not self.cmd:
             return
+
+        sys.stderr.write('Capturing trace...\n')
 
         if self.trace_file is None:
             if self.ref_dump is not None:
@@ -233,31 +166,74 @@ class AppDriver(Driver):
 
         if not os.path.exists(self.trace_file):
             fail('no trace file generated\n')
+
+        sys.stdout.flush()
+        sys.stderr.write('\n')
     
     def checkTrace(self):
+        sys.stderr.write('Comparing trace %s against %s...\n' % (self.trace_file, self.ref_dump))
+
         cmd = [options.apitrace, 'dump', '--color=never', self.trace_file]
         p = popen(cmd, stdout=subprocess.PIPE)
 
-        checker = TraceChecker(p.stdout, self.ref_dump)
-        checker.check()
+        srcParser = SrcTraceParser(p.stdout)
+        srcTrace = srcParser.parse()
+        self.doubleBuffer = srcParser.swapbuffers > 0
+
+        images = []
+        states = []
+
+        if self.ref_dump:
+            refParser = tracematch.RefTraceParser(self.ref_dump)
+            refTrace = refParser.parse()
+
+            try:
+                mo = refTrace.match(srcTrace)
+            except tracematch.TraceMismatch, ex:
+                fail(str(ex))
+
+            dirName, baseName = os.path.split(os.path.abspath(self.ref_dump))
+            prefix, _ = os.path.splitext(baseName)
+            prefix += '.'
+            fileNames = os.listdir(dirName)
+            for fileName in fileNames:
+                if fileName.startswith(prefix) and fileName != self.ref_dump:
+                    rest = fileName[len(prefix):]
+                    paramName, ext = os.path.splitext(rest)
+                    if ext in ('.json', '.png'):
+                        if paramName.isdigit():
+                            callNo = int(paramName)
+                        else:
+                            try:
+                                callNo = mo.params[paramName]
+                            except KeyError:
+                                fail('could not find parameter %s for %s' % (paramName, fileName))
+                        filePath = os.path.join(dirName, fileName)
+                        if ext == '.png':
+                            images.append((callNo, filePath))
+                        if ext == '.json':
+                            states.append((callNo, filePath))
         p.wait()
         if p.returncode != 0:
             fail('`apitrace dump` returned code %i' % p.returncode)
 
-        self.doubleBuffer = checker.doubleBuffer
+        sys.stdout.flush()
+        sys.stderr.write('\n')
 
         if self.api not in self.api_retrace_map:
             return
 
-        for callNo, refImageFileName in checker.images:
+        for callNo, refImageFileName in images:
             self.checkImage(callNo, refImageFileName)
-        for callNo, refStateFileName in checker.states:
+        for callNo, refStateFileName in states:
             self.checkState(callNo, refStateFileName)
 
     def checkImage(self, callNo, refImageFileName):
+        sys.stderr.write('Comparing snapshot from call %u against %s...\n' % (callNo, refImageFileName))
         try:
             from PIL import Image
         except ImportError:
+            sys.stderr.write('warning: PIL not found, skipping image comparison\n');
             return
 
         srcImage = self.getImage(callNo)
@@ -275,7 +251,12 @@ class AppDriver(Driver):
             comparer.write_diff(diffImageFileName)
             fail('snapshot from call %u does not match %s' % (callNo, refImageFileName))
 
+        sys.stdout.flush()
+        sys.stderr.write('\n')
+
     def checkState(self, callNo, refStateFileName):
+        sys.stderr.write('Comparing state dump from call %u against %s...\n' % (callNo, refStateFileName))
+
         srcState = self.getState(callNo)
         refState = self.getRefState(refStateFileName)
 
@@ -292,6 +273,9 @@ class AppDriver(Driver):
             differ = Differ(diffStateFile, ignore_added = True)
             differ.visit(refState, srcState)
             fail('state from call %u does not match %s' % (callNo, refStateFileName))
+
+        sys.stdout.flush()
+        sys.stderr.write('\n')
 
     def getRefState(self, refStateFileName):
         stream = open(refStateFileName, 'rt')
@@ -318,10 +302,15 @@ class AppDriver(Driver):
         if self.api not in self.api_retrace_map:
             return
 
+        sys.stderr.write('Retracing %s...\n' % (self.trace_file,))
+
         p = self._retrace()
         p.wait()
         if p.returncode != 0:
             fail('retrace failed with code %i' % (p.returncode))
+
+        sys.stdout.flush()
+        sys.stderr.write('\n')
 
     def getImage(self, callNo):
         from PIL import Image

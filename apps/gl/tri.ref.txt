@@ -13,6 +13,4 @@ glVertex3f(x = 0.9, y = -0.9, z = -30)
 glColor3f(red = 0, green = 0, blue = 0.7)
 glVertex3f(x = 0, y = 0.9, z = -30)
 glEnd()
-glFlush()
-#image tri.ref.png
-#state tri.ref.json
+<flush> glFlush()

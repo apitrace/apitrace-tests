@@ -169,8 +169,6 @@ class Driver:
         if not args:
             optparser.error('an argument must be specified')
         
-        print get_scripts_path()
-
         sys.path.insert(0, get_scripts_path())
 
         self.options = options
