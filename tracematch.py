@@ -440,6 +440,9 @@ class CallScanner(Scanner):
         # whitespace
         (SKIP, r'[ \t\f\r\n\v]+', False),
 
+        # comments
+        (SKIP, r'//[^\r\n]*', False),
+
         # Alphanumeric IDs
         (ID, r'[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)?', True),
 
