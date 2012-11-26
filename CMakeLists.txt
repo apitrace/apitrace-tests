@@ -41,7 +41,7 @@ find_package (GLEW)
 
 if (WIN32)
     find_package (DirectX)
-else ()
+elseif (PKG_CONFIG_FOUND)
 	pkg_check_modules (EGL egl)
 	pkg_check_modules (GLESV1 glesv1_cm)
 	pkg_check_modules (GLESV2 glesv2)
