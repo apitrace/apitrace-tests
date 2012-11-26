@@ -47,43 +47,44 @@ parseArgs(int argc, char** argv)
 static void
 init(void)
 {
-	GLenum target = GL_ARRAY_BUFFER;
+    GLenum target = GL_ARRAY_BUFFER;
     GLuint buffers[2];
     GLvoid *ptr;
 
-	if (!GLEW_VERSION_1_5 ||
+    if (!GLEW_VERSION_1_5 ||
         !GLEW_ARB_map_buffer_range) {
-        exit(0);
-	}
+        fprintf(stderr, "error: GL_ARB_map_buffer_range not supported\n");
+        exit(1);
+    }
 
-	glGenBuffers(2, buffers);
-	
+    glGenBuffers(2, buffers);
+    
     glBindBuffer(target, buffers[0]);
-	glBufferData(target, 1000, NULL, GL_STATIC_DRAW);
+    glBufferData(target, 1000, NULL, GL_STATIC_DRAW);
 
-	ptr = glMapBufferRange(target, 100, 200, GL_MAP_WRITE_BIT);
-	memset(ptr, 0, 200);
-	glUnmapBuffer(target);
+    ptr = glMapBufferRange(target, 100, 200, GL_MAP_WRITE_BIT);
+    memset(ptr, 0, 200);
+    glUnmapBuffer(target);
 
     glBindBuffer(target, buffers[1]);
-	glBufferData(target, 2000, NULL, GL_STATIC_DRAW);
-	ptr = glMapBufferRange(target, 200, 300, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT);
-	memset(ptr, 0, 300);
+    glBufferData(target, 2000, NULL, GL_STATIC_DRAW);
+    ptr = glMapBufferRange(target, 200, 300, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT);
+    memset(ptr, 0, 300);
 
     glBindBuffer(target, buffers[0]);
-	ptr = glMapBufferRange(target, 100, 200, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT);
-	memset(ptr, 0, 200);
+    ptr = glMapBufferRange(target, 100, 200, GL_MAP_WRITE_BIT | GL_MAP_FLUSH_EXPLICIT_BIT);
+    memset(ptr, 0, 200);
 
     glBindBuffer(target, buffers[1]);
     glFlushMappedBufferRange(target, 20, 30);
     glFlushMappedBufferRange(target, 40, 50);
-	glUnmapBuffer(target);
+    glUnmapBuffer(target);
 
     glBindBuffer(target, buffers[0]);
     glFlushMappedBufferRange(target, 10, 20);
     glFlushMappedBufferRange(target, 30, 40);
-	glUnmapBuffer(target);
-	
+    glUnmapBuffer(target);
+    
     glMapBufferRange(target, 100, 200, GL_MAP_READ_BIT);
 	glUnmapBuffer(target);
 
