@@ -784,8 +784,8 @@ def main():
         sys.stdout.write('\n')
 
     if srcFileName.endswith('.trace'):
-        cmd = [options.apitrace, 'dump', '--color=never', srcFileName]
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        cmd = [options.apitrace, 'dump', '--verbose', '--color=never', srcFileName]
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
         srcStream = p.stdout
     else:
         srcStream = open(srcFileName, 'rt')

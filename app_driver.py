@@ -173,8 +173,8 @@ class AppDriver(Driver):
     def checkTrace(self):
         sys.stderr.write('Comparing trace %s against %s...\n' % (self.trace_file, self.ref_dump))
 
-        cmd = [options.apitrace, 'dump', '--color=never', self.trace_file]
-        p = popen(cmd, stdout=subprocess.PIPE)
+        cmd = [options.apitrace, 'dump', '--verbose', '--color=never', self.trace_file]
+        p = popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
 
         srcParser = SrcTraceParser(p.stdout)
         srcTrace = srcParser.parse()
