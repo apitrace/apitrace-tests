@@ -117,7 +117,7 @@ class AppDriver(Driver):
         'egl_gl': 'eglretrace',
         'egl_gles1': 'eglretrace',
         'egl_gles2': 'eglretrace',
-        #'d3d8': 'd3dretrace',
+        'd3d8': 'd3dretrace',
         'd3d9': 'd3dretrace',
         'd3d10': 'd3dretrace',
         'd3d10_1': 'd3dretrace',
