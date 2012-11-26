@@ -598,11 +598,12 @@ class TraceParser(Parser):
             return self.handleString(value)
         elif self.match(NUMBER):
             token = self.consume()
-            if '.' in token.text:
+            try:
+                value = int(token.text)
+            except ValueError:
                 value = float(token.text)
                 return self.handleFloat(value)
             else:
-                value = int(token.text)
                 return self.handleInt(value)
         elif self.match(HEXNUM):
             token = self.consume()
