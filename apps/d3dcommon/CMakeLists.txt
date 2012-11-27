@@ -19,6 +19,7 @@ macro (fxc VS_PROFILE PS_PROFILE)
     set (HEADERS ${HEADERS} ${VS_HEADER} ${PS_HEADER})
 endmacro ()
 
+fxc (vs_2_0 ps_2_0)
 fxc (vs_4_0 ps_4_0)
 fxc (vs_4_0_level_9_1 ps_4_0_level_9_1)
 

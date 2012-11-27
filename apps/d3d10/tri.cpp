@@ -42,7 +42,9 @@ static IDXGISwapChain* g_pSwapChain = NULL;
 static ID3D10Device * g_pDevice = NULL;
 
 
-int main(int argc, char *argv[]){
+int
+main(int argc, char *argv[])
+{
     HRESULT hr;
 
     HINSTANCE hInstance = GetModuleHandle(NULL);

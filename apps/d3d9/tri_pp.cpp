@@ -24,9 +24,14 @@
  **************************************************************************/
 
 
+#include <stddef.h>
+
 #include <windows.h>
 
 #include <d3d9.h>
+
+#include "tri_vs_2_0.h"
+#include "tri_ps_2_0.h"
 
 
 static IDirect3D9 * g_pD3D = NULL;
@@ -126,40 +131,72 @@ main(int argc, char *argv[])
                               &g_PresentationParameters,
                               &g_pDevice);
     if (FAILED(hr)) {
-        g_pD3D->Release();
-        g_pD3D = NULL;
         return 1;
     }
 
-    struct Vertex {
-        float x, y, z;
-        DWORD color;
-    };
-
-
     D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(0.3f, 0.1f, 0.3f, 1.0f);
     g_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
-    g_pDevice->BeginScene();
 
-    g_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-    g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
-    static const Vertex vertices[] = {
-        { -0.9f, -0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.8f, 0.0f, 0.0f, 0.1f) },
-        {  0.9f, -0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.0f, 0.9f, 0.0f, 0.1f) },
-        {  0.0f,  0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.7f, 0.1f) },
+    struct Vertex {
+        float position[4];
+        float color[4];
     };
 
-    g_pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+    static const Vertex vertices[] = {
+        { { -0.9f, -0.9f, 0.5f, 1.0f}, { 0.8f, 0.0f, 0.0f, 0.1f } },
+        { {  0.9f, -0.9f, 0.5f, 1.0f}, { 0.0f, 0.9f, 0.0f, 0.1f } },
+        { {  0.0f,  0.9f, 0.5f, 1.0f}, { 0.0f, 0.0f, 0.7f, 0.1f } },
+    };
+
+    static const D3DVERTEXELEMENT9 VertexElements[] = {
+        { 0, offsetof(Vertex, position), D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+        { 0, offsetof(Vertex, color),    D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+        D3DDECL_END()
+    };
+
+    LPDIRECT3DVERTEXDECLARATION9 pVertexDeclaration = NULL;
+    hr = g_pDevice->CreateVertexDeclaration(VertexElements, &pVertexDeclaration);
+    if (FAILED(hr)) {
+        return 1;
+    }
+    g_pDevice->SetVertexDeclaration(pVertexDeclaration);
+
+    LPDIRECT3DVERTEXSHADER9 pVertexShader = NULL;
+    hr = g_pDevice->CreateVertexShader((CONST DWORD *)g_vs20_VS, &pVertexShader);
+    if (FAILED(hr)) {
+        return 1;
+    }
+    g_pDevice->SetVertexShader(pVertexShader);
+
+    LPDIRECT3DPIXELSHADER9 pPixelShader = NULL;
+    hr = g_pDevice->CreatePixelShader((CONST DWORD *)g_ps20_PS, &pPixelShader);
+    if (FAILED(hr)) {
+        return 1;
+    }
+    g_pDevice->SetPixelShader(pPixelShader);
+
+    g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+    g_pDevice->BeginScene();
+
     g_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
 
     g_pDevice->EndScene();
 
     g_pDevice->Present(NULL, NULL, NULL, NULL);
 
+    pPixelShader->Release();
+    pPixelShader = NULL;
+
+    pVertexShader->Release();
+    pVertexShader = NULL;
+
+    pVertexDeclaration->Release();
+    pVertexDeclaration = NULL;
 
     g_pDevice->Release();
     g_pDevice = NULL;
+
     g_pD3D->Release();
     g_pD3D = NULL;
 
