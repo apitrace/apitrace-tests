@@ -16,6 +16,7 @@ Or on Windows:
 
     cmake -G "Visual Studio 10" -H. -B.\build
     cmake --build .\build --target ALL_BUILD
+    set CTEST_OUTPUT_ON_FAILURE=1
     cmake --build .\build --target RUN_TESTS
 
 A detailed log will be written to `Testing/Temporary/LastTest.log`.
