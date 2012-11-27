@@ -323,7 +323,6 @@ class AppDriver(Driver):
         data = imageObj['__data__']
         stream = StringIO(base64.b64decode(data))
         im = Image.open(stream)
-        im.save('test.png')
         return im
 
     def getFramebufferAttachment(self, state, attachments):
