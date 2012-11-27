@@ -545,13 +545,14 @@ class TraceParser(Parser):
     def parse_opt_pair(self):
         '''Parse an optional `name = value` pair.'''
         if self.match(ID):
-            name = self.consume(ID).text
+            token = self.consume(ID)
             if self.match(EQUAL):
                 self.consume(EQUAL)
+                name = token.text
                 value = self.parse_value()
             else:
-                value = name
                 name = None
+                value = self.handleID(token.text)
         else:
             name = None
             value = self.parse_value()
