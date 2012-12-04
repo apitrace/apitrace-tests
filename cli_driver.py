@@ -24,7 +24,11 @@
 
 '''Test driver for scripts in the cli directory.'''
 
-import json, errno, shutil, subprocess
+import json
+import errno
+import shutil
+import subprocess
+import difflib
 
 from base_driver import *
 
@@ -49,7 +53,10 @@ class CliDriver(Driver):
     def do_expect(self, args):
         expected = json.loads(args)
         if (self.output != expected):
-            fail("Unexpected output:\n    Expected: %s\n    Received: %s\n" % (expected, self.output))
+            differ = difflib.Differ()
+            diff = differ.compare(expected.splitlines(1), self.output.splitlines(1))
+            diff = ''.join(diff)
+            fail("Unexpected output:\n%s\n" % diff)
 
     def do_rm_and_mkdir(self, args):
 
