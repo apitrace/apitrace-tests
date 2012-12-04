@@ -152,8 +152,9 @@ class AppDriver(Driver):
         
         cmd = [
             options.apitrace, 'trace', 
-            '--api', self.api_trace_map[self.api],
-            '--output', self.trace_file,
+            '-v',
+            '-a', self.api_trace_map[self.api],
+            '-o', self.trace_file,
             '--'
         ] + cmd
         if self.max_frames is not None:
