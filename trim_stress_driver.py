@@ -22,7 +22,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-'''Stress test driver for apitrace trimp.'''
+'''Stress test driver for apitrace trim.'''
 
 import os, errno, shutil, subprocess
 
@@ -68,7 +68,7 @@ class TrimStressDriver(Driver):
 
         for frame in range(frames):
             try:
-                subprocess.check_call([self.options.apitrace, "trim", "--frame=%d" % (frame), "--output=" + trim_file, trace_file])
+                subprocess.check_call([self.options.apitrace, "trim", "--auto", "--frame=%d" % (frame), "--output=" + trim_file, trace_file])
             except:
                 print "An error occurred while trimming frame %d from %s" % (frame, trace_file)
                 fail()

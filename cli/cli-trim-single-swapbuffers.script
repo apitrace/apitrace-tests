@@ -1,6 +1,6 @@
 # First, trim the trace to the final glxSwapBuffers call
 
-apitrace trim --calls=27 tri.trace
+apitrace trim --auto --calls=27 tri.trace
 
 # Then dump the image and compare to our reference
 
