@@ -38,6 +38,8 @@
 #include "tri_ps_4_0.h"
 
 
+static IDXGIFactory *g_pFactory = NULL;
+static IDXGIAdapter *g_pAdapter = NULL;
 static IDXGISwapChain* g_pSwapChain = NULL;
 static ID3D10Device * g_pDevice = NULL;
 
@@ -95,6 +97,26 @@ main(int argc, char *argv[])
         Flags |= D3D10_CREATE_DEVICE_DEBUG;
     }
 
+    hr = CreateDXGIFactory(IID_IDXGIFactory, (void**)(&g_pFactory) );
+    if (FAILED(hr)) {
+        return 1;
+    }
+
+    hr = g_pFactory->EnumAdapters(0, &g_pAdapter);
+    if (FAILED(hr)) {
+        return 1;
+    }
+
+    hr = D3D10CreateDevice(g_pAdapter,
+                           D3D10_DRIVER_TYPE_HARDWARE,
+                           NULL,
+                           Flags,
+                           D3D10_SDK_VERSION,
+                           &g_pDevice);
+    if (FAILED(hr)) {
+        return 1;
+    }
+
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
     SwapChainDesc.BufferDesc.Width = WindowWidth;
@@ -109,14 +131,7 @@ main(int argc, char *argv[])
     SwapChainDesc.OutputWindow = hWnd;
     SwapChainDesc.Windowed = true;
 
-    hr = D3D10CreateDeviceAndSwapChain(NULL,
-                                       D3D10_DRIVER_TYPE_HARDWARE,
-                                       NULL,
-                                       Flags,
-                                       D3D10_SDK_VERSION,
-                                       &SwapChainDesc,
-                                       &g_pSwapChain,
-                                       &g_pDevice);
+    hr = g_pFactory->CreateSwapChain(g_pDevice, &SwapChainDesc, &g_pSwapChain);
     if (FAILED(hr)) {
         return 1;
     }

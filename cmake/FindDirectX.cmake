@@ -138,6 +138,11 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	endif ()
 
 
+	find_library (DirectX_DXGI_LIBRARY dxgi
+		PATHS ${DirectX_LIB_SEARCH_PATH}
+		DOC "The directory where dxgi resides")
+
+
 	find_path (DirectX_D3D10_INCLUDE_DIR d3d10.h
 		PATHS ${DirectX_INC_SEARCH_PATH}
 		DOC "The directory where d3d10.h resides")

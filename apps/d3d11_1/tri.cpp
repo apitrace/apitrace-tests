@@ -149,7 +149,12 @@ int main(int argc, char *argv[]){
     if (FAILED(hr)) {
         return 1;
     }
-    hr = g_pDevice1->CreateRenderTargetView(pBackBuffer, NULL, &pRenderTargetView);
+    D3D11_RENDER_TARGET_VIEW_DESC RenderTargetViewDesc;
+    ZeroMemory(&RenderTargetViewDesc, sizeof RenderTargetViewDesc);
+    RenderTargetViewDesc.Format = SwapChainDesc.BufferDesc.Format;
+    RenderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    RenderTargetViewDesc.Texture2D.MipSlice = 0;
+    hr = g_pDevice1->CreateRenderTargetView(pBackBuffer, &RenderTargetViewDesc, &pRenderTargetView);
     if (FAILED(hr)) {
         return 1;
     }
