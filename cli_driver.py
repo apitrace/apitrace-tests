@@ -51,7 +51,7 @@ class CliDriver(Driver):
                 fail("Command failed (returned non-zero):\n    " + " ".join(cmd))
 
     def do_expect(self, args):
-        expected = json.loads(args)
+        expected = eval(args)
         if (self.output != expected):
             differ = difflib.Differ()
             diff = differ.compare(expected.splitlines(1), self.output.splitlines(1))
@@ -101,6 +101,11 @@ class CliDriver(Driver):
 
             if " " in line:
                 (cmd, args) = line.split(None,1)
+                if args.startswith('r"""'):
+                    while not line.endswith('"""'):
+                        line = script.readline()
+                        line = line.rstrip()
+                        args += '\n' + line
             else:
                 cmd = line
                 args = ''

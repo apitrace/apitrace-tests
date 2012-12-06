@@ -4,4 +4,4 @@ tri-out
 glxsimple-ref
 glxsimple-out
 glxsimple-trim.trace
-
+glxsimple-trim-unused-textures.trace
