@@ -100,26 +100,25 @@ int main(int argc, char *argv[])
        dwBehaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
     }
 
+    D3DDISPLAYMODE Mode;
+    hr = g_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode);
+    if (FAILED(hr)) {
+        return 1;
+    }
+
     ZeroMemory(&g_PresentationParameters, sizeof g_PresentationParameters);
     g_PresentationParameters.Windowed = Windowed;
-    if (!Windowed) {
+    if (Windowed) {
         g_PresentationParameters.BackBufferWidth = WindowWidth;
         g_PresentationParameters.BackBufferHeight = WindowHeight;
+    } else {
+        g_PresentationParameters.BackBufferWidth = Mode.Width;
+        g_PresentationParameters.BackBufferHeight = Mode.Height;
     }
+    g_PresentationParameters.BackBufferFormat = Mode.Format;
     g_PresentationParameters.BackBufferCount = 1;
     g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    if (Windowed) {
-        // Must matche the format of the current display mode
-        D3DDISPLAYMODE Mode;
-        hr = g_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &Mode);
-        if (FAILED(hr)) {
-            g_pD3D->Release();
-            g_pD3D = NULL;
-            return 1;
-        }
-        g_PresentationParameters.BackBufferFormat = Mode.Format;
-    } else {
-        g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
+    if (!Windowed) {
         g_PresentationParameters.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     }
     g_PresentationParameters.hDeviceWindow = hWnd;
