@@ -317,9 +317,9 @@ class AppDriver(Driver):
         from PIL import Image
         state = self.getState(callNo)
         if self.doubleBuffer:
-            attachments = ['GL_BACK', 'GL_BACK_LEFT', 'GL_BACK_RIGHT', 'GL_COLOR_ATTACHMENT0']
+            attachments = ['GL_BACK', 'GL_BACK_LEFT', 'GL_BACK_RIGHT', 'GL_COLOR_ATTACHMENT0', 'RENDER_TARGET_0']
         else:
-            attachments = ['GL_FRONT', 'GL_FRONT_LEFT', 'GL_FRONT_RIGHT', 'GL_COLOR_ATTACHMENT0']
+            attachments = ['GL_FRONT', 'GL_FRONT_LEFT', 'GL_FRONT_RIGHT', 'GL_COLOR_ATTACHMENT0', 'RENDER_TARGET_0']
         imageObj = self.getFramebufferAttachment(state, attachments)
         data = imageObj['__data__']
         stream = StringIO(base64.b64decode(data))

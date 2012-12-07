@@ -97,8 +97,7 @@ ID3D11Device::CreateRasterizerState(this = <pDevice>, pRasterizerDesc = &{FillMo
 ID3D11DeviceContext::RSSetState(this = <pDeviceContext>, pRasterizerState = <pRasterizerState>)
 ID3D11DeviceContext::IASetPrimitiveTopology(this = <pDeviceContext>, Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP)
 ID3D11DeviceContext::Draw(this = <pDeviceContext>, VertexCount = 3, StartVertexLocation = 0)
-IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
-
+<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
 ID3D11DeviceContext::IASetVertexBuffers(this = <pDeviceContext>, StartSlot = 0, NumBuffers = 1, ppVertexBuffers = &NULL, pStrides = &0, pOffsets = &0)
 ID3D11Buffer::Release(this = <pVertexBuffer>) = 0
 ID3D11DeviceContext::OMSetRenderTargets(this = <pDeviceContext>, NumViews = 0, ppRenderTargetViews = NULL, pDepthStencilView = NULL)
