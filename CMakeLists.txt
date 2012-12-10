@@ -47,6 +47,19 @@ elseif (PKG_CONFIG_FOUND)
 	pkg_check_modules (GLESV2 glesv2)
 endif ()
 
+# Check for the presence of several python packages, which are needed to build
+# generated tests.
+execute_process(
+    COMMAND ${python} -c "import PIL"
+    OUTPUT_QUIET
+    ERROR_QUIET
+    RESULT_VARIABLE IMPORT_PIL_RESULT)
+if (IMPORT_PIL_RESULT EQUAL 0)
+    set (PIL_FOUND 1)
+else ()
+    message (STATUS "python PIL module not found")
+endif ()
+
 if (UNIX)
 	link_libraries(m)
 endif (UNIX)
@@ -101,7 +114,7 @@ add_subdirectory (traces)
 # dumping images, etc. At that point these cli tests should be usable
 # with all targets so that we can drop the "if (OPENGL_FOUND)"
 # condition here.
-if (OPENGL_FOUND)
+if (OPENGL_FOUND AND PIL_FOUND)
     add_subdirectory (cli)
     add_subdirectory (trim_stress)
 endif ()
