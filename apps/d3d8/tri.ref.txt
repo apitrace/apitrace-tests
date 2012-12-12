@@ -9,6 +9,6 @@ IDirect3DDevice8::SetRenderState(this = <pDevice>, State = D3DRS_CULLMODE, Value
 IDirect3DDevice8::SetVertexShader(this = <pDevice>, Handle = 66) = D3D_OK
 IDirect3DDevice8::DrawPrimitiveUP(this = <pDevice>, PrimitiveType = D3DPT_TRIANGLELIST, PrimitiveCount = 1, pVertexStreamZeroData = blob(48), VertexStreamZeroStride = 16) = D3D_OK
 IDirect3DDevice8::EndScene(this = <pDevice>) = D3D_OK
-IDirect3DDevice8::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = D3D_OK
+<present> IDirect3DDevice8::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = D3D_OK
 IDirect3DDevice8::Release(this = <pDevice>) = 0
 IDirect3D8::Release(this = <pD3D>) = 0

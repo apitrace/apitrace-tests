@@ -106,6 +106,7 @@ int main(int argc, char *argv[]){
     SwapChainDesc.BufferCount = 2;
     SwapChainDesc.OutputWindow = hWnd;
     SwapChainDesc.Windowed = true;
+    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     hr = D3D10CreateDeviceAndSwapChain1(NULL,
                                         D3D10_DRIVER_TYPE_HARDWARE,

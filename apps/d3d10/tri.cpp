@@ -130,6 +130,7 @@ main(int argc, char *argv[])
     SwapChainDesc.BufferCount = 2;
     SwapChainDesc.OutputWindow = hWnd;
     SwapChainDesc.Windowed = true;
+    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     hr = g_pFactory->CreateSwapChain(g_pDevice, &SwapChainDesc, &g_pSwapChain);
     if (FAILED(hr)) {

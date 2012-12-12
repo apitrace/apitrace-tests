@@ -108,7 +108,7 @@ main(int argc, char *argv[])
         g_PresentationParameters.BackBufferHeight = WindowHeight;
     }
     g_PresentationParameters.BackBufferCount = 1;
-    g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_FLIP;
+    g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
     if (!Windowed) {
         g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
     } else {

@@ -43,7 +43,9 @@ static ID3D11Device * g_pDevice = NULL;
 static ID3D11DeviceContext * g_pDeviceContext = NULL;
 
 
-int main(int argc, char *argv[]){
+int
+main(int argc, char *argv[])
+{
     HRESULT hr;
 
     HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -107,6 +109,7 @@ int main(int argc, char *argv[]){
     SwapChainDesc.BufferCount = 2;
     SwapChainDesc.OutputWindow = hWnd;
     SwapChainDesc.Windowed = true;
+    SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     static const D3D_FEATURE_LEVEL FeatureLevels[] = {
         D3D_FEATURE_LEVEL_11_0,
