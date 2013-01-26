@@ -112,17 +112,17 @@ class AppDriver(Driver):
         'd3d11_1': 'd3d11',
     }
 
-    api_retrace_map = {
-        'gl': 'glretrace',
-        'egl_gl': 'eglretrace',
-        'egl_gles1': 'eglretrace',
-        'egl_gles2': 'eglretrace',
-        'd3d8': 'd3dretrace',
-        'd3d9': 'd3dretrace',
-        'd3d10': 'd3dretrace',
-        'd3d10_1': 'd3dretrace',
-        'd3d11': 'd3dretrace',
-        'd3d11_1': 'd3dretrace',
+    api_replay_map = {
+        'gl': 'glreplay',
+        'egl_gl': 'eglreplay',
+        'egl_gles1': 'eglreplay',
+        'egl_gles2': 'eglreplay',
+        'd3d8': 'd3dreplay',
+        'd3d9': 'd3dreplay',
+        'd3d10': 'd3dreplay',
+        'd3d10_1': 'd3dreplay',
+        'd3d11': 'd3dreplay',
+        'd3d11_1': 'd3dreplay',
     }
 
     def traceApp(self):
@@ -221,7 +221,7 @@ class AppDriver(Driver):
         sys.stdout.flush()
         sys.stderr.write('\n')
 
-        if self.api not in self.api_retrace_map:
+        if self.api not in self.api_replay_map:
             return
 
         for callNo, refImageFileName in images:
@@ -299,16 +299,16 @@ class AppDriver(Driver):
         s = json.dumps(state, sort_keys=True, indent=2)
         open(filename, 'wt').write(s)
 
-    def retrace(self):
-        if self.api not in self.api_retrace_map:
+    def replay(self):
+        if self.api not in self.api_replay_map:
             return
 
         sys.stderr.write('Retracing %s...\n' % (self.trace_file,))
 
-        p = self._retrace()
+        p = self._replay()
         p.wait()
         if p.returncode != 0:
-            fail('retrace failed with code %i' % (p.returncode))
+            fail('replay failed with code %i' % (p.returncode))
 
         sys.stdout.flush()
         sys.stderr.write('\n')
@@ -345,11 +345,11 @@ class AppDriver(Driver):
         else:
             return state
 
-        p = self._retrace(['-D', str(callNo)])
+        p = self._replay(['-D', str(callNo)])
         state = json.load(p.stdout, strict=False)
         p.wait()
         if p.returncode != 0:
-            fail('retrace returned code %i' % (p.returncode))
+            fail('replay returned code %i' % (p.returncode))
 
         self.adjustSrcState(state)
 
@@ -398,10 +398,10 @@ class AppDriver(Driver):
         except KeyError:
             pass
 
-    def _retrace(self, args = None, stdout=subprocess.PIPE):
-        retrace = self.api_retrace_map[self.api]
-        #cmd = [get_build_program(retrace)]
-        cmd = [options.apitrace, 'retrace']
+    def _replay(self, args = None, stdout=subprocess.PIPE):
+        replay = self.api_replay_map[self.api]
+        #cmd = [get_build_program(replay)]
+        cmd = [options.apitrace, 'replay']
         if self.doubleBuffer:
             cmd += ['-db']
         else:
@@ -448,7 +448,7 @@ class AppDriver(Driver):
         self.runApp()
         self.traceApp()
         self.checkTrace()
-        self.retrace()
+        self.replay()
 
         pass_()
 

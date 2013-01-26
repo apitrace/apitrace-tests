@@ -20,7 +20,7 @@ The actual execution of the test (and parsing of the REF script) is
 performed by the python program in ../app_driver.py. This driver
 program runs the application with the given arguments, performs a
 trace of the application, checks the trace against the reference
-script, and then run a "retrace" of the application (replaying the
+script, and then run a "replay" of the application (replaying the
 commands in the trace).
 
 In addition to a dump of the expected trace content, the reference

@@ -109,7 +109,7 @@ add_subdirectory (traces)
 # portable across all platforms. However, these tests all rely on
 # doing image comparisons and the current implementation of the
 # "apitrace dump-images" command relies on direct invocation of the
-# glretrace command.
+# glreplay command.
 #
 # Someday, we should have more unified commands for replaying traces,
 # dumping images, etc. At that point these cli tests should be usable

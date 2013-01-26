@@ -5,4 +5,4 @@ demos suite), modified to be non-interactive.
 
 Rather than cover the full breadth of OpenGL functionality, the focus here is
 to cover entrypoints that require special hand-written code to be
-traced/retraced correctly.
+traced/replayed correctly.
