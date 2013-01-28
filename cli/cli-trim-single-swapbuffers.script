@@ -1,0 +1,15 @@
+# First, trim the trace to the final glxSwapBuffers call
+
+apitrace trim --auto --calls=27 tri.trace
+
+# Then dump the image and compare to our reference
+
+rm_and_mkdir ./tri-out
+apitrace dump-images --call-nos=no -o ./tri-out/tri tri-trim.trace
+apitrace diff-images -v ./tri-ref ./tri-out
+
+# In addition to getting the return value indicating no error, let's
+# also require that "apitrace diff-images" gave us the output we
+# expect.
+
+expect "Comparing ./tri-ref/tri0000000000.png and ./tri-out/tri0000000000.png ... MATCH\n"

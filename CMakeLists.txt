@@ -47,6 +47,19 @@ elseif (PKG_CONFIG_FOUND)
 	pkg_check_modules (GLESV2 glesv2)
 endif ()
 
+# Check for the presence of several python packages, which are needed to build
+# generated tests.
+execute_process(
+    COMMAND ${python} -c "import PIL"
+    OUTPUT_QUIET
+    ERROR_QUIET
+    RESULT_VARIABLE IMPORT_PIL_RESULT)
+if (IMPORT_PIL_RESULT EQUAL 0)
+    set (PIL_FOUND 1)
+else ()
+    message (STATUS "python PIL module not found")
+endif ()
+
 if (UNIX)
 	link_libraries(m)
 endif (UNIX)
@@ -90,3 +103,18 @@ enable_testing()
 add_subdirectory (apps)
 add_subdirectory (traces)
 
+# FIXME: The tests in the cli directory are intended to be high-level
+# tests of the apitrace command-line interface which would ideally be
+# portable across all platforms. However, these tests all rely on
+# doing image comparisons and the current implementation of the
+# "apitrace dump-images" command relies on direct invocation of the
+# glretrace command.
+#
+# Someday, we should have more unified commands for replaying traces,
+# dumping images, etc. At that point these cli tests should be usable
+# with all targets so that we can drop the "if (OPENGL_FOUND)"
+# condition here.
+if (OPENGL_FOUND AND PIL_FOUND)
+    add_subdirectory (cli)
+    add_subdirectory (trim_stress)
+endif ()

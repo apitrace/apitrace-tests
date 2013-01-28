@@ -1,0 +1,14 @@
+trim -o trim-head-by-frame.src.trace --auto --frames=0 glxsimple.trace
+dump --verbose trim-head-by-frame.src.trace
+0 glXChooseVisual(dpy = 0x236a280, screen = 0, attribList = {GLX_RGBA, GLX_RED_SIZE, GLX_RED_SIZE, GLX_GREEN_SIZE, GLX_RED_SIZE, GLX_BLUE_SIZE, GLX_RED_SIZE, GLX_ALPHA_SIZE, GLX_RED_SIZE, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, GLX_STENCIL_SIZE, GLX_RED_SIZE, GLX_X_VISUAL_TYPE, GLX_DIRECT_COLOR, 0}) = &{visual = 0x2374ef8, visualid = 34, screen = 0, depth = 24, c_class = 5, red_mask = 16711680, green_mask = 65280, blue_mask = 255, colormap_size = 256, bits_per_rgb = 8}
+1 glXCreateContext(dpy = 0x236a280, vis = &{visual = 0x2374ef8, visualid = 34, screen = 0, depth = 24, c_class = 5, red_mask = 16711680, green_mask = 65280, blue_mask = 255, colormap_size = 256, bits_per_rgb = 8}, shareList = NULL, direct = True) = 0x2384330
+2 glXMakeCurrent(dpy = 0x236a280, drawable = 41943041, ctx = 0x2384330) = True
+3 glViewport(x = 0, y = 0, width = 64, height = 64)
+4 glMatrixMode(mode = GL_PROJECTION)
+5 glLoadIdentity()
+6 glOrtho(left = 0, right = 64, bottom = 64, top = 0, zNear = 0, zFar = 1)
+7 glMatrixMode(mode = GL_MODELVIEW)
+8 glClearColor(red = 0, green = 0, blue = 1, alpha = 1)
+9 glClear(mask = GL_COLOR_BUFFER_BIT)
+10 glXSwapBuffers(dpy = 0x236a280, drawable = 41943041)
+
