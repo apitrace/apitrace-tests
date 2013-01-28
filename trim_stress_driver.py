@@ -24,7 +24,7 @@
 
 '''Stress test driver for apitrace trim.'''
 
-import os, errno, shutil, subprocess
+import os, errno, re, shutil, subprocess
 
 from base_driver import *
 
@@ -69,6 +69,9 @@ class TrimStressDriver(Driver):
             # Don't descend into any sub-directories (not that there
             # should be any)
             del dirs[:]
+            pattern = re.compile("[0-9]*\.png")
+            def f(x): return re.match(pattern, x)
+            files = filter(f, files)
             frames = len(files)
 
         for frame in range(frames):
