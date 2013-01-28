@@ -1,5 +1,7 @@
 file (GLOB traces RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.trace)
+file (GLOB local_traces RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} local/*.trace)
 
+list (APPEND traces ${local_traces})
 list (SORT traces)
 
 foreach (trace ${traces})

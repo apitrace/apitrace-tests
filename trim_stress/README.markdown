@@ -24,3 +24,9 @@ Given <program>.trace:
 
         4. Move the frame snapshot from ./<program>-tmp-out to
            ./<program>-out
+
+Note that you can also put traces in the sub-directory local and they
+will be tested as well. The difference is that those files will be
+ignored by git. This can be useful for traces that are too large to be
+considered for inclusion for git, or for traces that cannot be shared
+due to proprietary contents.
