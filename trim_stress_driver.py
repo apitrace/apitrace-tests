@@ -50,13 +50,18 @@ class TrimStressDriver(Driver):
         (name, extension) = file_name.rsplit('.', 1)
 
         ref_dir = name + '-ref/'
+        tmp_out_dir = name + '-tmp-out/'
         out_dir = name + '-out/'
         trim_file = name + '.trace.trim'
 
-        rm_and_mkdir(ref_dir)
         rm_and_mkdir(out_dir)
+        rm_and_mkdir(tmp_out_dir)
 
-        subprocess.check_call([self.options.apitrace, "dump-images", "--call-nos=no", "--output=" + ref_dir, trace_file]);
+        if (not os.path.exists(ref_dir)):
+            rm_and_mkdir(ref_dir)
+            subprocess.check_call([self.options.apitrace,
+                                   "dump-images", "--call-nos=no",
+                                   "--output=" + ref_dir, trace_file]);
 
         # Count the number of frame snapshots generated
         frames = 0
@@ -68,21 +73,43 @@ class TrimStressDriver(Driver):
 
         for frame in range(frames):
             try:
-                subprocess.check_call([self.options.apitrace, "trim", "--auto", "--frame=%d" % (frame), "--output=" + trim_file, trace_file])
+                subprocess.check_call([self.options.apitrace,
+                                       "trim", "--auto",
+                                       "--frame=%d/frame" % (frame),
+                                       "--output=" + trim_file, trace_file])
             except:
-                print "An error occurred while trimming frame %d from %s" % (frame, trace_file)
+                print "An error occurred while trimming " + \
+                    "frame %d from %s" % (frame, trace_file)
                 fail()
             try:
-                subprocess.check_call([self.options.apitrace, "dump-images", "--call-nos=no", "--output=" + out_dir + "frame", trim_file])
+                subprocess.check_call([self.options.apitrace,
+                                       "dump-images", "--call-nos=no",
+                                       "--output=" + tmp_out_dir + "frame",
+                                       trim_file])
             except:
-                print "An error occurred replaying %s to generate a frame snapshot" % (trim_file)
+                print "An error occurred replaying " + \
+                    "%s to generate a frame snapshot" % (trim_file)
                 fail()
-            os.rename("%s/frame0000000000.png" % (out_dir), "%s/%010d.png" % (out_dir, frame))
-
+            os.rename("%s/frame0000000000.png" % (tmp_out_dir),
+                      "%s/%010d.png" % (tmp_out_dir, frame))
+            try:
+                subprocess.check_call([self.options.apitrace,
+                                       "diff-images", "-v",
+                                       ref_dir, tmp_out_dir])
+            except:
+                print "Trimmed frame did not match " + \
+                    "reference images. See " + name + "-index.html"
+                fail()
+            finally:
+                os.rename("index.html", name + "-index.html")
+            os.rename("%s/%010d.png" % (tmp_out_dir, frame),
+                      "%s/%010d.png" % (out_dir, frame))
         try:
-            subprocess.check_call([self.options.apitrace, "diff-images", "-v", ref_dir, out_dir])
+            subprocess.check_call([self.options.apitrace,
+                                   "diff-images", "-v", ref_dir, out_dir])
         except:
-            print "Trimmed frames did not match reference images. See " + name + "-index.html"
+            print "Trimmed frame did not match " + \
+                "reference images. See " + name + "-index.html"
             fail()
         finally:
             os.rename("index.html", name + "-index.html")
