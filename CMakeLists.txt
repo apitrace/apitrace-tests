@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-
+INCLUDE (FindPythonInterp)
 
 # Use clang on MacOSX. gcc doesn't support __thread key, and Apple has
 # abandoned it for clang.  This must be done before the project is defined.
