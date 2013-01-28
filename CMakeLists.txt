@@ -21,6 +21,7 @@ if (NOT EXISTS ${APITRACE_EXECUTABLE})
     message (WARNING "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
 endif ()
 
+include (FindPythonInterp)
 include (FindPkgConfig)
 
 set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -50,7 +51,7 @@ endif ()
 # Check for the presence of several python packages, which are needed to build
 # generated tests.
 execute_process(
-    COMMAND ${python} -c "import PIL"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import PIL"
     OUTPUT_QUIET
     ERROR_QUIET
     RESULT_VARIABLE IMPORT_PIL_RESULT)
