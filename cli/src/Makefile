@@ -1,4 +1,4 @@
-PROGS=glxsimple
+PROGS=glxsimple few-side-effects
 
 all: $(PROGS)
 
