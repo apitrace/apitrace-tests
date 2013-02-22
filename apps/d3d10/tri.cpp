@@ -119,8 +119,6 @@ main(int argc, char *argv[])
 
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
-    SwapChainDesc.BufferDesc.Width = WindowWidth;
-    SwapChainDesc.BufferDesc.Height = WindowHeight;
     SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;;
     SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
     SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
