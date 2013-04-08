@@ -35,6 +35,7 @@ add_app_test (
 
 set (targets
     tri
+    tri_glsl
     gremedy
     varray
     map_buffer

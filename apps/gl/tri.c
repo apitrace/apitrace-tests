@@ -41,6 +41,7 @@
 static GLboolean doubleBuffer = GL_TRUE;
 static int win;
 
+
 static void parseArgs(int argc, char** argv)
 {
    int i;
@@ -58,32 +59,36 @@ static void parseArgs(int argc, char** argv)
    }
 }
 
-static void Init(void)
+
+static void
+Init(void)
 {
-   glClearColor(0.3, 0.1, 0.3, 1.0);
+   glClearColor(0.3f, 0.1f, 0.3f, 1.0f);
 }
 
-static void Reshape(int width, int height)
+
+static void
+Reshape(int width, int height)
 {
-
-   glViewport(0, 0, (GLint)width, (GLint)height);
-
+   glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
    glOrtho(-1.0, 1.0, -1.0, 1.0, -0.5, 1000.0);
    glMatrixMode(GL_MODELVIEW);
 }
 
-static void Draw(void)
+
+static void
+Draw(void)
 {
    glClear(GL_COLOR_BUFFER_BIT); 
 
    glBegin(GL_TRIANGLES);
-   glColor3f(.8,0,0); 
+   glColor3f(.8, 0, 0); 
    glVertex3f(-0.9, -0.9, -30.0);
-   glColor3f(0,.9,0); 
+   glColor3f(0, .9, 0); 
    glVertex3f( 0.9, -0.9, -30.0);
-   glColor3f(0,0,.7); 
+   glColor3f(0, 0, .7); 
    glVertex3f( 0.0,  0.9, -30.0);
    glEnd();
 
@@ -98,7 +103,9 @@ static void Draw(void)
    exit(0);
 }
 
-int main(int argc, char **argv)
+
+int
+main(int argc, char **argv)
 {
    GLenum type;
 
