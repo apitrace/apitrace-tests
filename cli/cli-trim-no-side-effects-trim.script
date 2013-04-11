@@ -4,7 +4,7 @@
 # Trim trace to frame 1, but dropping calls from first frame 0 with no
 # side effects.
 
-apitrace trim --deps --trim-spec=no-side-effects --frames=1 few-side-effects.trace
+apitrace trim --no-prune --deps --trim-spec=no-side-effects --frames=1 few-side-effects.trace
 
 # Verify that we actually trimmed what we wanted to (just calls with
 # no side effects)

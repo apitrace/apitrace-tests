@@ -1,4 +1,4 @@
-trim -o trim-range.src.trace --calls=3-5,7,4-6,2 tri.trace
+trim --exact -o trim-range.src.trace --calls=3-5,7,4-6,2 tri.trace
 dump --verbose trim-range.src.trace
 0 glXGetVisualFromFBConfig(dpy = 0xfc52b0, config = 0xfe3620) = &{visual = 0xfd00e8, visualid = 154, screen = 0, depth = 24, c_class = 4, red_mask = 16711680, green_mask = 65280, blue_mask = 255, colormap_size = 256, bits_per_rgb = 8}
 1 glXCreateNewContext(dpy = 0xfc52b0, config = 0xfe3620, renderType = GLX_RGBA_TYPE, shareList = NULL, direct = True) = 0xfdd650

@@ -1,4 +1,4 @@
-trim -o trim-identity.src.trace tri.trace
+trim --exact -o trim-identity.src.trace tri.trace
 dump --verbose trim-identity.src.trace
 0 glXQueryExtension(dpy = 0xfc52b0, errorb = NULL, event = NULL) = True
 1 glXChooseFBConfig(dpy = 0xfc52b0, screen = 0, attribList = {GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, GLX_ALPHA_SIZE, 1, GLX_DOUBLEBUFFER, 1, 0}, nitems = &12) = {0xfe3620, 0xfe3710, 0xfe53e0, 0xfe54d0, 0xfe38f0, 0xfe39e0, 0xfe3e90, 0xfe56b0, 0xfe57a0, 0xfe5c50, 0xfe3f80, 0xfe5d40}

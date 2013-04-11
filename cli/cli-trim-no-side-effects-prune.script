@@ -1,7 +1,7 @@
 # Verify that "trim --prune" drops calls with no side effects
 
 # Tell trim to trim to the entire trace, but pruning calls
-apitrace trim --prune few-side-effects.trace
+apitrace trim --no-deps --prune few-side-effects.trace
 
 # Verify that we actually trimmed what we wanted to (just calls with
 # no side effects)
