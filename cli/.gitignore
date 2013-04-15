@@ -1,5 +1,6 @@
 !*.trace
 tri-trim.trace
+tri-ref
 tri-out
 glxsimple-ref
 glxsimple-out

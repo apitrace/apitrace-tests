@@ -1,11 +1,17 @@
-# First, trim the trace to the final glxSwapBuffers call
+# First, generate a reference frame for comparing
+
+rm_and_mkdir ./tri-ref
+apitrace dump-images --call-nos=no -o ./tri-ref/tri tri.trace
+
+# Then, trim trace to final glxSwapBuffers call, and generate a new screenshot
 
 apitrace trim --auto --calls=27 tri.trace
 
-# Then dump the image and compare to our reference
-
 rm_and_mkdir ./tri-out
 apitrace dump-images --call-nos=no -o ./tri-out/tri tri-trim.trace
+
+# Finally, compare new image to reference image
+
 apitrace diff-images -v ./tri-ref ./tri-out
 
 # In addition to getting the return value indicating no error, let's
