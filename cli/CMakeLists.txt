@@ -14,7 +14,7 @@ function (ADD_CLI_TEST)
         add_test(
             NAME ${TEST_NAME}
             COMMAND
-            python ${CMAKE_SOURCE_DIR}/cli_driver.py
+            ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/cli_driver.py
                 --apitrace ${APITRACE_EXECUTABLE}
                 --apitrace-source ${APITRACE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}

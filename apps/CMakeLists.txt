@@ -14,7 +14,7 @@ function (ADD_APP_TEST)
         add_test(
             NAME app_${TEST_NAME}
             COMMAND
-            python ${CMAKE_SOURCE_DIR}/app_driver.py
+            ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/app_driver.py
                 --apitrace ${APITRACE_EXECUTABLE}
                 --apitrace-source ${APITRACE_SOURCE_DIR}
                 --api ${api}

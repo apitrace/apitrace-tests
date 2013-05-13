@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-INCLUDE (FindPythonInterp)
+
 
 # Use clang on MacOSX. gcc doesn't support __thread key, and Apple has
 # abandoned it for clang.  This must be done before the project is defined.
@@ -21,10 +21,12 @@ if (NOT EXISTS ${APITRACE_EXECUTABLE})
     message (WARNING "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
 endif ()
 
+set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+set (Python_ADDITIONAL_VERSIONS 2.7 2.6)
+
 include (FindPythonInterp)
 include (FindPkgConfig)
-
-set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # Set default built type
 if (NOT CMAKE_BUILD_TYPE)
