@@ -279,6 +279,12 @@ main(int argc, char *argv[])
     g_pDevice->Release();
     g_pDevice = NULL;
 
+    g_pAdapter->Release();
+    g_pAdapter = NULL;
+
+    g_pFactory->Release();
+    g_pFactory = NULL;
+
     DestroyWindow(hWnd);
 
     return 0;
