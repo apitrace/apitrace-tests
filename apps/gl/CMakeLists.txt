@@ -34,6 +34,7 @@ add_app_test (
 )
 
 set (targets
+    debug
     tri
     tri_glsl
     gremedy
@@ -77,4 +78,25 @@ add_app_test (
     TARGET ${api}_varray
     REF varray_interleaved.ref.txt
     ARGS interleaved drawarrays
+)
+
+add_app_test (
+    NAME "gl_debug_khr"
+    TARGET ${api}_debug
+    REF debug_khr.ref.txt
+    ARGS GL_KHR_debug
+)
+
+add_app_test (
+    NAME "gl_debug_arb"
+    TARGET ${api}_debug
+    REF debug_arb.ref.txt
+    ARGS GL_ARB_debug_output
+)
+
+add_app_test (
+    NAME "gl_debug_amd"
+    TARGET ${api}_debug
+    REF debug_amd.ref.txt
+    ARGS GL_AMD_debug_output
 )

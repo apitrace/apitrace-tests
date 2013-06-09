@@ -23,63 +23,15 @@
  */
 
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
-#ifdef __APPLE__
-#  include <OpenGL/glu.h>
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glu.h>
-#  include <GL/glut.h>
-#endif
+#include "common.h"
 
 
 static int win;
 
-
-/**
- * Identical to gluCheckExtension, which is not part of GLU on Windows.
- */
-static GLboolean
-checkExtension(const char *extName, const GLubyte *extString)
-{
-   const char *p = (const char *)extString;
-   const char *q = extName;
-   char c;
-   do {
-       c = *p++;
-       if (c == '\0' || c == ' ') {
-           if (q && *q == '\0') {
-               return GL_TRUE;
-           } else {
-               q = extName;
-           }
-       } else {
-           if (q && *q == c) {
-               ++q;
-           } else {
-               q = 0;
-           }
-       }
-   } while (c);
-   return GL_FALSE;
-}
-
-
-static void checkGlError(const char *call) {
-   GLenum error = glGetError();
-   if (error != GL_NO_ERROR) {
-      fprintf(stderr, "error: %s -> %s\n", call, gluErrorString(error));
-      exit(1);
-   }
-}
 
 static void Init(void)
 {
