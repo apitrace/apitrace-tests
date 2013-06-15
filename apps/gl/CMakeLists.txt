@@ -40,6 +40,7 @@ set (targets
     gremedy
     varray
     map_buffer
+    exception
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
