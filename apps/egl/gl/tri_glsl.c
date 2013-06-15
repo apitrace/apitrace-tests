@@ -33,8 +33,6 @@
 
 
 
-static GLfloat view_rotx = 0.0, view_roty = 0.0;
-
 static GLint u_matrix = -1;
 static GLint attr_pos = 0, attr_color = 1;
 
@@ -106,7 +104,7 @@ draw(void)
    GLfloat mat[16], rot[16], scale[16];
 
    /* Set modelview/projection matrix */
-   make_z_rot_matrix(view_rotx, rot);
+   make_z_rot_matrix(0.0, rot);
    make_scale_matrix(0.5, 0.5, 0.5, scale);
    mul_matrix(mat, rot, scale);
    glUniformMatrix4fv(u_matrix, 1, GL_FALSE, mat);
@@ -367,34 +365,6 @@ event_loop(Display *dpy, Window win,
          break;
       case ConfigureNotify:
          reshape(event.xconfigure.width, event.xconfigure.height);
-         break;
-      case KeyPress:
-         {
-            char buffer[10];
-            int r, code;
-            code = XLookupKeysym(&event.xkey, 0);
-            if (code == XK_Left) {
-               view_roty += 5.0;
-            }
-            else if (code == XK_Right) {
-               view_roty -= 5.0;
-            }
-            else if (code == XK_Up) {
-               view_rotx += 5.0;
-            }
-            else if (code == XK_Down) {
-               view_rotx -= 5.0;
-            }
-            else {
-               r = XLookupString(&event.xkey, buffer, sizeof(buffer),
-                                 NULL, NULL);
-               if (buffer[0] == 27) {
-                  /* escape */
-                  return;
-               }
-            }
-         }
-         redraw = 1;
          break;
       default:
          ; /*no-op*/
