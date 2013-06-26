@@ -1,6 +1,6 @@
-glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = 4, buf = "Init")
+glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = -1, buf = "Init")
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
-glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = -1, buf = "Reshape")
+glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = 7, buf = "Reshape")
 glViewport(x = 0, y = 0, width = 250, height = 250)
 glMatrixMode(mode = GL_PROJECTION)
 glLoadIdentity()
