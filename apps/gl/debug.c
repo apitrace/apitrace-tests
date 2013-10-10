@@ -74,44 +74,48 @@ parseArgs(int argc, char** argv)
 }
 
 
-typedef void (GLAPIENTRY * PFNDEBUGMESSAGEINSERT)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf);
+typedef void (GLAPIENTRY * PFNDEBUGMESSAGEINSERT)(GLsizei length, const GLchar *buf);
+typedef void (GLAPIENTRY * PFNPUSHDEBUGGROUP)(GLsizei length, const char *message);
+typedef void (GLAPIENTRY * PFNPOPDEBUGGROUP)(void);
 
-static void GLAPIENTRY
-dummyDebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
-{
-    /* No-op */
-}
-
-
-static PFNDEBUGMESSAGEINSERT debugMessageInsert = dummyDebugMessageInsert;
+static void GLAPIENTRY noopDebugMessageInsert(GLsizei length, const GLchar *buf) {}
+static void GLAPIENTRY noopPushDebugGroup(GLsizei length, const char *message) {}
+static void GLAPIENTRY noopPopDebugGroup(void) {}
 
 static void
-debugMessage(GLsizei length, const GLchar *buf)
-{
-   debugMessageInsert(GL_DEBUG_SOURCE_APPLICATION_ARB, GL_DEBUG_TYPE_OTHER_ARB, 0, GL_DEBUG_SEVERITY_MEDIUM_ARB, length, buf);
-}
-
-
-static void
-pushDebugGroup(GLsizei length, const char *message)
-{
-    if (debugExtension == KHR_DEBUG) {
+khrDebugMessageInsert(GLsizei length, const GLchar *buf) {
 #ifdef GL_KHR_debug
-        glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION_ARB, 0, length, message);
+   glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_OTHER, 0, GL_DEBUG_SEVERITY_MEDIUM, length, buf);
 #endif
-    }
 }
-
 
 static void
-popDebugGroup(void)
-{
-    if (debugExtension == KHR_DEBUG) {
-#ifdef GL_KHR_debug
-        glPopDebugGroup();
-#endif
-    }
+arbDebugMessageInsert(GLsizei length, const GLchar *buf) {
+   glDebugMessageInsertARB(GL_DEBUG_SOURCE_APPLICATION_ARB, GL_DEBUG_TYPE_OTHER_ARB, 0, GL_DEBUG_SEVERITY_MEDIUM_ARB, length, buf);
 }
+
+static void
+amdDebugMessageInsert(GLsizei length, const GLchar *buf) {
+   glDebugMessageInsertAMD(GL_DEBUG_CATEGORY_APPLICATION_AMD, GL_DEBUG_SEVERITY_MEDIUM_AMD, 0, length, buf);
+}
+
+static void
+khrPushDebugGroup(GLsizei length, const char *message) {
+#ifdef GL_KHR_debug
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION_ARB, 0, length, message);
+#endif
+}
+
+static void
+khrPopDebugGroup(void) {
+#ifdef GL_KHR_debug
+    glPopDebugGroup();
+#endif
+}
+
+static PFNDEBUGMESSAGEINSERT debugMessageInsert = noopDebugMessageInsert;
+static PFNPUSHDEBUGGROUP pushDebugGroup = noopPushDebugGroup;
+static PFNPOPDEBUGGROUP popDebugGroup = noopPopDebugGroup;
 
 
 static void
@@ -165,22 +169,23 @@ Init(void)
        switch (debugExtension) {
        case KHR_DEBUG:
 #ifdef GL_KHR_debug
-           debugMessageInsert = glDebugMessageInsert;
+           debugMessageInsert = khrDebugMessageInsert;
+           pushDebugGroup = khrPushDebugGroup;
+           popDebugGroup = khrPopDebugGroup;
 #endif
            break;
        case ARB_DEBUG_OUTPUT:
-           debugMessageInsert = glDebugMessageInsertARB;
+           debugMessageInsert = arbDebugMessageInsert;
            break;
        case AMD_DEBUG_OUTPUT:
-           debugMessageInsert = (PFNDEBUGMESSAGEINSERT)glDebugMessageInsertAMD;
+           debugMessageInsert = amdDebugMessageInsert;
            break;
        }
     } else {
-       fprintf(stderr, "error: %s not supported\n", debugExtensionString);
-       exit(1);
+       fprintf(stderr, "warning: %s not supported\n", debugExtensionString);
     }
 
-    debugMessage(-1, __FUNCTION__);
+    debugMessageInsert(-1, __FUNCTION__);
     pushDebugGroup(-1, __FUNCTION__);
 
     glClearColor(0.3, 0.1, 0.3, 1.0);
@@ -190,7 +195,7 @@ Init(void)
 
 static void Reshape(int width, int height)
 {
-    debugMessage(strlen("Reshape"), "Reshape" "-- this should not be included");
+    debugMessageInsert(strlen("Reshape"), "Reshape" "-- this should not be included");
     pushDebugGroup(strlen("Reshape"), "Reshape" "-- this should not be included");
 
     glViewport(0, 0, (GLint)width, (GLint)height);
@@ -205,7 +210,7 @@ static void Reshape(int width, int height)
 
 static void Draw(void)
 {
-    debugMessage(-1, __FUNCTION__);
+    debugMessageInsert(-1, __FUNCTION__);
     pushDebugGroup(-1, __FUNCTION__);
 
     pushDebugGroup(-1, "Clear");
