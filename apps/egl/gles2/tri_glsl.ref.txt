@@ -1,7 +1,8 @@
 eglBindAPI(api = EGL_OPENGL_ES_API) = EGL_TRUE
 glClearColor(red = 0.4, green = 0.4, blue = 0.4, alpha = 0)
 glCreateShader(type = GL_FRAGMENT_SHADER) = 1
-glShaderSource(shader = 1, count = 1, string = &"varying vec4 v_color;
+glShaderSource(shader = 1, count = 1, string = &"precision mediump float;
+varying vec4 v_color;
 void main() {
    gl_FragColor = v_color;
 }
