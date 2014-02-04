@@ -122,3 +122,10 @@ add_app_test (
     REF debug_amd.ref.txt
     ARGS GL_AMD_debug_output
 )
+
+add_app_test (
+    NAME "gl_debug_ext"
+    TARGET ${api}_debug
+    REF debug_ext.ref.txt
+    ARGS GL_EXT_debug_marker
+)

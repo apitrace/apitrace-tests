@@ -38,6 +38,7 @@ enum DebugExtension {
     KHR_DEBUG,
     ARB_DEBUG_OUTPUT,
     AMD_DEBUG_OUTPUT,
+    EXT_DEBUG_MARKER
 };
 
 static enum DebugExtension debugExtension = ARB_DEBUG_OUTPUT;
@@ -65,6 +66,8 @@ parseArgs(int argc, char** argv)
             debugExtension = ARB_DEBUG_OUTPUT;
         } else if (strcmp(arg, "GL_AMD_debug_output") == 0) {
             debugExtension = AMD_DEBUG_OUTPUT;
+        } else if (strcmp(arg, "GL_EXT_debug_marker") == 0) {
+            debugExtension = EXT_DEBUG_MARKER;
         } else {
             fprintf(stderr, "error: unknown extension %s\n", arg);
             exit(1);
@@ -100,6 +103,12 @@ amdDebugMessageInsert(GLsizei length, const GLchar *buf) {
 }
 
 static void
+extDebugMessageInsert(GLsizei length, const GLchar *buf) {
+   if (length < 0) length = 0;
+   glInsertEventMarkerEXT(length, buf);
+}
+
+static void
 khrPushDebugGroup(GLsizei length, const char *message) {
 #ifdef GL_KHR_debug
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION_ARB, 0, length, message);
@@ -111,6 +120,17 @@ khrPopDebugGroup(void) {
 #ifdef GL_KHR_debug
     glPopDebugGroup();
 #endif
+}
+
+static void
+extPushDebugGroup(GLsizei length, const char *message) {
+   if (length < 0) length = 0;
+   glPushGroupMarkerEXT(length, message);
+}
+
+static void
+extPopDebugGroup(void) {
+    glPopGroupMarkerEXT();
 }
 
 static PFNDEBUGMESSAGEINSERT debugMessageInsert = noopDebugMessageInsert;
@@ -179,6 +199,11 @@ Init(void)
            break;
        case AMD_DEBUG_OUTPUT:
            debugMessageInsert = amdDebugMessageInsert;
+           break;
+       case EXT_DEBUG_MARKER:
+           debugMessageInsert = extDebugMessageInsert;
+           pushDebugGroup = extPushDebugGroup;
+           popDebugGroup = extPopDebugGroup;
            break;
        }
     } else {
