@@ -101,6 +101,11 @@ if (MSVC)
 	add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
 endif ()
 
+if (APPLE)
+    # Silence deprecated function warnings
+    add_definitions (-Wno-deprecated-declarations)
+endif ()
+
 enable_testing()
 
 add_subdirectory (apps)
