@@ -162,7 +162,8 @@ testMapBufferRange(void)
     GLvoid *ptr;
 
     if (!GLEW_VERSION_1_5 ||
-        !GLEW_ARB_map_buffer_range) {
+        (!GLEW_VERSION_3_2 &&
+         !GLEW_ARB_map_buffer_range)) {
         fprintf(stderr, "error: GL_ARB_map_buffer_range not supported\n");
         exit(1);
     }
@@ -204,10 +205,17 @@ testMapBufferRange(void)
 
 int main(int argc, char** argv)
 {
+    unsigned int mode = GLUT_SINGLE | GLUT_RGB;
     parseArgs(argc, argv);
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+#ifdef __APPLE__
+    if (mapMethod == MAP_BUFFER_RANGE) {
+        mode |= GLUT_3_2_CORE_PROFILE;
+    }
+#endif
+    glutInitDisplayMode(mode);
     glutCreateWindow(argv[0]);
+    glewExperimental = GL_TRUE;
     glewInit();
     switch (mapMethod) {
     case MAP_BUFFER_ARB:
