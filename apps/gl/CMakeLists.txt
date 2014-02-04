@@ -82,6 +82,27 @@ add_app_test (
 )
 
 add_app_test (
+    NAME "gl_map_buffer_arb"
+    TARGET ${api}_map_buffer
+    REF map_buffer_arb.ref.txt
+    ARGS map_buffer_arb
+)
+
+add_app_test (
+    NAME "gl_map_buffer_1_5"
+    TARGET ${api}_map_buffer
+    REF map_buffer_1_5.ref.txt
+    ARGS map_buffer_1_5
+)
+
+add_app_test (
+    NAME "gl_map_buffer_range"
+    TARGET ${api}_map_buffer
+    REF map_buffer_range.ref.txt
+    ARGS map_buffer_range
+)
+
+add_app_test (
     NAME "gl_debug_khr"
     TARGET ${api}_debug
     REF debug_khr.ref.txt

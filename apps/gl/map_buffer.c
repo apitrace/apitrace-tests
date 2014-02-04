@@ -39,15 +39,125 @@
 #endif
 
 
+static const GLenum target = GL_ARRAY_BUFFER;
+
+enum MapMethod {
+   MAP_BUFFER_ARB,
+   MAP_BUFFER_1_5,
+   MAP_BUFFER_RANGE,
+};
+
+enum MapMethod mapMethod = MAP_BUFFER_ARB;
+
+
 static void
 parseArgs(int argc, char** argv)
 {
+   int i;
+
+   for (i = 1; i < argc; ++i) {
+      const char *arg = argv[i];
+      if (strcmp(arg, "map_buffer_arb") == 0) {
+         mapMethod = MAP_BUFFER_ARB;
+      } else if (strcmp(arg, "map_buffer_1_5") == 0) {
+         mapMethod = MAP_BUFFER_1_5;
+      } else if (strcmp(arg, "map_buffer_range") == 0) {
+         mapMethod = MAP_BUFFER_RANGE;
+      } else {
+         fprintf(stderr, "error: unexpected arg %s\n", arg);
+         exit(1);
+      }
+   }
 }
 
+
 static void
-init(void)
+testMapBufferARB(void)
 {
-    GLenum target = GL_ARRAY_BUFFER;
+    GLuint buffers[2];
+    GLvoid *ptr;
+
+    if (!GL_ARB_vertex_buffer_object) {
+        fprintf(stderr, "error: GL_ARB_vertex_buffer_object not supported\n");
+        exit(1);
+    }
+
+    glGenBuffersARB(2, buffers);
+
+    glBindBufferARB(target, buffers[0]);
+    glBufferDataARB(target, 1000, NULL, GL_STATIC_DRAW);
+
+    ptr = glMapBufferARB(target, GL_WRITE_ONLY_ARB);
+    memset(ptr, 1, 1000);
+    glUnmapBufferARB(target);
+
+    glBindBufferARB(target, buffers[1]);
+    glBufferDataARB(target, 2000, NULL, GL_STATIC_DRAW);
+    ptr = glMapBufferARB(target, GL_WRITE_ONLY_ARB);
+    memset(ptr, 2, 2000);
+
+    glBindBufferARB(target, buffers[0]);
+    ptr = glMapBufferARB(target, GL_WRITE_ONLY_ARB);
+    memset(ptr, 3, 1000);
+
+    glBindBufferARB(target, buffers[1]);
+    glUnmapBufferARB(target);
+
+    glBindBufferARB(target, buffers[0]);
+    glUnmapBufferARB(target);
+
+    glMapBufferARB(target, GL_READ_ONLY_ARB);
+    glUnmapBufferARB(target);
+
+    glDeleteBuffersARB(2, buffers);
+}
+
+
+static void
+testMapBuffer(void)
+{
+    GLuint buffers[2];
+    GLvoid *ptr;
+
+    if (!GLEW_VERSION_1_5) {
+        fprintf(stderr, "error: OpenGL version 1.5 not supported\n");
+        exit(1);
+    }
+
+    glGenBuffers(2, buffers);
+
+    glBindBuffer(target, buffers[0]);
+    glBufferData(target, 1000, NULL, GL_STATIC_DRAW);
+
+    ptr = glMapBuffer(target, GL_WRITE_ONLY);
+    memset(ptr, 1, 1000);
+    glUnmapBuffer(target);
+
+    glBindBuffer(target, buffers[1]);
+    glBufferData(target, 2000, NULL, GL_STATIC_DRAW);
+    ptr = glMapBuffer(target, GL_WRITE_ONLY);
+    memset(ptr, 2, 2000);
+
+    glBindBuffer(target, buffers[0]);
+    ptr = glMapBuffer(target, GL_WRITE_ONLY);
+    memset(ptr, 3, 1000);
+
+    glBindBuffer(target, buffers[1]);
+    glUnmapBuffer(target);
+
+    glBindBuffer(target, buffers[0]);
+    glUnmapBuffer(target);
+
+    glMapBuffer(target, GL_READ_ONLY);
+    glUnmapBuffer(target);
+
+    glDeleteBuffers(2, buffers);
+}
+
+
+static void
+testMapBufferRange(void)
+{
     GLuint buffers[2];
     GLvoid *ptr;
 
@@ -58,7 +168,7 @@ init(void)
     }
 
     glGenBuffers(2, buffers);
-    
+
     glBindBuffer(target, buffers[0]);
     glBufferData(target, 1000, NULL, GL_STATIC_DRAW);
 
@@ -84,12 +194,13 @@ init(void)
     glFlushMappedBufferRange(target, 10, 20);
     glFlushMappedBufferRange(target, 30, 40);
     glUnmapBuffer(target);
-    
+
     glMapBufferRange(target, 100, 200, GL_MAP_READ_BIT);
-	glUnmapBuffer(target);
+    glUnmapBuffer(target);
 
     glDeleteBuffers(2, buffers);
 }
+
 
 int main(int argc, char** argv)
 {
@@ -98,6 +209,16 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutCreateWindow(argv[0]);
     glewInit();
-    init();
+    switch (mapMethod) {
+    case MAP_BUFFER_ARB:
+        testMapBufferARB();
+        break;
+    case MAP_BUFFER_1_5:
+        testMapBuffer();
+        break;
+    case MAP_BUFFER_RANGE:
+        testMapBufferRange();
+        break;
+    }
     return 0;
 }
