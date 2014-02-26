@@ -1,3 +1,5 @@
+glViewport(x = 0, y = 0, width = 250, height = 250)
+glScissor(x = 0, y = 0, width = 250, height = 250)
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
 glViewport(x = 0, y = 0, width = 250, height = 250)
 glMatrixMode(mode = GL_PROJECTION)
