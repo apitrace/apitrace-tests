@@ -1,4 +1,9 @@
+eglGetDisplay(display_id = <display_id>) = <dpy>
+eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_API) = EGL_TRUE
+eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
+glViewport(x = 0, y = 0, width = 300, height = 300)
+glScissor(x = 0, y = 0, width = 300, height = 300)
 glClearColor(red = 0.4, green = 0.4, blue = 0.4, alpha = 0)
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glMatrixMode(mode = GL_PROJECTION)
@@ -34,3 +39,4 @@ glDrawArrays(mode = GL_TRIANGLES, first = 0, count = 3)
 glDisableClientState(array = GL_VERTEX_ARRAY)
 glDisableClientState(array = GL_COLOR_ARRAY)
 glPopMatrix()
+eglSwapBuffers(dpy = <dpy>, surface = <surface>) = EGL_TRUE
