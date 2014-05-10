@@ -280,8 +280,7 @@ class AppDriver(Driver):
 
     def getRefState(self, refStateFileName):
         stream = open(refStateFileName, 'rt')
-        from jsondiff import load
-        state = load(stream)
+        state = json.load(stream, strict=False)
         self.adjustRefState(state)
         return state
 

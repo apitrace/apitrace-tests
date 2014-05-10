@@ -86,10 +86,14 @@ parseArgs(int argc, char** argv)
 typedef void (GLAPIENTRY * PFNDEBUGMESSAGEINSERT)(GLsizei length, const GLchar *buf);
 typedef void (GLAPIENTRY * PFNPUSHDEBUGGROUP)(GLsizei length, const char *message);
 typedef void (GLAPIENTRY * PFNPOPDEBUGGROUP)(void);
+typedef void (GLAPIENTRY * PFNOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
+typedef void (GLAPIENTRY * PFNGETOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
 
 static void GLAPIENTRY noopDebugMessageInsert(GLsizei length, const GLchar *buf) {}
 static void GLAPIENTRY noopPushDebugGroup(GLsizei length, const char *message) {}
 static void GLAPIENTRY noopPopDebugGroup(void) {}
+static void GLAPIENTRY noopObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) {}
+static void GLAPIENTRY noopGetobjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label) {}
 
 static void GLAPIENTRY
 khrDebugMessageInsert(GLsizei length, const GLchar *buf) {
@@ -148,6 +152,8 @@ extPopDebugGroup(void) {
 static PFNDEBUGMESSAGEINSERT debugMessageInsert = noopDebugMessageInsert;
 static PFNPUSHDEBUGGROUP pushDebugGroup = noopPushDebugGroup;
 static PFNPOPDEBUGGROUP popDebugGroup = noopPopDebugGroup;
+static PFNOBJECTLABEL objectLabel = noopObjectLabel;
+static PFNGETOBJECTLABEL getObjectLabel = noopGetobjectLabel;
 
 
 static void
@@ -203,6 +209,8 @@ Init(void)
            debugMessageInsert = khrDebugMessageInsert;
            pushDebugGroup = khrPushDebugGroup;
            popDebugGroup = khrPopDebugGroup;
+           objectLabel = glObjectLabel;
+           getObjectLabel = glGetObjectLabel;
            break;
        case ARB_DEBUG_OUTPUT:
            debugMessageInsert = arbDebugMessageInsert;
@@ -226,6 +234,14 @@ Init(void)
     glClearColor(0.3, 0.1, 0.3, 1.0);
     
     popDebugGroup();
+
+    
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    objectLabel(GL_TEXTURE, texture, -1, "texture");
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 1, 1, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, NULL);
 }
 
 static void Reshape(int width, int height)
