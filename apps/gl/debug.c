@@ -236,12 +236,19 @@ Init(void)
     popDebugGroup();
 
     
+    // texture label
     GLuint texture = 0;
     glGenTextures(1, &texture);
     objectLabel(GL_TEXTURE, texture, -1, "texture");
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, 1, 1, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+    // framebuffer color attachment label
+    GLuint framebuffer = 0;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 static void Reshape(int width, int height)
