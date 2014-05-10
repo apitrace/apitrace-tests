@@ -245,10 +245,10 @@ class AppDriver(Driver):
         precision = comparer.precision(filter=True)
         sys.stdout.write('precision of %f bits against %s\n' % (precision, refImageFileName))
         if precision < self.threshold_precision:
-            prefix = '%s.%u' % (self.getNamePrefix(), callNo)
-            srcImageFileName = prefix + '.src.png'
+            prefix = self.getNamePrefix()
+            srcImageFileName = '%s.src.%u.png' % (prefix, callNo)
+            diffImageFileName = '%s.diff.%u.png' % (prefix, callNo)
             srcImage.save(srcImageFileName)
-            diffImageFileName = prefix + '.diff.png'
             comparer.write_diff(diffImageFileName)
             fail('snapshot from call %u does not match %s' % (callNo, refImageFileName))
 
@@ -265,9 +265,9 @@ class AppDriver(Driver):
         comparer = Comparer(ignore_added = True)
         match = comparer.visit(refState, srcState)
         if not match:
-            prefix = '%s.%u' % (self.getNamePrefix(), callNo)
-            srcStateFileName = prefix + '.src.json'
-            diffStateFileName = prefix + '.diff.json'
+            prefix = self.getNamePrefix()
+            srcStateFileName = '%s.src.%u.json' % (prefix, callNo)
+            diffStateFileName = '%s.diff.%u.json' % (prefix, callNo)
             self.saveState(srcState, srcStateFileName)
             #diffStateFile = open(diffStateFileName, 'wt')
             diffStateFile = sys.stdout

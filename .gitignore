@@ -1,7 +1,6 @@
 .*.sw?
 *.a
 *.diff.*
-*.diff.*
 *.o
 *.pyc
 *.so
