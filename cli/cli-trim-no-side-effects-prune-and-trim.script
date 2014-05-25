@@ -7,12 +7,12 @@
 # in frame 0 with no side effects, and use --prunt to drop calls in
 # frame 1 with no side effects.
 
-apitrace trim --prune --deps --trim-spec=no-side-effects --frames=1 few-side-effects.trace
+apitrace trim --prune --deps --trim-spec=no-side-effects --frames=1 --output=few-side-effects-trim-no-side-effects-prune-and-trim.trace few-side-effects.trace
 
 # Verify that we actually trimmed what we wanted to (just calls with
 # no side effects)
 
-apitrace diff --tool=python few-side-effects.trace few-side-effects-trim.trace
+apitrace diff --tool=python few-side-effects.trace few-side-effects-trim-no-side-effects-prune-and-trim.trace
 expect r"""  glXChooseVisual(31941248, 0, (GLX_RGBA, GLX_RED_SIZE, GLX_RED_SIZE, GLX_GREEN_SIZE, GLX_RED_SIZE, GLX_BLUE_SIZE, GLX_RED_SIZE, GLX_ALPHA_SIZE, GLX_RED_SIZE, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, GLX_STENCIL_SIZE, GLX_RED_SIZE, GLX_X_VISUAL_TYPE, GLX_DIRECT_COLOR, 0)) = ([31985400, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8])
   glXCreateContext(31941248, ([31985400, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8]), 0, True) = 32022336
   glXMakeCurrent(31941248, 60817409, 32022336) = True

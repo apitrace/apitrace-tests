@@ -3,16 +3,16 @@
 # We carefully generate images only for desired frames (dropping the
 # first frame that draws using shaders).
 
-rm_and_mkdir glxsimple-ref
-apitrace dump-images --calls=10,47,50,71,87,88 --call-nos=no -o ./glxsimple-ref/ glxsimple.trace
+rm_and_mkdir glxsimple-trim-unused-shaders-ref
+apitrace dump-images --calls=10,47,50,71,87,88 --call-nos=no -o ./glxsimple-trim-unused-shaders-ref/ glxsimple.trace
 
 # Trim to the same callset used to generate reference images
 
-apitrace trim --auto --calls=10,47,50,71,87,88 glxsimple.trace
+apitrace trim --auto --calls=10,47,50,71,87,88 --output=glxsimple-trim-unused-shaders.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to
 
-apitrace diff --tool=python glxsimple.trace glxsimple-trim.trace
+apitrace diff --tool=python glxsimple.trace glxsimple-trim-unused-shaders.trace
 expect r"""  glXChooseVisual(37134976, 0, (GLX_RGBA, GLX_RED_SIZE, GLX_RED_SIZE, GLX_GREEN_SIZE, GLX_RED_SIZE, GLX_BLUE_SIZE, GLX_RED_SIZE, GLX_ALPHA_SIZE, GLX_RED_SIZE, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, GLX_STENCIL_SIZE, GLX_RED_SIZE, GLX_X_VISUAL_TYPE, GLX_DIRECT_COLOR, 0)) = ([37179128, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8])
   glXCreateContext(37134976, ([37179128, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8]), 0, True) = 37241648
   glXMakeCurrent(37134976, 41943041, 37241648) = True
@@ -106,15 +106,15 @@ expect r"""  glXChooseVisual(37134976, 0, (GLX_RGBA, GLX_RED_SIZE, GLX_RED_SIZE,
 
 # Generate output images for all frames in the trimmed trace
 
-rm_and_mkdir glxsimple-out
-apitrace dump-images --call-nos=no -o ./glxsimple-out/ glxsimple-trim.trace
+rm_and_mkdir glxsimple-trim-unused-shaders
+apitrace dump-images --call-nos=no -o ./glxsimple-trim-unused-shaders-src/ glxsimple-trim-unused-shaders.trace
 
 # Compare output to reference images
 
-apitrace diff-images -v ./glxsimple-ref ./glxsimple-out
-expect r"""Comparing ./glxsimple-ref/0000000000.png and ./glxsimple-out/0000000000.png ... MATCH
-Comparing ./glxsimple-ref/0000000001.png and ./glxsimple-out/0000000001.png ... MATCH
-Comparing ./glxsimple-ref/0000000002.png and ./glxsimple-out/0000000002.png ... MATCH
-Comparing ./glxsimple-ref/0000000003.png and ./glxsimple-out/0000000003.png ... MATCH
-Comparing ./glxsimple-ref/0000000004.png and ./glxsimple-out/0000000004.png ... MATCH
+apitrace diff-images -v ./glxsimple-trim-unused-shaders-ref ./glxsimple-trim-unused-shaders-src
+expect r"""Comparing ./glxsimple-trim-unused-shaders-ref/0000000000.png and ./glxsimple-trim-unused-shaders-src/0000000000.png ... MATCH
+Comparing ./glxsimple-trim-unused-shaders-ref/0000000001.png and ./glxsimple-trim-unused-shaders-src/0000000001.png ... MATCH
+Comparing ./glxsimple-trim-unused-shaders-ref/0000000002.png and ./glxsimple-trim-unused-shaders-src/0000000002.png ... MATCH
+Comparing ./glxsimple-trim-unused-shaders-ref/0000000003.png and ./glxsimple-trim-unused-shaders-src/0000000003.png ... MATCH
+Comparing ./glxsimple-trim-unused-shaders-ref/0000000004.png and ./glxsimple-trim-unused-shaders-src/0000000004.png ... MATCH
 """

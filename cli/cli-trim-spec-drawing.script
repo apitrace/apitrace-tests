@@ -1,10 +1,10 @@
 # Trim trace to the final glxDestroyContext, eliminating almost everything
 
-apitrace trim --auto --trim-spec=drawing --calls=88 glxsimple.trace
+apitrace trim --auto --trim-spec=drawing --calls=88 --output=glxsimple-trim-spec-drawing.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to (just drawing calls)
 
-apitrace diff --tool=python glxsimple.trace glxsimple-trim.trace
+apitrace diff --tool=python glxsimple.trace glxsimple-trim-spec-drawing.trace
 expect r"""  glXChooseVisual(37134976, 0, (GLX_RGBA, GLX_RED_SIZE, GLX_RED_SIZE, GLX_GREEN_SIZE, GLX_RED_SIZE, GLX_BLUE_SIZE, GLX_RED_SIZE, GLX_ALPHA_SIZE, GLX_RED_SIZE, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 24, GLX_STENCIL_SIZE, GLX_RED_SIZE, GLX_X_VISUAL_TYPE, GLX_DIRECT_COLOR, 0)) = ([37179128, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8])
   glXCreateContext(37134976, ([37179128, 34, 0, 24, 5, 16711680, 65280, 255, 256, 8]), 0, True) = 37241648
   glXMakeCurrent(37134976, 41943041, 37241648) = True
