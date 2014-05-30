@@ -38,7 +38,7 @@ class CliDriver(Driver):
         cmd = [self.options.apitrace] + args.split()
  
         print " ".join(cmd)
-        proc = subprocess.Popen(cmd, stdout = subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, universal_newlines=True)
         self.output = proc.communicate()[0]
 
         proc.wait()
