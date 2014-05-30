@@ -79,7 +79,7 @@ testMapBufferARB(void)
 
     if (!GL_ARB_vertex_buffer_object) {
         fprintf(stderr, "error: GL_ARB_vertex_buffer_object not supported\n");
-        exit(1);
+        exit(EXIT_SKIP);
     }
 
     glGenBuffersARB(2, buffers);
@@ -121,7 +121,7 @@ testMapBuffer(void)
 
     if (!GLEW_VERSION_1_5) {
         fprintf(stderr, "error: OpenGL version 1.5 not supported\n");
-        exit(1);
+        exit(EXIT_SKIP);
     }
 
     glGenBuffers(2, buffers);
@@ -165,7 +165,7 @@ testMapBufferRange(void)
         (!GLEW_VERSION_3_2 &&
          !GLEW_ARB_map_buffer_range)) {
         fprintf(stderr, "error: GL_ARB_map_buffer_range not supported\n");
-        exit(1);
+        exit(EXIT_SKIP);
     }
 
     glGenBuffers(2, buffers);

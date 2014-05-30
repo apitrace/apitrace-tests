@@ -92,8 +92,10 @@ class AppDriver(Driver):
 
         p = popen(self.cmd, cwd=self.cwd)
         p.wait()
-        if p.returncode != 0:
+        if p.returncode == 125:
             skip('application returned code %i' % p.returncode)
+        if p.returncode != 0:
+            fail('application returned code %i' % p.returncode)
 
         sys.stdout.flush()
         sys.stderr.write('\n')

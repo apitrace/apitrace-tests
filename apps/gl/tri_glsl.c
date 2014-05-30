@@ -78,7 +78,7 @@ Init(void)
 
    if (!GLEW_VERSION_2_0) {
       printf("This program requires OpenGL 2.x\n");
-      exit(1);
+      exit(EXIT_SKIP);
    }
 
    fragShader = glCreateShader(GL_FRAGMENT_SHADER);

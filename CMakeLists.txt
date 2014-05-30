@@ -110,6 +110,8 @@ endif ()
 
 enable_testing()
 
+add_definitions (-DEXIT_SKIP=125)
+
 add_subdirectory (apps)
 add_subdirectory (traces)
 
