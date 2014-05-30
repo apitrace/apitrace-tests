@@ -98,24 +98,23 @@ class TrimStressDriver(Driver):
             try:
                 subprocess.check_call([self.options.apitrace,
                                        "diff-images", "-v",
+                                       "-o", name + "-index.html",
                                        ref_dir, tmp_out_dir])
             except:
                 print "Trimmed frame did not match " + \
                     "reference images. See " + name + "-index.html"
                 fail()
-            finally:
-                os.rename("index.html", name + "-index.html")
             os.rename("%s/%010d.png" % (tmp_out_dir, frame),
                       "%s/%010d.png" % (out_dir, frame))
         try:
             subprocess.check_call([self.options.apitrace,
-                                   "diff-images", "-v", ref_dir, out_dir])
+                                   "diff-images", "-v",
+                                   "-o", name + "-index.html",
+                                   ref_dir, out_dir])
         except:
             print "Trimmed frame did not match " + \
                 "reference images. See " + name + "-index.html"
             fail()
-        finally:
-            os.rename("index.html", name + "-index.html")
 
     def run(self):
         self.parseOptions()
