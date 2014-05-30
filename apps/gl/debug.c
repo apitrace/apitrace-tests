@@ -55,25 +55,13 @@ parseArgs(int argc, char** argv)
     for (i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (strcmp(arg, "GL_KHR_debug") == 0) {
-#ifndef GL_KHR_debug
-#  pragma message ("warning: GL_KHR_debug not supported by this version of GLEW")
-            fprintf(stderr, "error: GL_KHR_debug not supported by this version of GLEW\n");
-            exit(1);
-#else
             debugExtension = KHR_DEBUG;
-#endif
         } else if (strcmp(arg, "GL_ARB_debug_output") == 0) {
             debugExtension = ARB_DEBUG_OUTPUT;
         } else if (strcmp(arg, "GL_AMD_debug_output") == 0) {
             debugExtension = AMD_DEBUG_OUTPUT;
         } else if (strcmp(arg, "GL_EXT_debug_marker") == 0) {
-#ifndef GL_EXT_debug_marker
-#  pragma message ("warning: GL_EXT_debug_marker not supported by this version of GLEW")
-            fprintf(stderr, "error: GL_EXT_debug_marker not supported by this version of GLEW\n");
-            exit(1);
-#else
             debugExtension = EXT_DEBUG_MARKER;
-#endif
         } else {
             fprintf(stderr, "error: unknown extension %s\n", arg);
             exit(1);
@@ -97,9 +85,7 @@ static void GLAPIENTRY noopGetobjectLabel(GLenum identifier, GLuint name, GLsize
 
 static void GLAPIENTRY
 khrDebugMessageInsert(GLsizei length, const GLchar *buf) {
-#ifdef GL_KHR_debug
    glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_OTHER, 0, GL_DEBUG_SEVERITY_MEDIUM, length, buf);
-#endif
 }
 
 static void GLAPIENTRY
@@ -114,39 +100,29 @@ amdDebugMessageInsert(GLsizei length, const GLchar *buf) {
 
 static void GLAPIENTRY
 extDebugMessageInsert(GLsizei length, const GLchar *buf) {
-#ifdef GL_EXT_debug_marker
    if (length < 0) length = 0;
    glInsertEventMarkerEXT(length, buf);
-#endif
 }
 
 static void GLAPIENTRY
 khrPushDebugGroup(GLsizei length, const char *message) {
-#ifdef GL_KHR_debug
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION_ARB, 0, length, message);
-#endif
 }
 
 static void GLAPIENTRY
 khrPopDebugGroup(void) {
-#ifdef GL_KHR_debug
     glPopDebugGroup();
-#endif
 }
 
 static void GLAPIENTRY
 extPushDebugGroup(GLsizei length, const char *message) {
-#ifdef GL_EXT_debug_marker
    if (length < 0) length = 0;
    glPushGroupMarkerEXT(length, message);
-#endif
 }
 
 static void GLAPIENTRY
 extPopDebugGroup(void) {
-#ifdef GL_EXT_debug_marker
     glPopGroupMarkerEXT();
-#endif
 }
 
 static PFNDEBUGMESSAGEINSERT debugMessageInsert = noopDebugMessageInsert;
