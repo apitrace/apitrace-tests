@@ -454,7 +454,7 @@ class Parser:
 
 #######################################################################
 
-ID, NUMBER, HEXNUM, STRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB = xrange(15)
+ID, NUMBER, HEXNUM, STRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB, MISSING = xrange(16)
 
 
 class CallScanner(Scanner):
@@ -494,6 +494,7 @@ class CallScanner(Scanner):
         '=': EQUAL,
         '+': PLUS,
         '|': VERT,
+        '?': MISSING,
     }
 
     # literal table
@@ -647,6 +648,10 @@ class TraceParser(Parser):
         elif self.match(WILDCARD):
             token = self.consume()
             return self.handleWildcard(token.text[1:-1])
+        elif self.match(MISSING):
+            token = self.consume()
+            # XXX: No handler for missing yet
+            return self.handleString(token.text)
         else:
             self.error()
 

@@ -90,7 +90,10 @@ class AppDriver(Driver):
 
         sys.stderr.write('Run application...\n')
 
-        p = popen(self.cmd, cwd=self.cwd)
+        env = os.environ.copy()
+        env['DRY_RUN'] = 'yes'
+
+        p = popen(self.cmd, cwd=self.cwd, env=env)
         p.wait()
         if p.returncode == 125:
             skip('application returned code %i' % p.returncode)
@@ -165,7 +168,8 @@ class AppDriver(Driver):
         p = popen(cmd, env=env, cwd=self.cwd)
         p.wait()
         if p.returncode != 0:
-            fail('`apitrace trace` returned code %i' % p.returncode)
+            if self.getNamePrefix() != 'exception':
+                fail('`apitrace trace` returned code %i' % p.returncode)
 
         if not os.path.exists(self.trace_file):
             fail('no trace file generated\n')
