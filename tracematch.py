@@ -513,6 +513,9 @@ class CallLexer(Lexer):
             # quotes
             text = text.replace('\\"', '"')
 
+            # DOS lines (necessary when mmaping)
+            text = text.replace('\r\n', '\n')
+
         return type, text
 
 
