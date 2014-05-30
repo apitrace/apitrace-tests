@@ -260,9 +260,9 @@ class TraceMatcher:
                     srcCall = srcCalls.next()
                 except StopIteration:
                     if skippedSrcCalls:
-                        raise TraceMismatch('missing call `%s` (found `%s`)' % (refCall, skippedSrcCalls[0]))
+                        raise TraceMismatch('missing call\n  %s\nfound\n  %s)' % (refCall, skippedSrcCalls[0]))
                     else:
-                        raise TraceMismatch('missing call %s' % refCall)
+                        raise TraceMismatch('missing call\n  %s' % refCall)
                 if verbose:
                     print '\t%s %s%r = %r' % srcCall
                 if refCall.match(srcCall, mo):
