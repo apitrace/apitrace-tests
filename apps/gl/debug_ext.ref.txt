@@ -1,3 +1,4 @@
+//!debug GL_EXT_debug_marker
 glInsertEventMarkerEXT(length = 0, buf = "Init")
 glPushGroupMarkerEXT(length = 0, message = "Init")
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)

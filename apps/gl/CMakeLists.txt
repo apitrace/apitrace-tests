@@ -46,82 +46,31 @@ endif ()
 foreach (target ${targets})
     add_executable (${api}_${target} ${target}.c)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
-
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt)
-        add_app_test(
-            NAME ${api}_${target}
-            TARGET ${api}_${target}
-            REF ${target}.ref.txt
-        )
-    endif ()
 endforeach (target)
 
-add_app_test (
-    NAME "gl_varray_drawarrays"
-    TARGET ${api}_varray
-    REF varray_drawarrays.ref.txt
-    ARGS pointer drawarrays
-)
 
-add_app_test (
-    NAME "gl_varray_elements"
-    TARGET ${api}_varray
-    REF varray_drawelements.ref.txt
-    ARGS pointer drawelements
-)
+# Automatically discover tests from *.ref.txt files
+file (GLOB TEST_REFS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.ref.txt)
+list (SORT TEST_REFS)
+foreach (TEST_REF ${TEST_REFS})
+    if (APITRACE_EXECUTABLE AND APITRACE_SOURCE_DIR)
+        # Search for `//!test` header
+        file (READ ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF} TEST_REF_DATA 4096)
+        string (REGEX MATCH "^//!([_a-zA-Z0-9]+)([^\r\n]*)?" TEST_REF_HEAD "${TEST_REF_DATA}")
+        set (TEST_TARGET "${CMAKE_MATCH_1}")
+        set (TEST_ARGS ${CMAKE_MATCH_2})
 
-add_app_test (
-    NAME "gl_varray_interleaved"
-    TARGET ${api}_varray
-    REF varray_interleaved.ref.txt
-    ARGS interleaved drawarrays
-)
+        # Split the remaning arguments
+        string (REPLACE " " ";" TEST_ARGS_SPLIT "${TEST_ARGS}")
 
-add_app_test (
-    NAME "gl_map_buffer_arb"
-    TARGET ${api}_map_buffer
-    REF map_buffer_arb.ref.txt
-    ARGS map_buffer_arb
-)
-
-add_app_test (
-    NAME "gl_map_buffer_1_5"
-    TARGET ${api}_map_buffer
-    REF map_buffer_1_5.ref.txt
-    ARGS map_buffer_1_5
-)
-
-add_app_test (
-    NAME "gl_map_buffer_range"
-    TARGET ${api}_map_buffer
-    REF map_buffer_range.ref.txt
-    ARGS map_buffer_range
-)
-
-add_app_test (
-    NAME "gl_debug_khr"
-    TARGET ${api}_debug
-    REF debug_khr.ref.txt
-    ARGS GL_KHR_debug
-)
-
-add_app_test (
-    NAME "gl_debug_arb"
-    TARGET ${api}_debug
-    REF debug_arb.ref.txt
-    ARGS GL_ARB_debug_output
-)
-
-add_app_test (
-    NAME "gl_debug_amd"
-    TARGET ${api}_debug
-    REF debug_amd.ref.txt
-    ARGS GL_AMD_debug_output
-)
-
-add_app_test (
-    NAME "gl_debug_ext"
-    TARGET ${api}_debug
-    REF debug_ext.ref.txt
-    ARGS GL_EXT_debug_marker
-)
+        if (TEST_TARGET)
+            get_filename_component (TEST_NAME ${TEST_REF} NAME_WE)
+            add_app_test (
+                NAME ${api}_${TEST_NAME}
+                TARGET ${api}_${TEST_TARGET}
+                REF ${TEST_REF}
+                ARGS ${TEST_ARGS_SPLIT}
+            )
+        endif ()
+    endif ()
+endforeach ()

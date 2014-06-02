@@ -1,3 +1,4 @@
+//!map_buffer map_buffer_arb
 glGenBuffersARB(n = 2, buffer = {<buffer1>, <buffer2>})
 glBindBufferARB(target = GL_ARRAY_BUFFER, buffer = <buffer1>)
 glBufferDataARB(target = GL_ARRAY_BUFFER, size = 1000, data = NULL, usage = GL_STATIC_DRAW)

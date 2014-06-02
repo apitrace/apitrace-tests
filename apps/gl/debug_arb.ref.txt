@@ -1,3 +1,4 @@
+//!debug GL_ARB_debug_output
 glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = -1, buf = "Init")
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
 glDebugMessageInsertARB(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = 7, buf = "Reshape")

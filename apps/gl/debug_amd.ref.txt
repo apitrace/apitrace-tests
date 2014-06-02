@@ -1,3 +1,4 @@
+//!debug GL_AMD_debug_output
 glDebugMessageInsertAMD(category = GL_DEBUG_CATEGORY_APPLICATION_AMD, severity = GL_DEBUG_SEVERITY_MEDIUM, id = 0, length = -1, buf = "Init")
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
 glDebugMessageInsertAMD(category = GL_DEBUG_CATEGORY_APPLICATION_AMD, severity = GL_DEBUG_SEVERITY_MEDIUM, id = 0, length = 7, buf = "Reshape")
