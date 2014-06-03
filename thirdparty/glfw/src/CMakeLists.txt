@@ -47,24 +47,24 @@ if (APPLE)
     set_source_files_properties(${glfw_SOURCES} PROPERTIES LANGUAGE C)
 endif()
 
-add_library(glfw ${glfw_SOURCES} ${glfw_HEADERS})
-set_target_properties(glfw PROPERTIES OUTPUT_NAME "${GLFW_LIB_NAME}")
+add_library(glfw${GLFW_SUFFIX} ${glfw_SOURCES} ${glfw_HEADERS})
+set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES OUTPUT_NAME "${GLFW_LIB_NAME}")
 
 if (BUILD_SHARED_LIBS)
     # Include version information in the output
-    set_target_properties(glfw PROPERTIES VERSION ${GLFW_VERSION})
+    set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES VERSION ${GLFW_VERSION})
     if (UNIX)
-        set_target_properties(glfw PROPERTIES SOVERSION ${GLFW_VERSION_MAJOR})
+        set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES SOVERSION ${GLFW_VERSION_MAJOR})
     endif()
 
     if (WIN32)
         # The GLFW DLL needs a special compile-time macro and import library name
-        set_target_properties(glfw PROPERTIES PREFIX "" IMPORT_PREFIX "")
+        set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES PREFIX "" IMPORT_PREFIX "")
 
         if (MINGW)
-            set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.a")
+            set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES IMPORT_SUFFIX "dll.a")
         else()
-            set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.lib")
+            set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES IMPORT_SUFFIX "dll.lib")
         endif()
     elseif (APPLE)
         # Append -fno-common to the compile flags to work around a bug in
@@ -73,16 +73,16 @@ if (BUILD_SHARED_LIBS)
         if (NOT glfw_CFLAGS)
             set(glfw_CFLAGS "")
         endif()
-        set_target_properties(glfw PROPERTIES
+        set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES
                               COMPILE_FLAGS "${glfw_CFLAGS} -fno-common"
                               INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
     endif()
 
-    target_link_libraries(glfw ${glfw_LIBRARIES})
-    target_link_libraries(glfw LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(glfw${GLFW_SUFFIX} ${glfw_LIBRARIES})
+    target_link_libraries(glfw${GLFW_SUFFIX} LINK_INTERFACE_LIBRARIES)
 endif()
 
 if (GLFW_INSTALL)
-    install(TARGETS glfw EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS glfw${GLFW_SUFFIX} EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
 endif()
 

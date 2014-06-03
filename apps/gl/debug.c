@@ -31,7 +31,7 @@
 #include "common.h"
 
 
-static int win;
+static GLFWwindow* window = NULL;
 
 
 enum DebugExtension {
@@ -227,8 +227,11 @@ Init(void)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-static void Reshape(int width, int height)
+static void Reshape(void)
 {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+
     debugMessageInsert(strlen("Reshape"), "Reshape" "-- this should not be included");
     pushDebugGroup(strlen("Reshape"), "Reshape" "-- this should not be included");
 
@@ -266,9 +269,7 @@ static void Draw(void)
 
     glFlush();
 
-    glutDestroyWindow(win);
-    
-    exit(0);
+    glfwSwapBuffers(window);
 }
 
 
@@ -277,21 +278,21 @@ main(int argc, char **argv)
 {
     parseArgs(argc, argv);
 
-    glutInit(&argc, argv);
+    glfwInit();
 
-    glutInitWindowSize(250, 250);
-
-    glutInitDisplayMode(GLUT_RGB | GLUT_ALPHA | GLUT_SINGLE);
-
-    win = glutCreateWindow(*argv);
-    if (!win) {
+    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+    if (!window) {
         exit(1);
     }
 
-    Init();
+    glfwMakeContextCurrent(window);
 
-    glutReshapeFunc(Reshape);
-    glutDisplayFunc(Draw);
-    glutMainLoop();
+    Init();
+    Reshape();
+    Draw();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
     return 0;
 }

@@ -23,23 +23,15 @@
  */
 
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
 
 
 static GLboolean doubleBuffer = GL_TRUE;
-static int win;
+static GLFWwindow* window = NULL;
 
 
 static void parseArgs(int argc, char** argv)
@@ -68,8 +60,11 @@ Init(void)
 
 
 static void
-Reshape(int width, int height)
+Reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
@@ -95,12 +90,8 @@ Draw(void)
    glFlush();
 
    if (doubleBuffer) {
-      glutSwapBuffers();
+      glfwSwapBuffers(window);
    }
-
-   glutDestroyWindow(win);
-
-   exit(0);
 }
 
 
@@ -111,23 +102,26 @@ main(int argc, char **argv)
 
    parseArgs(argc, argv);
 
-   glutInit(&argc, argv);
+   glfwInit();
 
-   glutInitWindowSize(250, 250);
+   if (!doubleBuffer) {
+       // FIXME: Single buffering not supported.
+       exit(EXIT_SKIP);
+   }
 
-   type = GLUT_RGB | GLUT_ALPHA;
-   type |= (doubleBuffer) ? GLUT_DOUBLE : GLUT_SINGLE;
-   glutInitDisplayMode(type);
-
-   win = glutCreateWindow(*argv);
-   if (!win) {
+   window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+   if (!window) {
       exit(1);
    }
 
-   Init();
+   glfwMakeContextCurrent(window);
 
-   glutReshapeFunc(Reshape);
-   glutDisplayFunc(Draw);
-   glutMainLoop();
+   Init();
+   Reshape();
+   Draw();
+
+   glfwDestroyWindow(window);
+   glfwTerminate();
+
    return 0;
 }

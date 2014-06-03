@@ -1,6 +1,5 @@
 eglGetDisplay(display_id = <display_id>) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
-eglChooseConfig(dpy = <dpy>, attrib_list = {EGL_RED_SIZE, 1, EGL_GREEN_SIZE, 1, EGL_BLUE_SIZE, 1, EGL_DEPTH_SIZE, 1, EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT, EGL_NONE}, configs = {<config>}, config_size = 1, num_config = &1) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_ES_API) = EGL_TRUE
 eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = &EGL_NONE) = <ctx>
 eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = {}) = <surface>
@@ -15,25 +14,7 @@ glFrustumf(left = -1, right = 1, bottom = -1, top = 1, zNear = 5, zFar = 60)
 glMatrixMode(mode = GL_MODELVIEW)
 glLoadIdentity()
 glTranslatef(x = 0, y = 0, z = -10)
-glViewport(x = 0, y = 0, width = 300, height = 300)
-glMatrixMode(mode = GL_PROJECTION)
-glLoadIdentity()
-glFrustumf(left = -1, right = 1, bottom = -1, top = 1, zNear = 5, zFar = 60)
-glMatrixMode(mode = GL_MODELVIEW)
-glLoadIdentity()
-glTranslatef(x = 0, y = 0, z = -10)
-glViewport(x = 0, y = 0, width = 300, height = 300)
-glMatrixMode(mode = GL_PROJECTION)
-glLoadIdentity()
-glFrustumf(left = -1, right = 1, bottom = -1, top = 1, zNear = 5, zFar = 60)
-glMatrixMode(mode = GL_MODELVIEW)
-glLoadIdentity()
-glTranslatef(x = 0, y = 0, z = -10)
 glClear(mask = GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-glPushMatrix()
-glRotatef(angle = 0, x = 1, y = 0, z = 0)
-glRotatef(angle = 0, x = 0, y = 1, z = 0)
-glRotatef(angle = 0, x = 0, y = 0, z = 1)
 glEnableClientState(array = GL_VERTEX_ARRAY)
 glEnableClientState(array = GL_COLOR_ARRAY)
 glColorPointer(size = 4, type = GL_FLOAT, stride = 0, pointer = blob(48))
@@ -45,5 +26,8 @@ glVertexPointer(size = 2, type = GL_FLOAT, stride = 0, pointer = blob(24))
 glDrawArrays(mode = GL_POINTS, first = 0, count = 3)
 glDisableClientState(array = GL_VERTEX_ARRAY)
 glDisableClientState(array = GL_COLOR_ARRAY)
-glPopMatrix()
 eglSwapBuffers(dpy = <dpy>, surface = <surface>) = EGL_TRUE
+eglMakeCurrent(dpy = <dpy>, draw = NULL, read = NULL, ctx = NULL) = EGL_TRUE
+eglDestroySurface(dpy = <dpy>, surface = <surface>) = EGL_TRUE
+eglDestroyContext(dpy = <dpy>, ctx = <ctx>) = EGL_TRUE
+eglTerminate(dpy = <dpy>) = EGL_TRUE

@@ -1,7 +1,8 @@
 eglGetDisplay(display_id = <display_id>) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_API) = EGL_TRUE
-eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
+eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = {EGL_CONTEXT_MAJOR_VERSION, 2, EGL_CONTEXT_MINOR_VERSION, 0, EGL_NONE}) = <ctx>
+eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = {}) = <surface>eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glScissor(x = 0, y = 0, width = 300, height = 300)
 glClearColor(red = 0.4, green = 0.4, blue = 0.4, alpha = 0)
@@ -37,8 +38,6 @@ glGetAttribLocation(program = 3, name = "pos") = 0
 glGetAttribLocation(program = 3, name = "color") = 1
 glGetUniformLocation(program = 3, name = "modelviewProjection") = 0
 glViewport(x = 0, y = 0, width = 300, height = 300)
-glViewport(x = 0, y = 0, width = 300, height = 300)
-glViewport(x = 0, y = 0, width = 300, height = 300)
 glUniformMatrix4fv(location = 0, count = 1, transpose = GL_FALSE, value = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1})
 glClear(mask = GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
 glEnableVertexAttribArray(index = 0)
@@ -49,3 +48,7 @@ glDrawArrays(mode = GL_TRIANGLES, first = 0, count = 3)
 glDisableVertexAttribArray(index = 0)
 glDisableVertexAttribArray(index = 1)
 eglSwapBuffers(dpy = <dpy>, surface = <surface>) = EGL_TRUE
+eglMakeCurrent(dpy = <dpy>, draw = NULL, read = NULL, ctx = NULL) = EGL_TRUE
+eglDestroySurface(dpy = <dpy>, surface = <surface>) = EGL_TRUE
+eglDestroyContext(dpy = <dpy>, ctx = <ctx>) = EGL_TRUE
+eglTerminate(dpy = <dpy>) = EGL_TRUE

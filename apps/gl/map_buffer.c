@@ -32,11 +32,10 @@
 #include <stdlib.h>
 
 #include <GL/glew.h>
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+
+
+static GLFWwindow* window = NULL;
 
 
 static const GLenum target = GL_ARRAY_BUFFER;
@@ -205,16 +204,25 @@ testMapBufferRange(void)
 
 int main(int argc, char** argv)
 {
-    unsigned int mode = GLUT_SINGLE | GLUT_RGB;
     parseArgs(argc, argv);
-    glutInit(&argc, argv);
+
+    glfwInit();
+
 #ifdef __APPLE__
     if (mapMethod == MAP_BUFFER_RANGE) {
-        mode |= GLUT_3_2_CORE_PROFILE;
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     }
 #endif
-    glutInitDisplayMode(mode);
-    glutCreateWindow(argv[0]);
+
+    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+    if (!window) {
+       exit(1);
+    }
+
+    glfwMakeContextCurrent(window);
+
     glewExperimental = GL_TRUE;
     glewInit();
     switch (mapMethod) {
@@ -228,5 +236,9 @@ int main(int argc, char** argv)
         testMapBufferRange();
         break;
     }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
     return 0;
 }

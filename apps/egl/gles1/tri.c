@@ -27,30 +27,16 @@
 
 #define USE_FIXED_POINT 0
 
-
-#include <assert.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <GLES/gl.h>  /* use OpenGL ES 1.x */
-#include <GLES/glext.h>
-#include <EGL/egl.h>
 
-#include "eglut.h"
+#include <GLFW/glfw3.h>
 
 
 #define FLOAT_TO_FIXED(X)   ((X) * 65535.0)
 
 
-
-static GLfloat view_rotx = 0.0, view_roty = 0.0, view_rotz = 0.0;
-
-
-static void
-idle(void)
-{
-   exit(0);
-}
+static GLFWwindow* window;
 
 
 static void
@@ -82,11 +68,6 @@ draw(void)
 
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   glPushMatrix();
-   glRotatef(view_rotx, 1, 0, 0);
-   glRotatef(view_roty, 0, 1, 0);
-   glRotatef(view_rotz, 0, 0, 1);
-
    {
 #if USE_FIXED_POINT
       glVertexPointer(2, GL_FIXED, 0, verts);
@@ -109,34 +90,24 @@ draw(void)
       glDisableClientState(GL_COLOR_ARRAY);
    }
 
-   if (0) {
-      /* test code */
-      GLfixed size;
-      glGetFixedv(GL_POINT_SIZE, &size);
-      printf("GL_POINT_SIZE = 0x%x %f\n", size, size / 65536.0);
-   }
-
-   glPopMatrix();
-
-   eglutIdleFunc(idle);
+   glfwSwapBuffers(window);
 }
 
 
 /* new window size or exposure */
 static void
-reshape(int width, int height)
+reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    GLfloat ar = (GLfloat) width / (GLfloat) height;
 
    glViewport(0, 0, (GLint) width, (GLint) height);
 
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-#ifdef GL_VERSION_ES_CM_1_0
    glFrustumf(-ar, ar, -1, 1, 5.0, 60.0);
-#else
-   glFrustum(-ar, ar, -1, 1, 5.0, 60.0);
-#endif
    
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
@@ -145,77 +116,31 @@ reshape(int width, int height)
 
 
 static void
-test_query_matrix(void)
-{
-   PFNGLQUERYMATRIXXOESPROC procQueryMatrixx;
-   typedef void (*voidproc)();
-   GLfixed mantissa[16];
-   GLint exponent[16];
-   GLbitfield rv;
-   int i;
-
-   procQueryMatrixx = (PFNGLQUERYMATRIXXOESPROC) eglGetProcAddress("glQueryMatrixxOES");
-   assert(procQueryMatrixx);
-   /* Actually try out this one */
-   rv = (*procQueryMatrixx)(mantissa, exponent);
-   for (i = 0; i < 16; i++) {
-      if (rv & (1<<i)) {
-        printf("matrix[%d] invalid\n", i);
-      }
-      else {
-         printf("matrix[%d] = %f * 2^(%d)\n", i, mantissa[i]/65536.0, exponent[i]);
-      }
-   }
-   assert(!eglGetProcAddress("glFoo"));
-}
-
-
-static void
 init(void)
 {
    glClearColor(0.4, 0.4, 0.4, 0.0);
-
-   if (0)
-      test_query_matrix();
 }
 
-static void
-special_key(int special)
-{
-   switch (special) {
-   case EGLUT_KEY_LEFT:
-      view_roty += 5.0;
-      break;
-   case EGLUT_KEY_RIGHT:
-      view_roty -= 5.0;
-      break;
-   case EGLUT_KEY_UP:
-      view_rotx += 5.0;
-      break;
-   case EGLUT_KEY_DOWN:
-      view_rotx -= 5.0;
-      break;
-   default:
-      break;
-   }
-}
 
 int
 main(int argc, char *argv[])
 {
-   eglutInitWindowSize(300, 300);
-   eglutInitAPIMask(EGLUT_OPENGL_ES1_BIT);
-   eglutInit(argc, argv);
+   glfwInit();
 
-   eglutCreateWindow("tri");
+   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-   eglutReshapeFunc(reshape);
-   eglutDisplayFunc(draw);
-   eglutSpecialFunc(special_key);
+   window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
+
+   glfwMakeContextCurrent(window);
 
    init();
+   reshape();
+   draw();
 
-   eglutMainLoop();
+   glfwDestroyWindow(window);
+   glfwTerminate();
 
    return 0;
 }

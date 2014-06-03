@@ -28,13 +28,7 @@
 #endif
 
 #include <GL/glew.h>
-#ifdef __APPLE__
-#  include <OpenGL/glu.h>
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glu.h>
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
 
 
 /**

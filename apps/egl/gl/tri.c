@@ -28,20 +28,14 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
-#include <GL/gl.h>
 
-#include "eglut.h"
+#include <GLFW/glfw3.h>
 
 
-static GLfloat view_rotx = 0.0, view_roty = 0.0, view_rotz = 0.0;
 
 
-static void
-idle(void)
-{
-   exit(0);
-}
+static GLFWwindow* window;
+
 
 static void
 draw(void)
@@ -59,11 +53,6 @@ draw(void)
 
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   glPushMatrix();
-   glRotatef(view_rotx, 1, 0, 0);
-   glRotatef(view_roty, 0, 1, 0);
-   glRotatef(view_rotz, 0, 0, 1);
-
    {
       glVertexPointer(2, GL_FLOAT, 0, verts);
       glColorPointer(3, GL_FLOAT, 0, colors);
@@ -76,16 +65,17 @@ draw(void)
       glDisableClientState(GL_COLOR_ARRAY);
    }
 
-   glPopMatrix();
-
-   eglutIdleFunc(idle);
+   glfwSwapBuffers(window);
 }
 
 
 /* new window size or exposure */
 static void
-reshape(int width, int height)
+reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    GLfloat ar = (GLfloat) width / (GLfloat) height;
 
    glViewport(0, 0, (GLint) width, (GLint) height);
@@ -107,43 +97,25 @@ init(void)
 }
 
 
-static void
-special_key(int special)
-{
-   switch (special) {
-   case EGLUT_KEY_LEFT:
-      view_roty += 5.0;
-      break;
-   case EGLUT_KEY_RIGHT:
-      view_roty -= 5.0;
-      break;
-   case EGLUT_KEY_UP:
-      view_rotx += 5.0;
-      break;
-   case EGLUT_KEY_DOWN:
-      view_rotx -= 5.0;
-      break;
-   default:
-      break;
-   }
-}
-
 int
 main(int argc, char *argv[])
 {
-   eglutInitWindowSize(300, 300);
-   eglutInitAPIMask(EGLUT_OPENGL_BIT);
-   eglutInit(argc, argv);
+   glfwInit();
 
-   eglutCreateWindow("egltri");
+   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
-   eglutReshapeFunc(reshape);
-   eglutDisplayFunc(draw);
-   eglutSpecialFunc(special_key);
+   window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
+
+   glfwMakeContextCurrent(window);
 
    init();
+   reshape();
+   draw();
 
-   eglutMainLoop();
+   glfwDestroyWindow(window);
+   glfwTerminate();
 
    return 0;
 }

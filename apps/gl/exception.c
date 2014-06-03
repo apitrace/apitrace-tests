@@ -35,13 +35,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#  include <OpenGL/gl.h>
-#  include <GLUT/glut.h>
-#else
-#  include <GL/gl.h>
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+
+
+static GLFWwindow* window = NULL;
 
 
 static void
@@ -56,9 +53,17 @@ init(void)
 
 int main(int argc, char** argv)
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutCreateWindow(argv[0]);
+    glfwInit();
+
+    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+
+    glfwMakeContextCurrent(window);
+
     init();
+
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
     return 0;
 }

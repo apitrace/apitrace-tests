@@ -30,7 +30,7 @@
 #include "common.h"
 
 
-static int win;
+static GLFWwindow* window = NULL;
 
 
 static void Init(void)
@@ -103,8 +103,11 @@ static void Init(void)
    glClearColor(0.3, 0.1, 0.3, 1.0);
 }
 
-static void Reshape(int width, int height)
+static void Reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    if (GLEW_GREMEDY_string_marker) {
       glStringMarkerGREMEDY(0, __FUNCTION__);
    }
@@ -140,28 +143,26 @@ static void Draw(void)
       glFrameTerminatorGREMEDY();
    }
 
-   glutDestroyWindow(win);
-   
-   exit(0);
+   glfwSwapBuffers(window);
 }
 
 int main(int argc, char **argv)
 {
-   glutInit(&argc, argv);
+   glfwInit();
 
-   glutInitWindowSize(250, 250);
-
-   glutInitDisplayMode(GLUT_RGB | GLUT_ALPHA | GLUT_SINGLE);
-
-   win = glutCreateWindow(*argv);
-   if (!win) {
-      exit(1);
+   window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+   if (!window) {
+       exit(1);
    }
 
-   Init();
+   glfwMakeContextCurrent(window);
 
-   glutReshapeFunc(Reshape);
-   glutDisplayFunc(Draw);
-   glutMainLoop();
+   Init();
+   Reshape();
+   Draw();
+
+   glfwDestroyWindow(window);
+   glfwTerminate();
+
    return 0;
 }

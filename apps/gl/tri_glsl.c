@@ -14,17 +14,14 @@
 #include <math.h>
 
 #include <GL/glew.h>
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
 
+
+static GLFWwindow* window;
 
 static GLuint fragShader;
 static GLuint vertShader;
 static GLuint program;
-static GLint win = 0;
 static GLfloat xpos = 0, ypos = 0;
 
 
@@ -101,8 +98,11 @@ Init(void)
 
 
 static void
-Reshape(int width, int height)
+Reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
@@ -127,28 +127,34 @@ Draw(void)
 
    glFlush();
 
-   glutSwapBuffers();
-
-   glDeleteShader(fragShader);
-   glDeleteShader(vertShader);
-   glDeleteProgram(program);
-   glutDestroyWindow(win);
-
-   exit(0);
+   glfwSwapBuffers(window);
 }
 
 
 int
 main(int argc, char **argv)
 {
-   glutInit(&argc, argv);
-   glutInitWindowSize(250, 250);
-   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-   win = glutCreateWindow(argv[0]);
+   glfwInit();
+
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+   window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+
+   glfwMakeContextCurrent(window);
+
    glewInit();
-   glutReshapeFunc(Reshape);
-   glutDisplayFunc(Draw);
+
    Init();
-   glutMainLoop();
+   Reshape();
+   Draw();
+
+   glDeleteShader(fragShader);
+   glDeleteShader(vertShader);
+   glDeleteProgram(program);
+
+   glfwDestroyWindow(window);
+   glfwTerminate();
+
    return 0;
 }

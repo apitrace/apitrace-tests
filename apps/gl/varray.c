@@ -48,11 +48,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+
+
+static GLFWwindow* window = NULL;
+
 
 enum SetupMethod {
    POINTER,
@@ -68,7 +68,6 @@ enum DerefMethod {
 static enum SetupMethod setupMethod = POINTER;
 static enum DerefMethod derefMethod = DRAWELEMENTS;
 
-static int win;
 
 static void parseArgs(int argc, char** argv)
 {
@@ -160,13 +159,14 @@ static void display(void)
    }
    glFlush();
 
-   glutDestroyWindow(win);
-
-   exit(0);
+   glfwSwapBuffers(window);
 }
 
-static void reshape(int w, int h)
+static void reshape(void)
 {
+   int w, h;
+   glfwGetFramebufferSize(window, &w, &h);
+
    glViewport(0, 0, (GLsizei) w, (GLsizei) h);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
@@ -176,13 +176,22 @@ static void reshape(int w, int h)
 int main(int argc, char** argv)
 {
    parseArgs(argc, argv);
-   glutInit(&argc, argv);
-   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-   glutInitWindowSize(350, 350);
-   win = glutCreateWindow(argv[0]);
+
+   glfwInit();
+
+   window = glfwCreateWindow(350, 350, argv[0], NULL, NULL);
+   if (!window) {
+      exit(1);
+   }
+
+   glfwMakeContextCurrent(window);
+
    init();
-   glutDisplayFunc(display);
-   glutReshapeFunc(reshape);
-   glutMainLoop();
+   reshape();
+   display();
+
+   glfwDestroyWindow(window);
+   glfwTerminate();
+
    return 0;
 }

@@ -24,11 +24,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <GLES/gl.h>  /* use OpenGL ES 1.x */
-#include <GLES/glext.h>
-#include <EGL/egl.h>
 
-#include "eglut.h"
+#include <GLFW/glfw3.h>
 
 
 typedef void (GL_APIENTRY *PFNGLINSERTEVENTMARKEREXT)(GLsizei length, const char *marker);
@@ -39,54 +36,10 @@ static PFNGLINSERTEVENTMARKEREXT glInsertEventMarkerEXT = NULL;
 static PFNGLPUSHGROUPMARKEREXT glPushGroupMarkerEXT = NULL;
 static PFNGLPOPGROUPMARKEREXT glPopGroupMarkerEXT = NULL;
    
-GLboolean has_GL_EXT_debug_marker = GL_FALSE;
+static GLboolean has_GL_EXT_debug_marker = GL_FALSE;
 
 
-/**
- * Identical to gluCheckExtension, which is not part of GLU on Windows.
- */
-static GLboolean
-checkExtension(const char *extName, const GLubyte *extString)
-{
-   const char *p = (const char *)extString;
-   const char *q = extName;
-   char c;
-   do {
-       c = *p++;
-       if (c == '\0' || c == ' ') {
-           if (q && *q == '\0') {
-               return GL_TRUE;
-           } else {
-               q = extName;
-           }
-       } else {
-           if (q && *q == c) {
-               ++q;
-           } else {
-               q = 0;
-           }
-       }
-   } while (c);
-   return GL_FALSE;
-}
-
-
-static void
-checkGlError(const char *call)
-{
-   GLenum error = glGetError();
-   if (error != GL_NO_ERROR) {
-      fprintf(stderr, "error: %s -> 0x%04x\n", call, error);
-      exit(1);
-   }
-}
-
-
-static void
-idle(void)
-{
-   exit(0);
-}
+static GLFWwindow* window = NULL;
 
 
 static void
@@ -102,14 +55,17 @@ draw(void)
        glPopGroupMarkerEXT();
    }
 
-   eglutIdleFunc(idle);
+   glfwSwapBuffers(window);
 }
 
 
 /* new window size or exposure */
 static void
-reshape(int width, int height)
+reshape(void)
 {
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
    glViewport(0, 0, (GLint) width, (GLint) height);
 }
 
@@ -117,18 +73,14 @@ reshape(int width, int height)
 static void
 init(void)
 {
-   const GLubyte *extensions;
-      
-   extensions = glGetString(GL_EXTENSIONS);
-   checkGlError("glGetString(GL_EXTENSIONS)");
-   has_GL_EXT_debug_marker = checkExtension("GL_EXT_debug_marker", extensions);
+   has_GL_EXT_debug_marker = glfwExtensionSupported("GL_EXT_debug_marker");
 
    if (has_GL_EXT_debug_marker) {
 
 #define GET_PROC(name, type) \
-   name = (type)eglGetProcAddress(#name); \
+   name = (type)glfwGetProcAddress(#name); \
    if (!name) { \
-      fprintf(stderr, "error: eglGetProcAddress(\"" #name "\" returned NULL\n"); \
+      fprintf(stderr, "error: glfwGetProcAddress(\"" #name "\" returned NULL\n"); \
       exit(1); \
    }
 
@@ -147,18 +99,22 @@ init(void)
 int
 main(int argc, char *argv[])
 {
-   eglutInitWindowSize(300, 300);
-   eglutInitAPIMask(EGLUT_OPENGL_ES1_BIT);
-   eglutInit(argc, argv);
+   glfwInit();
 
-   eglutCreateWindow("debug_marker");
+   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-   eglutReshapeFunc(reshape);
-   eglutDisplayFunc(draw);
+   window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
+
+   glfwMakeContextCurrent(window);
 
    init();
+   reshape();
+   draw();
 
-   eglutMainLoop();
+   glfwDestroyWindow(window);
+   glfwTerminate();
 
    return 0;
 }

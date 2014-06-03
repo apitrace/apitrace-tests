@@ -2,8 +2,6 @@ This is an automated test suite for apitrace.
 
 In addition to apitrace requirements, it also requires:
 
-* GLUT
-
 * GLEW
 
 To run the test suite do on Unices:
