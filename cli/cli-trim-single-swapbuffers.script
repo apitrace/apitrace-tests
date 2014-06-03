@@ -12,7 +12,7 @@ apitrace dump-images --call-nos=no -o ./tri-src/tri tri-trim.trace
 
 # Finally, compare new image to reference image
 
-apitrace diff-images -v ./tri-ref ./tri-src
+apitrace diff-images -v ./tri-ref/ ./tri-src/
 
 # In addition to getting the return value indicating no error, let's
 # also require that "apitrace diff-images" gave us the output we
