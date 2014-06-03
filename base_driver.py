@@ -34,6 +34,17 @@ import subprocess
 import sys
 
 
+# Disable Windows error dialog boxes
+if sys.platform == 'win32':
+    import ctypes
+    SEM_FAILCRITICALERRORS = 1
+    SEM_NOGPFAULTERRORBOX = 2
+    dwMode = ctypes.windll.kernel32.GetErrorMode()
+    dwMode |= SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX
+    ctypes.windll.kernel32.SetErrorMode(dwMode)
+    del dwMode
+
+
 def _exit(status, code, reason=None):
     if reason is None:
         reason = ''
