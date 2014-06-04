@@ -24,6 +24,9 @@
  **************************************************************************/
 
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <initguid.h>
 
 #include <windows.h>
@@ -90,7 +93,8 @@ int main(int argc, char *argv[])
 
     hr = DirectDrawCreateEx(NULL, (void **)&g_pDD, IID_IDirectDraw7, NULL);
     if (FAILED(hr)) {
-        return 1;
+        fprintf(stderr, "error: failed to create IDirectDraw7 instance.\n");
+        return EXIT_SKIP;
     }
 
     hr = g_pDD->SetCooperativeLevel(hWnd, DDSCL_NORMAL);
