@@ -4,7 +4,6 @@ if (APITRACE_EXECUTABLE)
             get_filename_component (TEST_NAME ${TEST_SCRIPT} NAME_WE)
             add_test(
                 NAME ${TEST_NAME}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 COMMAND
                 ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/cli_driver.py
                     --apitrace ${APITRACE_EXECUTABLE}

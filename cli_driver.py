@@ -79,6 +79,9 @@ class CliDriver(Driver):
     def run_script(self, cli_script):
         "Execute the commands in the given cli script."
 
+        script_dir, clip_script = os.path.split(cli_script)
+        os.chdir(script_dir)
+
         commands = {
             'apitrace': self.do_apitrace,
             'expect': self.do_expect,
