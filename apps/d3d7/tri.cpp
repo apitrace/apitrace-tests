@@ -93,8 +93,7 @@ int main(int argc, char *argv[])
 
     hr = DirectDrawCreateEx(NULL, (void **)&g_pDD, IID_IDirectDraw7, NULL);
     if (FAILED(hr)) {
-        fprintf(stderr, "error: failed to create IDirectDraw7 instance.\n");
-        return EXIT_SKIP;
+        return 1;
     }
 
     hr = g_pDD->SetCooperativeLevel(hWnd, DDSCL_NORMAL);
@@ -152,7 +151,9 @@ int main(int argc, char *argv[])
 
     hr = g_pDD->QueryInterface(IID_IDirect3D7, (void **)&g_pD3D);
     if (FAILED(hr)) {
-        return 1;
+        /* D3D7 is not supported on 64 bits processes. */
+        fprintf(stderr, "error: failed to get IDirect3D7 interface.\n");
+        return EXIT_SKIP;
     }
 
     hr = g_pD3D->CreateDevice(IID_IDirect3DHALDevice, g_pddsBackBuffer, &g_pDevice);
