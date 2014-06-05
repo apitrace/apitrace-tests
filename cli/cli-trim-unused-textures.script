@@ -111,7 +111,7 @@ apitrace dump-images --call-nos=no -o ./glxsimple-trim-unused-textures-src/ glxs
 
 # Compare output to reference images
 
-apitrace diff-images -v ./glxsimple-trim-unused-textures-ref ./glxsimple-trim-unused-textures-src
+apitrace diff-images -v ./glxsimple-trim-unused-textures-ref/ ./glxsimple-trim-unused-textures-src/
 expect r"""Comparing ./glxsimple-trim-unused-textures-ref/0000000000.png and ./glxsimple-trim-unused-textures-src/0000000000.png ... MATCH
 Comparing ./glxsimple-trim-unused-textures-ref/0000000001.png and ./glxsimple-trim-unused-textures-src/0000000001.png ... MATCH
 Comparing ./glxsimple-trim-unused-textures-ref/0000000002.png and ./glxsimple-trim-unused-textures-src/0000000002.png ... MATCH

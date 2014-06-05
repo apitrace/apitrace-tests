@@ -111,7 +111,7 @@ apitrace dump-images --call-nos=no -o ./glxsimple-trim-unused-shaders-src/ glxsi
 
 # Compare output to reference images
 
-apitrace diff-images -v ./glxsimple-trim-unused-shaders-ref ./glxsimple-trim-unused-shaders-src
+apitrace diff-images -v ./glxsimple-trim-unused-shaders-ref/ ./glxsimple-trim-unused-shaders-src/
 expect r"""Comparing ./glxsimple-trim-unused-shaders-ref/0000000000.png and ./glxsimple-trim-unused-shaders-src/0000000000.png ... MATCH
 Comparing ./glxsimple-trim-unused-shaders-ref/0000000001.png and ./glxsimple-trim-unused-shaders-src/0000000001.png ... MATCH
 Comparing ./glxsimple-trim-unused-shaders-ref/0000000002.png and ./glxsimple-trim-unused-shaders-src/0000000002.png ... MATCH
