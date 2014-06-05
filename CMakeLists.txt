@@ -82,6 +82,7 @@ if (MSVC)
 	add_definitions (-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
 	add_definitions (-D_SCL_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
 	add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
+	add_definitions (-wd4305) # truncation from 'type1' to 'type2'
 endif ()
 
 if (MINGW)
