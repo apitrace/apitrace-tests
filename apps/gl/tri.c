@@ -98,8 +98,6 @@ Draw(void)
 int
 main(int argc, char **argv)
 {
-   GLenum type;
-
    parseArgs(argc, argv);
 
    glfwInit();
