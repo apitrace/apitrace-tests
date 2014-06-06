@@ -34,20 +34,6 @@ add_app_test (
     REF default.ref.txt
 )
 
-add_app_test (
-    NAME "gl_default_sb"
-    TARGET ${api}_tri
-    REF default_sb.ref.txt
-    ARGS -sb
-)
-
-add_app_test (
-    NAME "gl_default_db"
-    TARGET ${api}_tri
-    REF default_db.ref.txt
-    ARGS -db
-)
-
 set (targets
     debug
     tri

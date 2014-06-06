@@ -79,7 +79,8 @@
     "GL_INDEX_LOGIC_OP": "GL_FALSE",
     "GL_COLOR_LOGIC_OP": "GL_FALSE",
     // Some implementations return more GL_AUX_BUFFERS than requested
-    // GL_DRAW_BUFFER and GL_READ_BUFFER vary with visual
+    "GL_DRAW_BUFFER": "GL_BACK",
+    "GL_READ_BUFFER": "GL_BACK",
     // GL_SCISSOR_BOX depends on the drawable
     "GL_SCISSOR_TEST": "GL_FALSE",
     "GL_INDEX_CLEAR_VALUE": 0,
@@ -88,7 +89,7 @@
     "GL_COLOR_WRITEMASK": ["GL_TRUE", "GL_TRUE", "GL_TRUE", "GL_TRUE"],
     "GL_INDEX_MODE": "GL_FALSE",
     "GL_RGBA_MODE": "GL_TRUE",
-    // GL_DOUBLEBUFFER varies with visual
+    "GL_DOUBLEBUFFER": "GL_TRUE",
     "GL_STEREO": "GL_FALSE",
     "GL_RENDER_MODE": "GL_RENDER",
     "GL_PERSPECTIVE_CORRECTION_HINT": "GL_DONT_CARE",
@@ -253,7 +254,7 @@
     "GL_STENCIL_BACK_FAIL": "GL_KEEP",
     "GL_STENCIL_BACK_PASS_DEPTH_FAIL": "GL_KEEP",
     "GL_STENCIL_BACK_PASS_DEPTH_PASS": "GL_KEEP",
-    // GL_DRAW_BUFFER0 varies with visual
+    "GL_DRAW_BUFFER0": "GL_BACK",
     "GL_DRAW_BUFFER1": "GL_ZERO",
     "GL_DRAW_BUFFER2": "GL_ZERO",
     "GL_DRAW_BUFFER3": "GL_ZERO",

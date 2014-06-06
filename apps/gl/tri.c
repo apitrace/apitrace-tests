@@ -30,26 +30,7 @@
 #include <GLFW/glfw3.h>
 
 
-static GLboolean doubleBuffer = GL_TRUE;
 static GLFWwindow* window = NULL;
-
-
-static void parseArgs(int argc, char** argv)
-{
-   int i;
-
-   for (i = 1; i < argc; ++i) {
-      const char *arg = argv[i];
-      if (strcmp(arg, "-sb") == 0) {
-         doubleBuffer = GL_FALSE;
-      } else if (strcmp(arg, "-db") == 0) {
-         doubleBuffer = GL_TRUE;
-      } else {
-         fprintf(stderr, "error: unknown arg %s\n", arg);
-         exit(1);
-      }
-   }
-}
 
 
 static void
@@ -89,23 +70,14 @@ Draw(void)
 
    glFlush();
 
-   if (doubleBuffer) {
-      glfwSwapBuffers(window);
-   }
+   glfwSwapBuffers(window);
 }
 
 
 int
 main(int argc, char **argv)
 {
-   parseArgs(argc, argv);
-
    glfwInit();
-
-   if (!doubleBuffer) {
-       // FIXME: Single buffering not supported.
-       exit(EXIT_SKIP);
-   }
 
    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
    if (!window) {
