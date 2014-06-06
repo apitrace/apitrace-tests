@@ -59,7 +59,7 @@
     "GL_STENCIL_WRITEMASK": -1,
     "GL_MATRIX_MODE": "GL_MODELVIEW",
     "GL_NORMALIZE": "GL_FALSE",
-    // GL_VIEWPORT depends on the drawable
+    "GL_VIEWPORT": [0, 0, 250, 250],
     "GL_MODELVIEW_STACK_DEPTH": 1,
     "GL_PROJECTION_STACK_DEPTH": 1,
     "GL_TEXTURE_STACK_DEPTH": 1,
@@ -81,7 +81,7 @@
     // Some implementations return more GL_AUX_BUFFERS than requested
     "GL_DRAW_BUFFER": "GL_BACK",
     "GL_READ_BUFFER": "GL_BACK",
-    // GL_SCISSOR_BOX depends on the drawable
+    "GL_SCISSOR_BOX": [0, 0, 250, 250],
     "GL_SCISSOR_TEST": "GL_FALSE",
     "GL_INDEX_CLEAR_VALUE": 0,
     "GL_INDEX_WRITEMASK": -1,

@@ -28,14 +28,9 @@ link_libraries (
 
 set (api gl)
 
-add_app_test (
-    NAME "gl_default"
-    TARGET ${api}_tri
-    REF default.ref.txt
-)
-
 set (targets
     debug
+    default
     tri
     tri_glsl
     gremedy
