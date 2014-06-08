@@ -2,8 +2,8 @@
 #
 #   tracemeld.sh foo.ref.txt foo.trace
 #
-MELD=meld
+DIFFTOOL=${DIFFTOOL:-meld}
 TEMPFILE=`mktemp`
 apitrace dump --call-nos=no "$2" > "$TEMPFILE"
-$MELD "$1" "$TEMPFILE"
+$DIFFTOOL "$1" "$TEMPFILE"
 rm -f "$TEMPFILE"
