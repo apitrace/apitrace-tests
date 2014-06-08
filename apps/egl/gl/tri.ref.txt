@@ -1,7 +1,7 @@
 eglGetDisplay(display_id = <display_id>) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_API) = EGL_TRUE
-eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = {EGL_CONTEXT_MAJOR_VERSION, 1, EGL_CONTEXT_MINOR_VERSION, 5, EGL_NONE}) = <ctx>
+eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = {EGL_NONE}) = <ctx>
 eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = {}) = <surface>
 eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
 glViewport(x = 0, y = 0, width = 300, height = 300)

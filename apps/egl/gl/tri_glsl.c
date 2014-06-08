@@ -206,8 +206,6 @@ main(int argc, char *argv[])
    glfwInit();
 
    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
    window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
    if (!window) {
