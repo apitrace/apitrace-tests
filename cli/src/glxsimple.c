@@ -143,7 +143,7 @@ create_rgb_texture (double r, double g, double b)
 static void
 paint_using_texture (GLuint texture)
 {
-	glBindTexture (GL_TEXTURE_2D, texture);
+	if (0) glBindTexture (GL_TEXTURE_2D, texture);
 
 	glEnable (GL_TEXTURE_2D);
 
@@ -159,24 +159,6 @@ draw (Display *dpy, Window window, int width, int height)
 	int i;
 	GLenum glew_err;
 	GLuint texture[PASSES];
-
-        int visual_attr[] = {
-                GLX_RGBA,
-                GLX_RED_SIZE,		8,
-                GLX_GREEN_SIZE, 	8,
-                GLX_BLUE_SIZE,		8,
-                GLX_ALPHA_SIZE, 	8,
-                GLX_DOUBLEBUFFER,
-                GLX_DEPTH_SIZE,		24,
-                GLX_STENCIL_SIZE,	8,
-                GLX_X_VISUAL_TYPE,	GLX_DIRECT_COLOR,
-                None
-        };
-
-	/* Window and context setup. */
-        XVisualInfo *visual_info = glXChooseVisual(dpy, 0, visual_attr);
-        GLXContext ctx = glXCreateContext(dpy, visual_info, NULL, True);
-        glXMakeCurrent(dpy, window, ctx);
 
 	glew_err = glewInit();
 	if (glew_err != GLEW_OK)
@@ -213,13 +195,12 @@ draw (Display *dpy, Window window, int width, int height)
 		frame++;
 	}
 
-	/* Draw another frame with a re-used texture. */
-	paint_using_texture (texture[0]);
-	glXSwapBuffers (dpy, window);
-	frame++;
-
-	/* Cleanup */
-        glXDestroyContext (dpy, ctx);
+        if (0) {
+	        /* Draw another frame with a re-used texture. */
+	        paint_using_texture (texture[0]);
+	        glXSwapBuffers (dpy, window);
+	        frame++;
+        }
 }
 
 static void
@@ -266,17 +247,54 @@ main (void)
                 return 1;
         }
 
-        window = XCreateSimpleWindow(dpy, DefaultRootWindow (dpy),
-                                     0, 0, width, height, 0,
-                                     BlackPixel (dpy, DefaultScreen (dpy)),
-                                     BlackPixel (dpy, DefaultScreen (dpy)));
+        int visual_attr[] = {
+                GLX_RGBA,
+                GLX_RED_SIZE,		8,
+                GLX_GREEN_SIZE, 	8,
+                GLX_BLUE_SIZE,		8,
+                GLX_ALPHA_SIZE, 	8,
+                GLX_DOUBLEBUFFER,
+                GLX_DEPTH_SIZE,		24,
+                GLX_STENCIL_SIZE,	8,
+                None
+        };
 
-        XSelectInput(dpy, window,
-                     KeyPressMask | StructureNotifyMask | ExposureMask);
+        int screen = DefaultScreen(dpy);
+
+	/* Window and context setup. */
+        XVisualInfo *visual_info = glXChooseVisual(dpy, screen, visual_attr);
+
+	Window root = DefaultRootWindow (dpy);
+
+	/* window attributes */
+	XSetWindowAttributes attr;
+	attr.background_pixel = BlackPixel(dpy, screen);
+	attr.border_pixel = BlackPixel(dpy, screen);
+	attr.colormap = XCreateColormap(dpy, root, visual_info->visual, AllocNone);
+	attr.event_mask = KeyPressMask | StructureNotifyMask | ExposureMask;
+
+	unsigned long mask;
+	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
+
+	window = XCreateWindow(
+		dpy, root,
+		0, 0, width, height,
+		0,
+		visual_info->depth,
+		InputOutput,
+		visual_info->visual,
+		mask,
+		&attr);
 
         XMapWindow (dpy, window);
 
+        GLXContext ctx = glXCreateContext(dpy, visual_info, NULL, True);
+        glXMakeCurrent(dpy, window, ctx);
+
         handle_events (dpy, window, width, height);
+
+	/* Cleanup */
+        glXDestroyContext (dpy, ctx);
 
         XDestroyWindow (dpy, window);
         XCloseDisplay (dpy);

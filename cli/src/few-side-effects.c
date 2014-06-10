@@ -56,23 +56,6 @@ static void
 draw (Display *dpy, Window window, int width, int height)
 {
 	GLenum glew_err;
-        int visual_attr[] = {
-                GLX_RGBA,
-                GLX_RED_SIZE,		8,
-                GLX_GREEN_SIZE, 	8,
-                GLX_BLUE_SIZE,		8,
-                GLX_ALPHA_SIZE, 	8,
-                GLX_DOUBLEBUFFER,
-                GLX_DEPTH_SIZE,		24,
-                GLX_STENCIL_SIZE,	8,
-                GLX_X_VISUAL_TYPE,	GLX_DIRECT_COLOR,
-                None
-        };
-
-	/* Window and context setup. */
-        XVisualInfo *visual_info = glXChooseVisual(dpy, 0, visual_attr);
-        GLXContext ctx = glXCreateContext(dpy, visual_info, NULL, True);
-        glXMakeCurrent(dpy, window, ctx);
 
 	glew_err = glewInit();
 	if (glew_err != GLEW_OK)
@@ -120,9 +103,6 @@ draw (Display *dpy, Window window, int width, int height)
 
 		glDisable(GL_BLEND);
 	}
-
-	/* Cleanup */
-        glXDestroyContext (dpy, ctx);
 }
 
 static void
@@ -169,17 +149,54 @@ main (void)
                 return 1;
         }
 
-        window = XCreateSimpleWindow(dpy, DefaultRootWindow (dpy),
-                                     0, 0, width, height, 0,
-                                     BlackPixel (dpy, DefaultScreen (dpy)),
-                                     BlackPixel (dpy, DefaultScreen (dpy)));
+        int visual_attr[] = {
+                GLX_RGBA,
+                GLX_RED_SIZE,		8,
+                GLX_GREEN_SIZE, 	8,
+                GLX_BLUE_SIZE,		8,
+                GLX_ALPHA_SIZE, 	8,
+                GLX_DOUBLEBUFFER,
+                GLX_DEPTH_SIZE,		24,
+                GLX_STENCIL_SIZE,	8,
+                None
+        };
 
-        XSelectInput(dpy, window,
-                     KeyPressMask | StructureNotifyMask | ExposureMask);
+        int screen = DefaultScreen(dpy);
+
+	/* Window and context setup. */
+        XVisualInfo *visual_info = glXChooseVisual(dpy, screen, visual_attr);
+
+	Window root = DefaultRootWindow (dpy);
+
+	/* window attributes */
+	XSetWindowAttributes attr;
+	attr.background_pixel = BlackPixel(dpy, screen);
+	attr.border_pixel = BlackPixel(dpy, screen);
+	attr.colormap = XCreateColormap(dpy, root, visual_info->visual, AllocNone);
+	attr.event_mask = KeyPressMask | StructureNotifyMask | ExposureMask;
+
+	unsigned long mask;
+	mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
+
+	window = XCreateWindow(
+		dpy, root,
+		0, 0, width, height,
+		0,
+		visual_info->depth,
+		InputOutput,
+		visual_info->visual,
+		mask,
+		&attr);
 
         XMapWindow (dpy, window);
 
+        GLXContext ctx = glXCreateContext(dpy, visual_info, NULL, True);
+        glXMakeCurrent(dpy, window, ctx);
+
         handle_events (dpy, window, width, height);
+
+	/* Cleanup */
+        glXDestroyContext (dpy, ctx);
 
         XDestroyWindow (dpy, window);
         XCloseDisplay (dpy);
