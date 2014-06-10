@@ -9,6 +9,9 @@ if (APPLE)
 endif ()
 
 
+option (TEST_UNRELIABLE "Run unreliable tests" OFF)
+
+
 project (apitrace-tests)
 
 find_path (APITRACE_SOURCE_DIR NAMES cmake/FindDirectX.cmake PATHS .. ../.. DOC "apitrace source tree" NO_DEFAULT_PATH)
@@ -113,18 +116,13 @@ add_definitions (-DEXIT_SKIP=125)
 add_subdirectory (apps)
 add_subdirectory (traces)
 
-# FIXME: The tests in the cli directory are intended to be high-level
-# tests of the apitrace command-line interface which would ideally be
-# portable across all platforms. However, these tests all rely on
-# doing image comparisons and the current implementation of the
-# "apitrace dump-images" command relies on direct invocation of the
-# glreplay command.
+# FIXME: Some of these tests are not reliable on some platforms:
 #
-# Someday, we should have more unified commands for replaying traces,
-# dumping images, etc. At that point these cli tests should be usable
-# with all targets so that we can drop the "if (OPENGL_FOUND)"
-# condition here.
-if (OPENGL_FOUND AND PIL_FOUND)
+# - They use 64x64 drawables, but on Windows these get bumped to bigger sizes
+#   to make space for title bar, buttons, etc.
+# - The 64x64 resize is not effctive on some platforms (e.g., xvfb-run)
+#
+if (OPENGL_FOUND AND PIL_FOUND AND TEST_UNRELIABLE)
     add_subdirectory (cli)
     add_subdirectory (trim_stress)
 endif ()
