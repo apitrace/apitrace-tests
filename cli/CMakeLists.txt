@@ -13,3 +13,5 @@ if (APITRACE_EXECUTABLE)
         )
     endforeach ()
 endif ()
+
+add_subdirectory (src)
