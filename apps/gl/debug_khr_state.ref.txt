@@ -1,4 +1,4 @@
-//!debug GL_KHR_debug
+//!debug -require GL_KHR_debug
 glDebugMessageInsert(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = -1, buf = "Init")
 glPushDebugGroup(source = GL_DEBUG_SOURCE_APPLICATION, id = 0, length = -1, message = "Init")
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
@@ -6,10 +6,10 @@ glPopDebugGroup()
 glGenTextures(n = 1, textures = &<texture>)
 glObjectLabel(identifier = GL_TEXTURE, name = <texture>, length = -1, label = "texture")
 glBindTexture(target = GL_TEXTURE_2D, texture = <texture>)
-glTexImage2D(target = GL_TEXTURE_2D, level = 0, internalformat = 3, width = 1, height = 1, border = 0, format = GL_RGB, type = GL_UNSIGNED_BYTE, pixels = NULL)
+<texture_label> glTexImage2D(target = GL_TEXTURE_2D, level = 0, internalformat = 3, width = 1, height = 1, border = 0, format = GL_RGB, type = GL_UNSIGNED_BYTE, pixels = NULL)
 glGenFramebuffers(n = 1, framebuffers = &<framebuffer>)
 glBindFramebuffer(target = GL_FRAMEBUFFER, framebuffer = <framebuffer>)
-glFramebufferTexture2D(target = GL_FRAMEBUFFER, attachment = GL_COLOR_ATTACHMENT0, textarget = GL_TEXTURE_2D, texture = <texture>, level = 0)
+<framebuffer_label> glFramebufferTexture2D(target = GL_FRAMEBUFFER, attachment = GL_COLOR_ATTACHMENT0, textarget = GL_TEXTURE_2D, texture = <texture>, level = 0)
 glBindFramebuffer(target = GL_FRAMEBUFFER, framebuffer = 0)
 glDebugMessageInsert(source = GL_DEBUG_SOURCE_APPLICATION, type = GL_DEBUG_TYPE_OTHER, id = 0, severity = GL_DEBUG_SEVERITY_MEDIUM, length = 7, buf = "Reshape")
 glPushDebugGroup(source = GL_DEBUG_SOURCE_APPLICATION, id = 0, length = 7, message = "Reshape")

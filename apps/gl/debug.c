@@ -32,6 +32,7 @@
 
 
 static GLFWwindow* window = NULL;
+static GLboolean require = GL_FALSE;
 
 
 enum DebugExtension {
@@ -54,7 +55,9 @@ parseArgs(int argc, char** argv)
 
     for (i = 1; i < argc; ++i) {
         const char *arg = argv[i];
-        if (strcmp(arg, "GL_KHR_debug") == 0) {
+        if (strcmp(arg, "-require") == 0) {
+            require = GL_TRUE;
+        } else if (strcmp(arg, "GL_KHR_debug") == 0) {
             debugExtension = KHR_DEBUG;
         } else if (strcmp(arg, "GL_ARB_debug_output") == 0) {
             debugExtension = ARB_DEBUG_OUTPUT;
@@ -63,7 +66,7 @@ parseArgs(int argc, char** argv)
         } else if (strcmp(arg, "GL_EXT_debug_marker") == 0) {
             debugExtension = EXT_DEBUG_MARKER;
         } else {
-            fprintf(stderr, "error: unknown extension %s\n", arg);
+            fprintf(stderr, "error: unexpected argument `%s`\n", arg);
             exit(1);
         }
         debugExtensionString = arg;
@@ -202,6 +205,9 @@ Init(void)
        }
     } else {
        fprintf(stderr, "warning: %s not supported\n", debugExtensionString);
+       if (require) {
+           exit(EXIT_SKIP);
+       }
     }
 
     debugMessageInsert(-1, __FUNCTION__);
