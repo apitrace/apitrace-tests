@@ -45,7 +45,9 @@ static ID3D11Device1 * g_pDevice1 = NULL;
 static ID3D11DeviceContext1 * g_pDeviceContext1 = NULL;
 
 
-int main(int argc, char *argv[]){
+int
+main(int argc, char *argv[])
+{
     HRESULT hr;
 
     HINSTANCE hInstance = GetModuleHandle(NULL);
