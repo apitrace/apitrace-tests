@@ -31,6 +31,8 @@
 
 #include <windows.h>
 
+#include "compat.h"
+
 #include <d3d.h>
 
 
