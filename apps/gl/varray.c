@@ -181,7 +181,7 @@ int main(int argc, char** argv)
 
    window = glfwCreateWindow(350, 350, argv[0], NULL, NULL);
    if (!window) {
-      exit(1);
+       return EXIT_SKIP;
    }
 
    glfwMakeContextCurrent(window);

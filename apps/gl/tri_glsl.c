@@ -140,6 +140,9 @@ main(int argc, char **argv)
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
+   if (!window) {
+       return EXIT_SKIP;
+   }
 
    glfwMakeContextCurrent(window);
 
