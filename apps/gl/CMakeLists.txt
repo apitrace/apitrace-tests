@@ -29,6 +29,7 @@ link_libraries (
 set (api gl)
 
 set (targets
+    child
     debug
     default
     tri
