@@ -12,6 +12,7 @@ set (api d3d10)
 
 set (targets
     tri
+    map_no_overwrite
 )
 
 foreach (target ${targets})
