@@ -4,7 +4,7 @@ if (APITRACE_EXECUTABLE)
     foreach (TEST_SCRIPT ${TEST_SCRIPTS})
         get_filename_component (TEST_NAME ${TEST_SCRIPT} NAME_WE)
         add_test(
-            NAME cli_${TEST_NAME}
+            NAME ${TEST_NAME}
             COMMAND
             ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/cli_driver.py
                 --apitrace ${APITRACE_EXECUTABLE}
@@ -14,6 +14,4 @@ if (APITRACE_EXECUTABLE)
     endforeach ()
 endif ()
 
-if (TEST_UNRELIABLE)
-    add_subdirectory (trim)
-endif ()
+add_subdirectory (src)

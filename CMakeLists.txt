@@ -122,7 +122,9 @@ add_subdirectory (traces)
 #   to make space for title bar, buttons, etc.
 # - The 64x64 resize is not effctive on some platforms (e.g., xvfb-run)
 #
-if (OPENGL_FOUND AND PIL_FOUND AND TEST_UNRELIABLE)
+if (OPENGL_FOUND AND PIL_FOUND)
     add_subdirectory (cli)
-    add_subdirectory (trim_stress)
+    if (TEST_UNRELIABLE)
+        add_subdirectory (trim_stress)
+    endif ()
 endif ()
