@@ -11,6 +11,7 @@ set (api d3d11)
 
 set (targets
     tri
+    map_no_overwrite
 )
 
 foreach (target ${targets})
