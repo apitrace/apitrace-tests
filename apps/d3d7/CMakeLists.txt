@@ -11,6 +11,7 @@ set (api d3d7)
 
 set (targets
     tri
+    ddraw
 )
 
 foreach (target ${targets})

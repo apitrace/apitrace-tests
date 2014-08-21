@@ -144,46 +144,26 @@ int main(int argc, char *argv[])
     pcClipper->SetHWnd(0, hWnd);
     pddsPrimary->SetClipper(pcClipper);
 
-    /*
-     * Initialize D3D
-     */
-
-    com_ptr<IDirect3D7> pD3D;
-    hr = pDD->QueryInterface(IID_IDirect3D7, (void **)&pD3D);
-    if (FAILED(hr)) {
-        /* D3D7 is not supported on 64 bits processes. */
-        fprintf(stderr, "error: failed to get IDirect3D7 interface.\n");
-        return EXIT_SKIP;
-    }
-
-    com_ptr<IDirect3DDevice7> pDevice;
-    hr = pD3D->CreateDevice(IID_IDirect3DHALDevice, pddsBackBuffer, &pDevice);
+    DDPIXELFORMAT ddpf;
+    ZeroMemory(&ddpf, sizeof ddpf);
+    ddpf.dwSize = sizeof ddpf;
+    hr = pddsBackBuffer->GetPixelFormat(&ddpf);
     if (FAILED(hr)) {
         return 1;
     }
 
-    struct Vertex {
-        float x, y, z;
-        DWORD color;
-    };
-
-
-    D3DCOLOR clearColor = D3DRGBA(0.3f, 0.1f, 0.3f, 1.0f);
-    pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
-    pDevice->BeginScene();
-
-    pDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
-    pDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
-
-    static Vertex vertices[] = {
-        { -0.9f, -0.9f, 0.5f, D3DRGBA(0.8f, 0.0f, 0.0f, 0.1f) },
-        {  0.9f, -0.9f, 0.5f, D3DRGBA(0.0f, 0.9f, 0.0f, 0.1f) },
-        {  0.0f,  0.9f, 0.5f, D3DRGBA(0.0f, 0.0f, 0.7f, 0.1f) },
-    };
-
-    pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, D3DFVF_XYZ | D3DFVF_DIFFUSE, vertices, 3, 0);
-
-    pDevice->EndScene();
+    DDBLTFX ddbltfx; 
+    ZeroMemory(&ddbltfx, sizeof ddbltfx);
+    ddbltfx.dwSize = sizeof ddbltfx; 
+    ddbltfx.dwFillColor = ddpf.dwBBitMask; // Pure blue
+    hr = pddsBackBuffer->Blt( 
+        NULL,        // Destination is entire surface
+        NULL,        // No source surface
+        NULL,        // No source rectangle
+        DDBLT_COLORFILL, &ddbltfx); 
+    if (FAILED(hr)) {
+        return 1;
+    }
 
     /*
      * Present
