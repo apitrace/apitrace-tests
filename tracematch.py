@@ -27,6 +27,7 @@
 
 import sys
 import optparse
+import string
 import os
 import re
 import subprocess
@@ -205,10 +206,37 @@ class CallMatcher(Matcher):
         self.args = args
         self.ret = ret
 
+    def _parseVersionedMethodName(self, name):
+        try:
+            ifaceName, methodName = name.split('::', 1)
+        except ValueError:
+            return None, 0, name
+
+        if ifaceName[-1] in string.digits:
+            ifaceVersion = ifaceName[-1]
+            ifaceName = ifaceName[:-1]
+        else:
+            ifaceVersion = 0
+
+        return ifaceName, ifaceVersion, methodName
+
+    def _matchFunctionName(self, srcFunctionName):
+        if self.functionName == srcFunctionName:
+            return True
+
+        # Match things like IDXGIFactory1::* and IDXGIFactory2::*
+        ifaceName, ifaceVersion, methodName = self._parseVersionedMethodName(self.functionName)
+        srcIfaceName, srcIfaceVersion, srcMethodName = self._parseVersionedMethodName(srcFunctionName)
+        return (
+            ifaceName == srcIfaceName and 
+            ifaceVersion <= srcIfaceVersion and
+            methodName == srcMethodName
+        )
+
     def match(self, call, mo):
         callNo, srcFunctionName, srcArgs, srcRet = call
 
-        if self.functionName != srcFunctionName:
+        if not self._matchFunctionName(srcFunctionName):
             return False
 
         refArgs = [value for name, value in self.args]
