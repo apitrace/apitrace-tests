@@ -49,29 +49,4 @@ foreach (target ${targets})
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
 endforeach (target)
 
-
-# Automatically discover tests from *.ref.txt files
-file (GLOB TEST_REFS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.ref.txt)
-list (SORT TEST_REFS)
-foreach (TEST_REF ${TEST_REFS})
-    if (APITRACE_EXECUTABLE AND APITRACE_SOURCE_DIR)
-        # Search for `//!test` header
-        file (READ ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF} TEST_REF_DATA 4096)
-        string (REGEX MATCH "^//!([_a-zA-Z0-9]+)([^\r\n]*)?" TEST_REF_HEAD "${TEST_REF_DATA}")
-        set (TEST_TARGET "${CMAKE_MATCH_1}")
-        set (TEST_ARGS ${CMAKE_MATCH_2})
-
-        # Split the remaning arguments
-        string (REPLACE " " ";" TEST_ARGS_SPLIT "${TEST_ARGS}")
-
-        if (TEST_TARGET)
-            get_filename_component (TEST_NAME ${TEST_REF} NAME_WE)
-            add_app_test (
-                NAME ${api}_${TEST_NAME}
-                TARGET ${api}_${TEST_TARGET}
-                REF ${TEST_REF}
-                ARGS ${TEST_ARGS_SPLIT}
-            )
-        endif ()
-    endif ()
-endforeach ()
+add_app_tests ()
