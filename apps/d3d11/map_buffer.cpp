@@ -48,6 +48,19 @@ main(int argc, char *argv[])
 {
     HRESULT hr;
 
+    D3D11_USAGE Usage = D3D11_USAGE_DYNAMIC;
+    for (int i = 1; i < argc; ++i) {
+        const char *arg = argv[i];
+        if (strcmp(arg, "-dynamic") == 0) {
+            Usage = D3D11_USAGE_DYNAMIC;
+        } else if (strcmp(arg, "-staging") == 0) {
+            Usage = D3D11_USAGE_STAGING;
+        } else {
+            fprintf(stderr, "error: unknown arg %s\n", arg);
+            exit(1);
+        }
+    }
+
     UINT Flags = 0;
     if (LoadLibraryA("d3d11sdklayers")) {
         Flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -75,37 +88,74 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    UINT NumBuffers = 4;
     UINT NumSegments = 8;
     UINT SegmentSize = 512;
 
     D3D11_BUFFER_DESC BufferDesc;
     ZeroMemory(&BufferDesc, sizeof BufferDesc);
-    BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     BufferDesc.ByteWidth = NumSegments * SegmentSize;
-    BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     BufferDesc.MiscFlags = 0;
-
-    com_ptr<ID3D11Buffer> pVertexBuffer;
-    hr = pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
-    if (FAILED(hr)) {
-        return 1;
+    BufferDesc.Usage = Usage;
+    if (Usage == D3D11_USAGE_STAGING) {
+        BufferDesc.BindFlags = 0;
+    } else {
+        BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     }
 
-    for (UINT j = 0; j < NumSegments; ++j) {
-        D3D11_MAP MapType = j == 0 ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE_NO_OVERWRITE;
-        D3D11_MAPPED_SUBRESOURCE MappedResource;
-        hr = pDeviceContext->Map(pVertexBuffer, 0, MapType, 0, &MappedResource);
+    D3D11_MAP MapType = D3D11_MAP_WRITE;
+    for (UINT i = 0; i < NumBuffers; ++i) {
+        com_ptr<ID3D11Buffer> pVertexBuffer;
+        hr = pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
+        if (FAILED(hr)) {
+            return 1;
+        }
+
+        if (Usage == D3D11_USAGE_DYNAMIC) {
+            MapType = D3D11_MAP_WRITE_DISCARD;
+        }
+
+        for (UINT j = 0; j < NumSegments; ++j) {
+            D3D11_MAPPED_SUBRESOURCE MappedResource;
+
+            hr = pDeviceContext->Map(pVertexBuffer, 0, MapType, 0, &MappedResource);
+            if (FAILED(hr)) {
+                return 1;
+            } 
+            
+            BYTE *pMap = (BYTE *)MappedResource.pData;
+
+            int c = (j % 255) + 1;
+            memset(pMap + j*SegmentSize, c, SegmentSize);
+
+            pDeviceContext->Unmap(pVertexBuffer, 0);
+            
+            if (Usage == D3D11_USAGE_DYNAMIC) {
+                MapType = D3D11_MAP_WRITE_NO_OVERWRITE;
+            }
+        }
+
+        pDeviceContext->Flush();
+
+        D3D11_QUERY_DESC QueryDesc;
+        QueryDesc.Query = D3D11_QUERY_EVENT;
+        QueryDesc.MiscFlags = 0;
+        com_ptr<ID3D11Query> pQuery;
+        hr = pDevice->CreateQuery(&QueryDesc, &pQuery);
         if (FAILED(hr)) {
             return 1;
         } 
         
-        BYTE *pMap = (BYTE *)MappedResource.pData;
+        pDeviceContext->End(pQuery);
 
-        int c = (j % 255) + 1;
-        memset(pMap + j*SegmentSize, c, SegmentSize);
+        do {
+            hr = pDeviceContext->GetData(pQuery, NULL, 0, 0);
+        } while (hr == S_FALSE);
+        if (FAILED(hr)) {
+            return 1;
+        } 
 
-        pDeviceContext->Unmap(pVertexBuffer, 0);
     }
 
     return 0;
