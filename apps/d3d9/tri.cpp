@@ -59,7 +59,6 @@ main(int argc, char *argv[])
 
     const int WindowWidth = 250;
     const int WindowHeight = 250;
-    BOOL Windowed = TRUE;
 
     DWORD dwStyle = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW;
 
@@ -102,18 +101,10 @@ main(int argc, char *argv[])
     }
 
     ZeroMemory(&g_PresentationParameters, sizeof g_PresentationParameters);
-    g_PresentationParameters.Windowed = Windowed;
-    if (!Windowed) {
-        g_PresentationParameters.BackBufferWidth = WindowWidth;
-        g_PresentationParameters.BackBufferHeight = WindowHeight;
-    }
+    g_PresentationParameters.Windowed = TRUE;
     g_PresentationParameters.BackBufferCount = 1;
     g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    if (!Windowed) {
-        g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
-    } else {
-        g_PresentationParameters.BackBufferFormat = D3DFMT_UNKNOWN;
-    }
+    g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
     g_PresentationParameters.hDeviceWindow = hWnd;
 
     g_PresentationParameters.EnableAutoDepthStencil = FALSE;
