@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     D3DCAPS8 caps;
     hr = g_pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     if (FAILED(hr)) {
-       return 1;
+       return EXIT_SKIP;
     }
 
     DWORD dwBehaviorFlags;
