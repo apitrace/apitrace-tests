@@ -351,7 +351,7 @@ class AppDriver(Driver):
         else:
             return state
 
-        p = self._replay(['-D', str(callNo)])
+        p = self._replay(['-D', str(callNo)], stdout=subprocess.PIPE, universal_newlines=True)
         state = json.load(p.stdout, strict=False)
         p.wait()
         if p.returncode != 0:
@@ -404,7 +404,7 @@ class AppDriver(Driver):
         except KeyError:
             pass
 
-    def _replay(self, args = None, stdout=subprocess.PIPE):
+    def _replay(self, args = None, stdout=None, universal_newlines=False):
         replay = self.api_replay_map[self.api]
         #cmd = [get_build_program(replay)]
         cmd = [options.apitrace, 'replay']
@@ -415,7 +415,11 @@ class AppDriver(Driver):
         if args:
             cmd += args
         cmd += [self.trace_file]
-        return popen(cmd, stdout=stdout)
+        return popen(
+            cmd,
+            stdout=stdout,
+            universal_newlines=universal_newlines
+        )
 
     def createOptParser(self):
         optparser = Driver.createOptParser(self)
