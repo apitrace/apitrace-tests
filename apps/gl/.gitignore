@@ -8,4 +8,5 @@ gremedy
 map_buffer
 tri
 tri_glsl
+tri_glsl_core
 varray
