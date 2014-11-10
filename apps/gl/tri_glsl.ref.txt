@@ -1,25 +1,25 @@
 //!tri_glsl
-glCreateShader(type = GL_FRAGMENT_SHADER) = 1
-glShaderSource(shader = 1, count = 1, string = &"void main() {
+glCreateShader(type = GL_FRAGMENT_SHADER) = <fs>
+glShaderSource(shader = <fs>, count = 1, string = &"void main() {
    gl_FragColor = gl_Color; 
 }
 ", length = &-1)
-glCompileShader(shader = 1)
-glGetShaderiv(shader = 1, pname = GL_COMPILE_STATUS, params = &1)
-glCreateShader(type = GL_VERTEX_SHADER) = 2
-glShaderSource(shader = 2, count = 1, string = &"void main() {
+glCompileShader(shader = <fs>)
+glGetShaderiv(shader = <fs>, pname = GL_COMPILE_STATUS, params = &1)
+glCreateShader(type = GL_VERTEX_SHADER) = <vs>
+glShaderSource(shader = <vs>, count = 1, string = &"void main() {
    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
    gl_FrontColor = gl_Color;
 }
 ", length = &-1)
-glCompileShader(shader = 2)
-glGetShaderiv(shader = 2, pname = GL_COMPILE_STATUS, params = &1)
-glCreateProgram() = 3
-glAttachShader(program = 3, shader = 1)
-glAttachShader(program = 3, shader = 2)
-glLinkProgram(program = 3)
-glGetProgramiv(program = 3, pname = GL_LINK_STATUS, params = &1)
-glUseProgram(program = 3)
+glCompileShader(shader = <vs>)
+glGetShaderiv(shader = <vs>, pname = GL_COMPILE_STATUS, params = &1)
+glCreateProgram() = <program>
+glAttachShader(program = <program>, shader = <fs>)
+glAttachShader(program = <program>, shader = <vs>)
+glLinkProgram(program = <program>)
+glGetProgramiv(program = <program>, pname = GL_LINK_STATUS, params = &1)
+glUseProgram(program = <program>)
 glClearColor(red = 0.3, green = 0.1, blue = 0.3, alpha = 1)
 glViewport(x = 0, y = 0, width = 250, height = 250)
 glMatrixMode(mode = GL_PROJECTION)
@@ -37,6 +37,6 @@ glVertex3f(x = 0, y = 0.9, z = -30)
 glEnd()
 <flush> glFlush()
 
-glDeleteShader(shader = 1)
-glDeleteShader(shader = 2)
-glDeleteProgram(program = 3)
+glDeleteShader(shader = <fs>)
+glDeleteShader(shader = <vs>)
+glDeleteProgram(program = <program>)

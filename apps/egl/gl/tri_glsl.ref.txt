@@ -6,16 +6,16 @@ eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list 
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glScissor(x = 0, y = 0, width = 300, height = 300)
 glClearColor(red = 0.4, green = 0.4, blue = 0.4, alpha = 0)
-glCreateShader(type = GL_FRAGMENT_SHADER) = 1
-glShaderSource(shader = 1, count = 1, string = &"varying vec4 v_color;
+glCreateShader(type = GL_FRAGMENT_SHADER) = <fs>
+glShaderSource(shader = <fs>, count = 1, string = &"varying vec4 v_color;
 void main() {
    gl_FragColor = v_color;
 }
 ", length = NULL)
-glCompileShader(shader = 1)
-glGetShaderiv(shader = 1, pname = GL_COMPILE_STATUS, params = &1)
-glCreateShader(type = GL_VERTEX_SHADER) = 2
-glShaderSource(shader = 2, count = 1, string = &"uniform mat4 modelviewProjection;
+glCompileShader(shader = <fs>)
+glGetShaderiv(shader = <fs>, pname = GL_COMPILE_STATUS, params = &1)
+glCreateShader(type = GL_VERTEX_SHADER) = <vs>
+glShaderSource(shader = <vs>, count = 1, string = &"uniform mat4 modelviewProjection;
 attribute vec4 pos;
 attribute vec4 color;
 varying vec4 v_color;
@@ -24,19 +24,19 @@ void main() {
    v_color = color;
 }
 ", length = NULL)
-glCompileShader(shader = 2)
-glGetShaderiv(shader = 2, pname = GL_COMPILE_STATUS, params = &1)
-glCreateProgram() = 3
-glAttachShader(program = 3, shader = 1)
-glAttachShader(program = 3, shader = 2)
-glBindAttribLocation(program = 3, index = 0, name = "pos")
-glBindAttribLocation(program = 3, index = 1, name = "color")
-glLinkProgram(program = 3)
-glGetProgramiv(program = 3, pname = GL_LINK_STATUS, params = &1)
-glUseProgram(program = 3)
-glGetAttribLocation(program = 3, name = "pos") = 0
-glGetAttribLocation(program = 3, name = "color") = 1
-glGetUniformLocation(program = 3, name = "modelviewProjection") = 0
+glCompileShader(shader = <vs>)
+glGetShaderiv(shader = <vs>, pname = GL_COMPILE_STATUS, params = &1)
+glCreateProgram() = <program>
+glAttachShader(program = <program>, shader = <fs>)
+glAttachShader(program = <program>, shader = <vs>)
+glBindAttribLocation(program = <program>, index = 0, name = "pos")
+glBindAttribLocation(program = <program>, index = 1, name = "color")
+glLinkProgram(program = <program>)
+glGetProgramiv(program = <program>, pname = GL_LINK_STATUS, params = &1)
+glUseProgram(program = <program>)
+glGetAttribLocation(program = <program>, name = "pos") = 0
+glGetAttribLocation(program = <program>, name = "color") = 1
+glGetUniformLocation(program = <program>, name = "modelviewProjection") = 0
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glUniformMatrix4fv(location = 0, count = 1, transpose = GL_FALSE, value = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1})
 glClear(mask = GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
