@@ -45,7 +45,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif ()
 
 foreach (target ${targets})
-    add_executable (${api}_${target} ${target}.c)
+    add_executable (${api}_${target} ${target}.cpp)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
 endforeach (target)
 

@@ -32,6 +32,7 @@
 #include <process.h>
 #else
 #include <unistd.h>
+#include <sys/wait.h>
 #endif
 
 #include <GLFW/glfw3.h>
@@ -106,11 +107,11 @@ main(int argc, char **argv)
 
         return 0;
     } else {
-        char *args[3];
+        const char *args[3];
 
         args[0] = argv[0];
         args[1] = "-child";
         args[2] = NULL;
-        return execute(args);
+        return execute((char * const *)args);
     }
 }

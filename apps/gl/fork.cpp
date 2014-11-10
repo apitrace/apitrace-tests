@@ -41,14 +41,14 @@ int main(int argc, char **argv)
 
     fprintf(stderr, "main\n");
 
-    glXGetProcAddressARB("__main");
+    glXGetProcAddressARB((const GLubyte *)"__main");
 
     pid_t pid = fork();
     if (pid == 0) {
         fprintf(stderr, "child\n");
         fflush(stderr);
         for (i = 0; i < N; ++i) {
-            glXGetProcAddressARB("__child");
+            glXGetProcAddressARB((const GLubyte *)"__child");
         }
     } else {
         // parent
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
             exit(-1);
         }
         for (i = 0; i < N; ++i) {
-            glXGetProcAddressARB("__parent");
+            glXGetProcAddressARB((const GLubyte *)"__parent");
         }
     }
 
