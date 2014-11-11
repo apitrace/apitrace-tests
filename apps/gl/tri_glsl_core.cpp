@@ -114,15 +114,18 @@ static void
 create_shaders(void)
 {
     static const char *fragShaderText =
-        "varying vec4 v_color;\n"
+        "#version 150\n"
+        "in vec4 v_color;\n"
+        "out vec4 f_color;\n"
         "void main() {\n"
-        "    gl_FragColor = v_color;\n"
+        "    f_color = v_color;\n"
         "}\n";
     static const char *vertShaderText =
+        "#version 150\n"
         "uniform mat4 modelviewProjection;\n"
-        "attribute vec4 pos;\n"
-        "attribute vec4 color;\n"
-        "varying vec4 v_color;\n"
+        "in vec4 pos;\n"
+        "in vec4 color;\n"
+        "out vec4 v_color;\n"
         "void main() {\n"
         "    gl_Position = modelviewProjection * pos;\n"
         "    v_color = color;\n"
@@ -130,13 +133,16 @@ create_shaders(void)
 
     GLuint fragShader, vertShader, program;
     GLint stat;
+    char log[1000];
+    GLsizei len;
 
     fragShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragShader, 1, (const char **) &fragShaderText, NULL);
     glCompileShader(fragShader);
     glGetShaderiv(fragShader, GL_COMPILE_STATUS, &stat);
     if (!stat) {
-        fprintf(stderr, "error: fragment shader did not compile!\n");
+        glGetShaderInfoLog(fragShader, sizeof log, &len, log);
+        fprintf(stderr, "error: compiling fragment shader:\n%s\n", log);
         exit(1);
     }
 
@@ -145,7 +151,8 @@ create_shaders(void)
     glCompileShader(vertShader);
     glGetShaderiv(vertShader, GL_COMPILE_STATUS, &stat);
     if (!stat) {
-        fprintf(stderr, "error: vertex shader did not compile!\n");
+        glGetShaderInfoLog(vertShader, sizeof log, &len, log);
+        fprintf(stderr, "error: compiling vertex shader:\n%s\n", log);
         exit(1);
     }
 
@@ -158,12 +165,12 @@ create_shaders(void)
 
     glGetProgramiv(program, GL_LINK_STATUS, &stat);
     if (!stat) {
-        char log[1000];
-        GLsizei len;
-        glGetProgramInfoLog(program, 1000, &len, log);
+        glGetProgramInfoLog(program, sizeof log, &len, log);
         fprintf(stderr, "error: linking:\n%s\n", log);
         exit(1);
     }
+
+    glBindFragDataLocation(program, 0, "f_color");
 
     glUseProgram(program);
 
