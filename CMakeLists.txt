@@ -26,7 +26,7 @@ endif ()
 
 set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package (PythonInterp 2.6 REQUIRED)
+find_package (PythonInterp 2.7 REQUIRED)
 find_package (PkgConfig)
 
 # Set default built type
