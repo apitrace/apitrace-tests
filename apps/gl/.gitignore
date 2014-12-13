@@ -6,6 +6,7 @@ exception
 fork
 gremedy
 map_buffer
+map_coherent
 tri
 tri_glsl
 tri_glsl_core

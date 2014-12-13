@@ -38,6 +38,7 @@ set (targets
     gremedy
     varray
     map_buffer
+    map_coherent
     exception
 )
 
