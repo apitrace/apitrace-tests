@@ -78,6 +78,9 @@ testBufferStorage(void)
 
     void *data = malloc(size);
     memset(data, 0, size);
+
+    while ((glGetError() != GL_NO_ERROR))
+        ;
     
     glBufferStorage(target, size, data,
                     GL_MAP_WRITE_BIT |
@@ -130,14 +133,10 @@ int main(int argc, char** argv)
 {
     glfwInit();
 
-#ifdef __APPLE__
-    if (mapMethod == MAP_BUFFER_RANGE) {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    }
-#endif
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
     if (!window) {
