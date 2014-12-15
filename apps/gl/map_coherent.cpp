@@ -27,12 +27,26 @@
 #include <windows.h>
 #endif
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+
+
+#define GL_MAP_NOTIFY_EXPLICIT_BIT_VMWX 0x80000000
+
+
+typedef void (APIENTRY * PFNGLNOTIFYMAPPEDBUFFERRANGEVMWXPROC)(const void * start, GLsizeiptr length);
+
+static void APIENTRY
+noopGlNotifyMappedBufferRangeVMWX(const void * start, GLsizeiptr length) {
+}
+
+static PFNGLNOTIFYMAPPEDBUFFERRANGEVMWXPROC glNotifyMappedBufferRangeVMWX = &noopGlNotifyMappedBufferRangeVMWX;
 
 
 static const GLenum target = GL_ARRAY_BUFFER;
@@ -48,6 +62,13 @@ testBufferStorage(void)
         exit(EXIT_SKIP);
     }
 
+    GLbitfield map_trace_explicit_bit = 0;
+    if (glfwExtensionSupported("GL_VMWX_map_buffer_debug")) {
+        glNotifyMappedBufferRangeVMWX = (PFNGLNOTIFYMAPPEDBUFFERRANGEVMWXPROC)glfwGetProcAddress("glNotifyMappedBufferRangeVMWX");
+        assert(glNotifyMappedBufferRangeVMWX);
+        map_trace_explicit_bit = GL_MAP_NOTIFY_EXPLICIT_BIT_VMWX;
+    }
+
     GLuint buffer = 0;
     glGenBuffers(1, &buffer);
 
@@ -61,7 +82,8 @@ testBufferStorage(void)
     glBufferStorage(target, size, data,
                     GL_MAP_WRITE_BIT |
                     GL_MAP_PERSISTENT_BIT |
-                    GL_MAP_COHERENT_BIT);
+                    GL_MAP_COHERENT_BIT |
+                    map_trace_explicit_bit);
 
     free(data);
 
@@ -91,9 +113,11 @@ testBufferStorage(void)
     glUnmapBuffer(target);
 
     // persistent & coherent mapping
-    map = (GLubyte *)glMapBufferRange(target, 500, 100, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+    map = (GLubyte *)glMapBufferRange(target, 500, 100, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | map_trace_explicit_bit);
     memset(map + 20, 4, 30);
+    glNotifyMappedBufferRangeVMWX(map + 20, 30);
     memset(map + 50, 5, 50);
+    glNotifyMappedBufferRangeVMWX(map + 50, 50);
     glUnmapBuffer(target);
 
     glBindBuffer(target, 0);
