@@ -59,6 +59,7 @@ testBufferStorage(void)
     if (!GLEW_VERSION_4_4 &&
         !GLEW_ARB_buffer_storage) {
         fprintf(stderr, "error: GL_ARB_buffer_storage not supported\n");
+        glfwTerminate();
         exit(EXIT_SKIP);
     }
 
