@@ -24,6 +24,7 @@ set (api egl_gl)
 set (targets
     tri
     tri_glsl
+    core
 )
 
 foreach (target ${targets})
