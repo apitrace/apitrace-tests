@@ -222,10 +222,18 @@ init(void)
 int
 main(int argc, char *argv[])
 {
+   int version_major = 2;
+
+   int i;
+
+   for (i = 1; i < argc; ++i) {
+       version_major = atoi(argv[i]);
+   }
+
    glfwInit();
 
    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, version_major);
 
    window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
    if (!window) {

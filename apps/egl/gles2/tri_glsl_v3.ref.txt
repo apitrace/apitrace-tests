@@ -1,4 +1,4 @@
-//!tri_glsl
+//!tri_glsl 3
 eglGetDisplay(display_id = <display_id>) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_ES_API) = EGL_TRUE
