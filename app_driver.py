@@ -408,10 +408,8 @@ class AppDriver(Driver):
         replay = self.api_replay_map[self.api]
         #cmd = [get_build_program(replay)]
         cmd = [options.apitrace, 'replay']
-        if self.doubleBuffer:
-            cmd += ['-db']
-        else:
-            cmd += ['-sb']
+        if not self.doubleBuffer:
+            cmd += ['--sb']
         if args:
             cmd += args
         cmd += [self.trace_file]
