@@ -24,7 +24,6 @@
  **************************************************************************/
 
 
-#include <assert.h>
 #include <stdio.h>
 #include <stddef.h>
 
@@ -37,30 +36,6 @@
 
 #include "tri_vs_4_0.h"
 #include "tri_ps_4_0.h"
-
-
-static void
-_dumpObjInfo(const char *szExpr, void *pvObj) {
-    void * lpVtbl = *(void **)pvObj;
-    
-    fprintf(stderr, "%s, pvObj = %p, lpVtbl = %p",
-            szExpr, pvObj, lpVtbl);
-
-    HMODULE hModule = 0;
-    BOOL bRet = GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-                                  (LPCTSTR)lpVtbl,
-                                  &hModule);
-    if (bRet) {
-        char szModule[256];
-        DWORD dwRet = GetModuleFileNameA(hModule, szModule, sizeof szModule);
-        assert(dwRet);
-        fprintf(stderr, " (%s!+0x%0lx)",
-                szModule, (DWORD)((UINT_PTR)lpVtbl - (UINT_PTR)hModule));
-    }
-    fprintf(stderr, "\n");
-}
-
-#define dumpObjInfo(_p) _dumpObjInfo(#_p, _p)
 
 
 static IDXGISwapChain* g_pSwapChain = NULL;
@@ -120,7 +95,7 @@ main(int argc, char *argv[])
 
     UINT Flags = 0;
     if (LoadLibraryA("d3d11sdklayers")) {
-        //Flags |= D3D11_CREATE_DEVICE_DEBUG;
+        Flags |= D3D11_CREATE_DEVICE_DEBUG;
     }
 
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
@@ -167,10 +142,6 @@ main(int argc, char *argv[])
     if (FAILED(hr)) {
         return 1;
     }
-
-    dumpObjInfo(g_pDevice);
-    dumpObjInfo(g_pDevice1);
-    dumpObjInfo(g_pDeviceContext1);
 
     ID3D11RenderTargetView *pRenderTargetView = NULL;
     ID3D11Texture2D* pBackBuffer;
@@ -325,8 +296,6 @@ main(int argc, char *argv[])
     g_pDevice = NULL;
 
     DestroyWindow(hWnd);
-
-    getchar();
 
     return 0;
 }
