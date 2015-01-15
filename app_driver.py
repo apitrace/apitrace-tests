@@ -375,6 +375,10 @@ class AppDriver(Driver):
         # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns 255
         self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
 
+        # Mesa
+        self.replaceState(parameters, 'GL_STENCIL_VALUE_MASK', 255, -1)
+        self.replaceState(parameters, 'GL_STENCIL_WRITEMASK', 255, -1)
+
     def adjustRefState(self, state):
         # Do some adjustments on reference state to eliminate failures from
         # bugs/issues outside of apitrace
