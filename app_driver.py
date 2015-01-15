@@ -122,6 +122,7 @@ class AppDriver(Driver):
         'egl_gl': 'eglreplay',
         'egl_gles1': 'eglreplay',
         'egl_gles2': 'eglreplay',
+        'd3d7': 'd3dreplay',
         'd3d8': 'd3dreplay',
         'd3d9': 'd3dreplay',
         'd3d10': 'd3dreplay',
