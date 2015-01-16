@@ -13,7 +13,7 @@ IDirect3DDevice7::SetRenderState(this = <pDevice>, dwRenderStateType = D3DRENDER
 IDirect3DDevice7::SetRenderState(this = <pDevice>, dwRenderStateType = D3DRENDERSTATE_CULLMODE, dwRenderState = 1) = D3D_OK
 IDirect3DDevice7::DrawPrimitive(this = <pDevice>, d3dptPrimitiveType = D3DPT_TRIANGLELIST, d3dvtVertexType = D3DFVF_XYZ | D3DFVF_DIFFUSE, lpvVertices = blob(48), dwVertexCount = 3, dwFlags = 0) = D3D_OK
 IDirect3DDevice7::EndScene(this = <pDevice>) = D3D_OK
-IDirectDrawSurface7::Blt(this = <pddsPrimary>, lpDestRect = &{left = <>, top = <>, right = <>, bottom = <>}, lpDDSrcSurface = <pddsBackBuffer>, lpSrcRect = &{left = 0, top = 0, right = 250, bottom = 250}, dwFlags = DDBLT_WAIT, lpDDBltFx = NULL) = DD_OK
+<present> IDirectDrawSurface7::Blt(this = <pddsPrimary>, lpDestRect = &{left = <>, top = <>, right = <>, bottom = <>}, lpDDSrcSurface = <pddsBackBuffer>, lpSrcRect = &{left = 0, top = 0, right = 250, bottom = 250}, dwFlags = DDBLT_WAIT, lpDDBltFx = NULL) = DD_OK
 IDirect3DDevice7::Release(this = <pDevice>) = 0
 IDirect3D7::Release(this = <pD3D>) = 4
 IDirectDrawClipper::Release(this = <pClipper>) = 1
