@@ -31,6 +31,7 @@
 #include <GLFW/glfw3.h>
 
 
+static GLboolean doubleBuffer = GL_TRUE;
 static GLboolean coreProfile = GL_FALSE;
 static GLFWwindow* window = NULL;
 
@@ -42,7 +43,11 @@ parseArgs(int argc, char** argv)
 
    for (i = 1; i < argc; ++i) {
       const char *arg = argv[i];
-      if (strcmp(arg, "-core") == 0) {
+      if (strcmp(arg, "-sb") == 0) {
+         doubleBuffer = GL_FALSE;
+      } else if (strcmp(arg, "-db") == 0) {
+         doubleBuffer = GL_TRUE;
+      } else if (strcmp(arg, "-core") == 0) {
          coreProfile = GL_TRUE;
       } else {
          fprintf(stderr, "error: unknown arg %s\n", arg);
@@ -58,6 +63,10 @@ main(int argc, char **argv)
    parseArgs(argc, argv);
 
    glfwInit();
+
+   if (!doubleBuffer) {
+       glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
+   }
 
    if (coreProfile) {
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
