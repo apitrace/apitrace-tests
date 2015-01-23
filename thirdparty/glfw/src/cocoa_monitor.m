@@ -263,8 +263,10 @@ _GLFWmonitor** _glfwPlatformGetMonitors(int* count)
     {
         int j;
 
+#if 0
         if (CGDisplayIsAsleep(displays[i]))
             continue;
+#endif
 
         CGDirectDisplayID screenDisplayID = CGDisplayMirrorsDisplay(displays[i]);
         if (screenDisplayID == kCGNullDirectDisplay)
