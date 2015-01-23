@@ -124,7 +124,11 @@ int _glfwCreateContext(_GLFWwindow* window,
     // Arbitrary array size here
     NSOpenGLPixelFormatAttribute attributes[40];
 
+    // XXX: Allow software renderer, as accelerated renderers are still
+    // preferred without this flag.
+#if 0
     ADD_ATTR(NSOpenGLPFAAccelerated);
+#endif
     ADD_ATTR(NSOpenGLPFAClosestPolicy);
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
