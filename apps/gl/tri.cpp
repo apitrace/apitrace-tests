@@ -34,6 +34,13 @@ static GLFWwindow* window = NULL;
 
 
 static void
+Error(int error, const char *description)
+{
+   fprintf(stderr, "glfw: error: %s\n", description);
+}
+
+
+static void
 Init(void)
 {
    glClearColor(0.3f, 0.1f, 0.3f, 1.0f);
@@ -77,6 +84,8 @@ Draw(void)
 int
 main(int argc, char **argv)
 {
+   glfwSetErrorCallback(&Error);
+
    glfwInit();
 
    window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
