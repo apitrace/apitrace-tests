@@ -26,7 +26,7 @@ set (targets
 )
 
 foreach (target ${targets})
-    add_executable (${api}_${target} ${target}.c)
+    add_executable (${api}_${target} ${target}.cpp)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
     target_link_libraries (${api}_${target} ${GLFW_LIBRARY} ${GLESV2_LIBRARIES} ${EGL_LIBRARIES})
 endforeach (target)
