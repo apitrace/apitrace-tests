@@ -23,6 +23,7 @@ set (api egl_gles2)
 
 set (targets
     tri_glsl
+    map_buffer
 )
 
 foreach (target ${targets})
