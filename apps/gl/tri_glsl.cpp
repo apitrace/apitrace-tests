@@ -89,6 +89,12 @@ Init(void)
    glAttachShader(program, vertShader);
    glLinkProgram(program);
    CheckLink(program);
+
+   glDetachShader(program, fragShader);
+   glDetachShader(program, vertShader);
+   glDeleteShader(fragShader);
+   glDeleteShader(vertShader);
+
    glUseProgram(program);
 
    assert(glGetError() == 0);
@@ -152,8 +158,6 @@ main(int argc, char **argv)
    Reshape();
    Draw();
 
-   glDeleteShader(fragShader);
-   glDeleteShader(vertShader);
    glDeleteProgram(program);
 
    glfwDestroyWindow(window);
