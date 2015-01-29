@@ -65,7 +65,7 @@ Init(void)
 {
    static const char *fragShaderText =
       "void main() {\n"
-      "   gl_FragColor = gl_Color; \n"
+      "   gl_FragColor = gl_Color;\n"
       "}\n";
    static const char *vertShaderText =
       "void main() {\n"
@@ -117,11 +117,11 @@ Draw(void)
    glClear(GL_COLOR_BUFFER_BIT);
 
    glBegin(GL_TRIANGLES);
-   glColor3f(.8, 0, 0); 
+   glColor3f(.8, 0, 0);
    glVertex3f(-0.9, -0.9, -30.0);
-   glColor3f(0, .9, 0); 
+   glColor3f(0, .9, 0);
    glVertex3f( 0.9, -0.9, -30.0);
-   glColor3f(0, 0, .7); 
+   glColor3f(0, 0, .7);
    glVertex3f( 0.0,  0.9, -30.0);
    glEnd();
 

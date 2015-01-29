@@ -1,7 +1,7 @@
 //!tri_glsl
 glCreateShader(type = GL_FRAGMENT_SHADER) = <fs>
 glShaderSource(shader = <fs>, count = 1, string = &"void main() {
-   gl_FragColor = gl_Color; 
+   gl_FragColor = gl_Color;
 }
 ", length = &-1)
 glCompileShader(shader = <fs>)
