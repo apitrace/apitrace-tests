@@ -143,6 +143,14 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    com_ptr<ID3DUserDefinedAnnotation> pUserDefinedAnnotation;
+    hr = pDeviceContext1->QueryInterface(IID_ID3DUserDefinedAnnotation, (void **)&pUserDefinedAnnotation);
+    if (FAILED(hr)) {
+        return 1;
+    }
+
+    pUserDefinedAnnotation->SetMarker(L"Marker");
+
     com_ptr<ID3D11Texture2D> pBackBuffer;
     hr = pSwapChain->GetBuffer(0, IID_ID3D11Texture2D, (void **)&pBackBuffer);
     if (FAILED(hr)) {
@@ -163,8 +171,12 @@ main(int argc, char *argv[])
 
     pDeviceContext1->OMSetRenderTargets(1, &pRenderTargetView.p, NULL);
 
+    pUserDefinedAnnotation->BeginEvent(L"Frame");
+
+    pUserDefinedAnnotation->BeginEvent(L"Clear");
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
     pDeviceContext1->ClearRenderTargetView(pRenderTargetView, clearColor);
+    pUserDefinedAnnotation->EndEvent(); // Clear
 
     com_ptr<ID3D11VertexShader> pVertexShader;
     hr = pDevice1->CreateVertexShader(g_VS, sizeof g_VS, NULL, &pVertexShader);
@@ -254,10 +266,14 @@ main(int argc, char *argv[])
     pDeviceContext1->RSSetState(pRasterizerState);
 
     pDeviceContext1->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+    pUserDefinedAnnotation->BeginEvent(L"Draw");
     pDeviceContext1->Draw(3, 0);
+    pUserDefinedAnnotation->EndEvent(); // Draw
+
+    pUserDefinedAnnotation->EndEvent(); // Frame
 
     pSwapChain->Present(0, 0);
-
 
     ID3D11Buffer * pNullBuffer = NULL;
     UINT NullStride = 0;
