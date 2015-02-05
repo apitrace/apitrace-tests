@@ -2,7 +2,6 @@
 D3D11CreateDeviceAndSwapChain(pAdapter = NULL, DriverType = D3D_DRIVER_TYPE_HARDWARE, Software = NULL, Flags = <>, pFeatureLevels = {D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0}, FeatureLevels = 3, SDKVersion = 7, pSwapChainDesc = &{BufferDesc = {Width = 250, Height = 250, RefreshRate = {Numerator = 60, Denominator = 1}, Format = DXGI_FORMAT_R8G8B8A8_UNORM, ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED, Scaling = DXGI_MODE_SCALING_UNSPECIFIED}, SampleDesc = {Count = 1, Quality = 0}, BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT, BufferCount = 2, OutputWindow = <hWnd>, Windowed = TRUE, SwapEffect = DXGI_SWAP_EFFECT_DISCARD, Flags = 0x0}, ppSwapChain = &<pSwapChain>, ppDevice = &<pDevice>, pFeatureLevel = NULL, ppImmediateContext = &<pDeviceContext>) = S_OK
 IDXGISwapChain::GetBuffer(this = <pSwapChain>, Buffer = 0, riid = {Data1 = 1863690994, Data2 = 53768, Data3 = 20105, Data4 = {154, 180, 72, 149, 53, 211, 79, 156}}, ppSurface = &<pSurface>) = S_OK
 ID3D11Device::CreateRenderTargetView(this = <pDevice>, pResource = <pSurface>, pDesc = &{Format = DXGI_FORMAT_R8G8B8A8_UNORM, ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D, Texture2D = {MipSlice = 0}}, ppRTView = &<pRenderTargetView>) = S_OK
-ID3D11Texture2D::Release(this = <pSurface>) = 0
 ID3D11DeviceContext::OMSetRenderTargets(this = <pDeviceContext>, NumViews = 1, ppRenderTargetViews = &<pRenderTargetView>, pDepthStencilView = NULL)
 ID3D11DeviceContext::ClearRenderTargetView(this = <pDeviceContext>, pRenderTargetView = <pRenderTargetView>, ColorRGBA = {0.3, 0.1, 0.3, 1})
 ID3D11Device::CreateVertexShader(this = <pDevice>, pShaderBytecode = "//
@@ -100,17 +99,18 @@ ID3D11DeviceContext::IASetPrimitiveTopology(this = <pDeviceContext>, Topology = 
 ID3D11DeviceContext::Draw(this = <pDeviceContext>, VertexCount = 3, StartVertexLocation = 0)
 <present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
 ID3D11DeviceContext::IASetVertexBuffers(this = <pDeviceContext>, StartSlot = 0, NumBuffers = 1, ppVertexBuffers = &NULL, pStrides = &0, pOffsets = &0)
-ID3D11Buffer::Release(this = <pVertexBuffer>) = 0
 ID3D11DeviceContext::OMSetRenderTargets(this = <pDeviceContext>, NumViews = 0, ppRenderTargetViews = NULL, pDepthStencilView = NULL)
-ID3D11RenderTargetView::Release(this = <pRenderTargetView>) = 0
 ID3D11DeviceContext::IASetInputLayout(this = <pDeviceContext>, pInputLayout = NULL)
-ID3D11InputLayout::Release(this = <pInputLayout>) = 0
 ID3D11DeviceContext::VSSetShader(this = <pDeviceContext>, pVertexShader = NULL, ppClassInstances = NULL, NumClassInstances = 0)
-ID3D11VertexShader::Release(this = <pVertexShader>) = 0
 ID3D11DeviceContext::PSSetShader(this = <pDeviceContext>, pPixelShader = NULL, ppClassInstances = NULL, NumClassInstances = 0)
-ID3D11PixelShader::Release(this = <pPixelShader>) = 0
 ID3D11DeviceContext::RSSetState(this = <pDeviceContext>, pRasterizerState = NULL)
 ID3D11RasterizerState::Release(this = <pRasterizerState>) = 0
+ID3D11Buffer::Release(this = <pVertexBuffer>) = 0
+ID3D11PixelShader::Release(this = <pPixelShader>) = 0
+ID3D11InputLayout::Release(this = <pInputLayout>) = 0
+ID3D11VertexShader::Release(this = <pVertexShader>) = 0
+ID3D11RenderTargetView::Release(this = <pRenderTargetView>) = 0
+ID3D11Texture2D::Release(this = <pSurface>) = 0
 IDXGISwapChain::Release(this = <pSwapChain>) = 0
 ID3D11DeviceContext::Release(this = <pDeviceContext>) = 0
 ID3D11Device::Release(this = <pDevice>) = 0

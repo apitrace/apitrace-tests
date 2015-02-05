@@ -34,13 +34,10 @@
 
 #include <d3d11.h>
 
+#include "com_ptr.hpp"
+
 #include "tri_vs_4_0.h"
 #include "tri_ps_4_0.h"
-
-
-static IDXGISwapChain* g_pSwapChain = NULL;
-static ID3D11Device * g_pDevice = NULL;
-static ID3D11DeviceContext * g_pDeviceContext = NULL;
 
 
 int
@@ -115,6 +112,9 @@ main(int argc, char *argv[])
         D3D_FEATURE_LEVEL_10_0
     };
 
+    com_ptr<ID3D11Device> pDevice;
+    com_ptr<ID3D11DeviceContext> pDeviceContext;
+    com_ptr<IDXGISwapChain> pSwapChain;
     hr = D3D11CreateDeviceAndSwapChain(NULL, /* pAdapter */
                                        D3D_DRIVER_TYPE_HARDWARE,
                                        NULL, /* Software */
@@ -123,38 +123,39 @@ main(int argc, char *argv[])
                                        sizeof FeatureLevels / sizeof FeatureLevels[0],
                                        D3D11_SDK_VERSION,
                                        &SwapChainDesc,
-                                       &g_pSwapChain,
-                                       &g_pDevice,
+                                       &pSwapChain,
+                                       &pDevice,
                                        NULL, /* pFeatureLevel */
-                                       &g_pDeviceContext); /* ppImmediateContext */
+                                       &pDeviceContext); /* ppImmediateContext */
     if (FAILED(hr)) {
         return 1;
     }
 
-    ID3D11RenderTargetView *pRenderTargetView = NULL;
-    ID3D11Texture2D* pBackBuffer;
-    hr = g_pSwapChain->GetBuffer(0, IID_ID3D11Texture2D, (void **)&pBackBuffer);
+    com_ptr<ID3D11Texture2D> pBackBuffer;
+    hr = pSwapChain->GetBuffer(0, IID_ID3D11Texture2D, (void **)&pBackBuffer);
     if (FAILED(hr)) {
         return 1;
     }
+
     D3D11_RENDER_TARGET_VIEW_DESC RenderTargetViewDesc;
     ZeroMemory(&RenderTargetViewDesc, sizeof RenderTargetViewDesc);
     RenderTargetViewDesc.Format = SwapChainDesc.BufferDesc.Format;
     RenderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
     RenderTargetViewDesc.Texture2D.MipSlice = 0;
-    hr = g_pDevice->CreateRenderTargetView(pBackBuffer, &RenderTargetViewDesc, &pRenderTargetView);
+
+    com_ptr<ID3D11RenderTargetView> pRenderTargetView;
+    hr = pDevice->CreateRenderTargetView(pBackBuffer, &RenderTargetViewDesc, &pRenderTargetView);
     if (FAILED(hr)) {
         return 1;
     }
-    pBackBuffer->Release();
 
-    g_pDeviceContext->OMSetRenderTargets(1, &pRenderTargetView, NULL);
+    pDeviceContext->OMSetRenderTargets(1, &pRenderTargetView.p, NULL);
 
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
-    g_pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
+    pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
 
-    ID3D11VertexShader * pVertexShader;
-    hr = g_pDevice->CreateVertexShader(g_VS, sizeof g_VS, NULL, &pVertexShader);
+    com_ptr<ID3D11VertexShader> pVertexShader;
+    hr = pDevice->CreateVertexShader(g_VS, sizeof g_VS, NULL, &pVertexShader);
     if (FAILED(hr)) {
         return 1;
     }
@@ -169,26 +170,25 @@ main(int argc, char *argv[])
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
-    ID3D11InputLayout *pVertexLayout = NULL;
-    hr = g_pDevice->CreateInputLayout(InputElementDescs,
-                                      2,
-                                      g_VS,
-                                      sizeof g_VS,
-                                      &pVertexLayout);
+    com_ptr<ID3D11InputLayout> pVertexLayout;
+    hr = pDevice->CreateInputLayout(InputElementDescs,
+                                    2,
+                                    g_VS, sizeof g_VS,
+                                    &pVertexLayout);
     if (FAILED(hr)) {
         return 1;
     }
 
-    g_pDeviceContext->IASetInputLayout(pVertexLayout);
+    pDeviceContext->IASetInputLayout(pVertexLayout);
 
-    ID3D11PixelShader * pPixelShader;
-    hr = g_pDevice->CreatePixelShader(g_PS, sizeof g_PS, NULL, &pPixelShader);
+    com_ptr<ID3D11PixelShader>  pPixelShader;
+    hr = pDevice->CreatePixelShader(g_PS, sizeof g_PS, NULL, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
     }
 
-    g_pDeviceContext->VSSetShader(pVertexShader, NULL, 0);
-    g_pDeviceContext->PSSetShader(pPixelShader, NULL, 0);
+    pDeviceContext->VSSetShader(pVertexShader, NULL, 0);
+    pDeviceContext->PSSetShader(pPixelShader, NULL, 0);
 
     static const Vertex vertices[] = {
         { { -0.9f, -0.9f, 0.5f, 1.0f}, { 0.8f, 0.0f, 0.0f, 0.1f } },
@@ -209,16 +209,16 @@ main(int argc, char *argv[])
     BufferData.SysMemPitch = 0;
     BufferData.SysMemSlicePitch = 0;
 
-    ID3D11Buffer *pVertexBuffer;
-    hr = g_pDevice->CreateBuffer(&BufferDesc, &BufferData, &pVertexBuffer);
+    com_ptr<ID3D11Buffer> pVertexBuffer;
+    hr = pDevice->CreateBuffer(&BufferDesc, &BufferData, &pVertexBuffer);
     if (FAILED(hr)) {
         return 1;
     }
 
     UINT Stride = sizeof(Vertex);
     UINT Offset = 0;
-    g_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &Stride, &Offset);
-    
+    pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer.p, &Stride, &Offset);
+
     D3D11_VIEWPORT ViewPort;
     ViewPort.TopLeftX = 0;
     ViewPort.TopLeftY = 0;
@@ -226,56 +226,41 @@ main(int argc, char *argv[])
     ViewPort.Height = WindowHeight;
     ViewPort.MinDepth = 0.0f;
     ViewPort.MaxDepth = 1.0f;
-    g_pDeviceContext->RSSetViewports(1, &ViewPort);
-    
+    pDeviceContext->RSSetViewports(1, &ViewPort);
+
     D3D11_RASTERIZER_DESC RasterizerDesc;
     ZeroMemory(&RasterizerDesc, sizeof RasterizerDesc);
     RasterizerDesc.CullMode = D3D11_CULL_NONE;
     RasterizerDesc.FillMode = D3D11_FILL_SOLID;
     RasterizerDesc.FrontCounterClockwise = true;
     RasterizerDesc.DepthClipEnable = true;
-    ID3D11RasterizerState* pRasterizerState = NULL;
-    hr = g_pDevice->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
+    com_ptr<ID3D11RasterizerState> pRasterizerState;
+    hr = pDevice->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
     if (FAILED(hr)) {
         return 1;
     }
-    g_pDeviceContext->RSSetState(pRasterizerState);
+    pDeviceContext->RSSetState(pRasterizerState);
 
-    g_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    g_pDeviceContext->Draw(3, 0);
+    pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    pDeviceContext->Draw(3, 0);
 
-    g_pSwapChain->Present(0, 0);
+    pSwapChain->Present(0, 0);
 
 
-    ID3D11Buffer *pNullBuffer = NULL;
+    ID3D11Buffer * pNullBuffer = NULL;
     UINT NullStride = 0;
     UINT NullOffset = 0;
-    g_pDeviceContext->IASetVertexBuffers(0, 1, &pNullBuffer, &NullStride, &NullOffset);
-    pVertexBuffer->Release();
+    pDeviceContext->IASetVertexBuffers(0, 1, &pNullBuffer, &NullStride, &NullOffset);
 
-    g_pDeviceContext->OMSetRenderTargets(0, NULL, NULL);
-    pRenderTargetView->Release();
+    pDeviceContext->OMSetRenderTargets(0, NULL, NULL);
 
-    g_pDeviceContext->IASetInputLayout(NULL);
-    pVertexLayout->Release();
+    pDeviceContext->IASetInputLayout(NULL);
 
-    g_pDeviceContext->VSSetShader(NULL, NULL, 0);
-    pVertexShader->Release();
+    pDeviceContext->VSSetShader(NULL, NULL, 0);
 
-    g_pDeviceContext->PSSetShader(NULL, NULL, 0);
-    pPixelShader->Release();
+    pDeviceContext->PSSetShader(NULL, NULL, 0);
 
-    g_pDeviceContext->RSSetState(NULL);
-    pRasterizerState->Release();
-
-    g_pSwapChain->Release();
-    g_pSwapChain = NULL;
-
-    g_pDeviceContext->Release();
-    g_pDeviceContext = NULL;
-
-    g_pDevice->Release();
-    g_pDevice = NULL;
+    pDeviceContext->RSSetState(NULL);
 
     DestroyWindow(hWnd);
 

@@ -36,12 +36,12 @@
 template< class T >
 class com_ptr
 {
-private:
+public:
     T *p;
 
-public:
-    com_ptr(void) {
-        p = NULL;
+    com_ptr(void) :
+        p(NULL)
+    {
     }
 
     ~com_ptr() {
