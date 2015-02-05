@@ -205,6 +205,12 @@ Init(void)
        }
     } else {
        fprintf(stderr, "warning: %s not supported\n", debugExtensionString);
+#ifdef __APPLE__
+       if (debugExtension == KHR_DEBUG && glfwExtensionSupported("GL_EXT_debug_label")) {
+           // glretrace will fallback to EXT_debug_label internally
+           require = GL_FALSE;
+       }
+#endif
        if (require) {
            exit(EXIT_SKIP);
        }
