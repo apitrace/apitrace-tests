@@ -86,6 +86,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    D3DPERF_SetMarker(D3DCOLOR_XRGB(128, 128, 128), L"Marker");
+
     D3DCAPS9 caps;
     hr = g_pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     if (FAILED(hr)) {
@@ -142,7 +144,10 @@ main(int argc, char *argv[])
     };
 
     g_pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+
+    D3DPERF_BeginEvent(D3DCOLOR_XRGB(128, 128, 128), L"Draw");
     g_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
+    D3DPERF_EndEvent();
 
     g_pDevice->EndScene();
 
