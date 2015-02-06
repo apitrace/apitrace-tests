@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <string.h>
 
 #include <initguid.h>
 #include <windows.h>
@@ -40,6 +41,14 @@
 
 #include "tri_vs_4_0.h"
 #include "tri_ps_4_0.h"
+
+
+template< typename T >
+inline void
+setObjectName(com_ptr<T> &pObject, const char *szName)
+{
+    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, strlen(szName), szName);
+}
 
 
 int
@@ -135,11 +144,15 @@ main(int argc, char *argv[])
 
     D3DPERF_SetMarker(D3DCOLOR_XRGB(128, 128, 128), L"Marker");
 
+    setObjectName(pDevice, "Device");
+
     com_ptr<ID3D11Texture2D> pBackBuffer;
     hr = pSwapChain->GetBuffer(0, IID_ID3D11Texture2D, (void **)&pBackBuffer);
     if (FAILED(hr)) {
         return 1;
     }
+
+    setObjectName(pBackBuffer, "BackBuffer");
 
     D3D11_RENDER_TARGET_VIEW_DESC RenderTargetViewDesc;
     ZeroMemory(&RenderTargetViewDesc, sizeof RenderTargetViewDesc);
