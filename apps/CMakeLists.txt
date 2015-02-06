@@ -78,7 +78,7 @@ if (DirectX_D3D11_1_FOUND)
     add_subdirectory (d3d11_1)
 endif ()
 
-if (DirectX_D3D11_FOUND)
+if (DirectX_D3D11_FOUND AND DirectX_D3D9_FOUND)
     add_subdirectory (d3d11)
 endif ()
 

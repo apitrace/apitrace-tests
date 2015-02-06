@@ -34,6 +34,8 @@
 
 #include <d3d11.h>
 
+#include <d3d9.h> // D3DPERF_*
+
 #include "com_ptr.hpp"
 
 #include "tri_vs_4_0.h"
@@ -131,6 +133,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    D3DPERF_SetMarker(D3DCOLOR_XRGB(128, 128, 128), L"Marker");
+
     com_ptr<ID3D11Texture2D> pBackBuffer;
     hr = pSwapChain->GetBuffer(0, IID_ID3D11Texture2D, (void **)&pBackBuffer);
     if (FAILED(hr)) {
@@ -151,8 +155,12 @@ main(int argc, char *argv[])
 
     pDeviceContext->OMSetRenderTargets(1, &pRenderTargetView.p, NULL);
 
+    D3DPERF_BeginEvent(D3DCOLOR_XRGB(128, 128, 128), L"Frame");
+
+    D3DPERF_BeginEvent(D3DCOLOR_XRGB(128, 128, 128), L"Clear");
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
     pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
+    D3DPERF_EndEvent(); // Clear
 
     com_ptr<ID3D11VertexShader> pVertexShader;
     hr = pDevice->CreateVertexShader(g_VS, sizeof g_VS, NULL, &pVertexShader);
@@ -242,7 +250,12 @@ main(int argc, char *argv[])
     pDeviceContext->RSSetState(pRasterizerState);
 
     pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+    D3DPERF_BeginEvent(D3DCOLOR_XRGB(128, 128, 128), L"Draw");
     pDeviceContext->Draw(3, 0);
+    D3DPERF_EndEvent(); // Draw
+
+    D3DPERF_EndEvent(); // Frame
 
     pSwapChain->Present(0, 0);
 
