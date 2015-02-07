@@ -371,14 +371,24 @@ class AppDriver(Driver):
         try:
             parameters = state['parameters']
         except KeyError:
-            return
+            pass
+        else:
+            # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns 255
+            self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
 
-        # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns 255
-        self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
+            # Mesa
+            self.replaceState(parameters, 'GL_STENCIL_VALUE_MASK', 255, -1)
+            self.replaceState(parameters, 'GL_STENCIL_WRITEMASK', 255, -1)
 
-        # Mesa
-        self.replaceState(parameters, 'GL_STENCIL_VALUE_MASK', 255, -1)
-        self.replaceState(parameters, 'GL_STENCIL_WRITEMASK', 255, -1)
+        try:
+            shaders = state['shaders']
+        except KeyError:
+            pass
+        else:
+            for label, shader in shaders.iteritems():
+                if tracematch.isShaderDisassembly(shader):
+                    shader = tracematch.normalizeShaderDisassembly(shader)
+                    shaders[label] = shader
 
     def adjustRefState(self, state):
         # Do some adjustments on reference state to eliminate failures from
