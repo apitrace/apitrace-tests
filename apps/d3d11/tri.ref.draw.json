@@ -24,7 +24,7 @@ ret"
       "__width__": 250,
       "__height__": 250,
       "__depth__": 1,
-      "__format__": "UNKNOWN"
+      "__format__": "DXGI_FORMAT_R8G8B8A8_UNORM"
     }
   }
 }
