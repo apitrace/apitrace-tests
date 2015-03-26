@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <GL/glew.h> // for GL_SHADING_LANGUAGE_VERSION
 #include <GLFW/glfw3.h>
 
 
