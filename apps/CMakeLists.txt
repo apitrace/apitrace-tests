@@ -50,6 +50,7 @@ macro (add_app_tests)
             string (REPLACE " " ";" TEST_ARGS_SPLIT "${TEST_ARGS}")
 
             if (TEST_TARGET)
+                message (STATUS "Found test ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}")
                 get_filename_component (TEST_NAME ${TEST_REF} NAME_WE)
                 add_app_test (
                     NAME ${api}_${TEST_NAME}

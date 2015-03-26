@@ -30,6 +30,7 @@ set (api gl)
 
 set (targets
     child
+    config
     debug
     default
     tri

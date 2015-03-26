@@ -165,6 +165,8 @@ class AppDriver(Driver):
         ] + cmd
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
+        if self.getNamePrefix() == 'config':
+            env['GLTRACE_CONF'] = os.path.join(os.path.dirname(self.ref_dump), 'gltrace.conf')
 
         p = popen(cmd, env=env, cwd=self.cwd)
         p.wait()
