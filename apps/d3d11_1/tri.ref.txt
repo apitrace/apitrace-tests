@@ -107,7 +107,7 @@ ID3DUserDefinedAnnotation::BeginEvent(this = <pUserDefinedAnnotation>, Name = "D
 ID3D11DeviceContext1::Draw(this = <pDeviceContext>, VertexCount = 3, StartVertexLocation = 0)
 ID3DUserDefinedAnnotation::EndEvent(this = <pUserDefinedAnnotation>) = -1
 ID3DUserDefinedAnnotation::EndEvent(this = <pUserDefinedAnnotation>) = -1
-<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
+<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = <>
 ID3D11DeviceContext1::IASetVertexBuffers(this = <pDeviceContext>, StartSlot = 0, NumBuffers = 1, ppVertexBuffers = &NULL, pStrides = &0, pOffsets = &0)
 ID3D11DeviceContext1::OMSetRenderTargets(this = <pDeviceContext>, NumViews = 0, ppRenderTargetViews = NULL, pDepthStencilView = NULL)
 ID3D11DeviceContext1::IASetInputLayout(this = <pDeviceContext>, pInputLayout = NULL)

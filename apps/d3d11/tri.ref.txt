@@ -106,7 +106,7 @@ D3DPERF_BeginEvent(col = 4286611584, wszName = "Draw") = -1
 <draw> ID3D11DeviceContext::Draw(this = <pDeviceContext>, VertexCount = 3, StartVertexLocation = 0)
 D3DPERF_EndEvent() = -1
 D3DPERF_EndEvent() = -1
-<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
+<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = <>
 ID3D11DeviceContext::IASetVertexBuffers(this = <pDeviceContext>, StartSlot = 0, NumBuffers = 1, ppVertexBuffers = &NULL, pStrides = &0, pOffsets = &0)
 ID3D11DeviceContext::OMSetRenderTargets(this = <pDeviceContext>, NumViews = 0, ppRenderTargetViews = NULL, pDepthStencilView = NULL)
 ID3D11DeviceContext::IASetInputLayout(this = <pDeviceContext>, pInputLayout = NULL)
