@@ -38,4 +38,13 @@ foreach (target ${targets})
     )
 endforeach (target)
 
+add_library (rtld_local_module MODULE rtld_local_module.cpp)
+target_link_libraries (rtld_local_module ${GLFW_LIBRARY} ${GLESV2_LIBRARIES} ${EGL_LIBRARIES})
+set_target_properties (rtld_local_module PROPERTIES OUTPUT_NAME rtld_local)
+add_executable (${api}_rtld_local rtld_local.cpp)
+set_target_properties (${api}_rtld_local PROPERTIES OUTPUT_NAME rtld_local)
+target_link_libraries (${api}_rtld_local ${CMAKE_DL_LIBS})
+
 add_app_tests ()
+
+set_property (TEST app_${api}_rtld_local PROPERTY WILL_FAIL TRUE)
