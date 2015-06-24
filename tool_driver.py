@@ -83,7 +83,7 @@ class ToolDriver(Driver):
             args = refStream.readline().split()
             cmd = [self.options.apitrace] + args
 
-            if args[0] == 'dump':
+            if args[0] in ('dump', 'diff'):
                 break
 
             p = popen(cmd, cwd=cwd, universal_newlines=True)
