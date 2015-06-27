@@ -55,6 +55,8 @@ int main(int argc, char** argv)
 {
     glfwInit();
 
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+
     window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
     if (!window) {
         return EXIT_SKIP;

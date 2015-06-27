@@ -64,6 +64,8 @@ main(int argc, char **argv)
 
    glfwInit();
 
+   glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+
    if (!doubleBuffer) {
        glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
    }

@@ -208,6 +208,7 @@ int main(int argc, char** argv)
 
     glfwInit();
 
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #ifdef __APPLE__
     if (mapMethod == MAP_BUFFER_RANGE) {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

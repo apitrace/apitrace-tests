@@ -223,6 +223,7 @@ main(int argc, char *argv[])
 {
    glfwInit();
 
+   glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 
    window = glfwCreateWindow(300, 300, argv[0], NULL, NULL);
