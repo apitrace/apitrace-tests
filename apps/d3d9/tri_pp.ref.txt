@@ -28,7 +28,7 @@ IDirect3DDevice9::SetRenderState(this = <pDevice>, State = D3DRS_CULLMODE, Value
 IDirect3DDevice9::BeginScene(this = <pDevice>) = D3D_OK
 IDirect3DDevice9::DrawPrimitiveUP(this = <pDevice>, PrimitiveType = D3DPT_TRIANGLELIST, PrimitiveCount = 1, pVertexStreamZeroData = blob(96), VertexStreamZeroStride = 32) = D3D_OK
 IDirect3DDevice9::EndScene(this = <pDevice>) = D3D_OK
-IDirect3DDevice9::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = D3D_OK
+IDirect3DDevice9::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = <>
 IDirect3DPixelShader9::Release(this = <pPixelShader>) = 0
 IDirect3DVertexShader9::Release(this = <pVertexShader>) = 0
 IDirect3DVertexDeclaration9::Release(this = <pVertexDeclaration>) = 0

@@ -11,6 +11,6 @@ D3DPERF_BeginEvent(col = 4286611584, wszName = "Draw") = -1
 IDirect3DDevice9::DrawPrimitiveUP(this = <pDevice>, PrimitiveType = D3DPT_TRIANGLELIST, PrimitiveCount = 1, pVertexStreamZeroData = blob(48), VertexStreamZeroStride = 16) = D3D_OK
 D3DPERF_EndEvent() = -1
 IDirect3DDevice9::EndScene(this = <pDevice>) = D3D_OK
-<present> IDirect3DDevice9::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = D3D_OK
+<present> IDirect3DDevice9::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = <>
 IDirect3DDevice9::Release(this = <pDevice>) = 0
 IDirect3D9::Release(this = <pD3D>) = 0
