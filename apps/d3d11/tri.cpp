@@ -97,8 +97,6 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    ShowWindow(hWnd, SW_SHOW);
-
     UINT Flags = 0;
     if (LoadLibraryA("d3d11sdklayers")) {
         Flags |= D3D11_CREATE_DEVICE_DEBUG;

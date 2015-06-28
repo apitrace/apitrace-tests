@@ -84,8 +84,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    ShowWindow(hWnd, SW_SHOW);
-
     com_ptr<IDirectDraw7> pDD;
     hr = DirectDrawCreateEx(NULL, (void **)&pDD, IID_IDirectDraw7, NULL);
     if (FAILED(hr)) {

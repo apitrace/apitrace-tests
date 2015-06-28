@@ -79,8 +79,6 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    ShowWindow(hWnd, SW_SHOW);
-
     g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_pD3D) {
         return 1;

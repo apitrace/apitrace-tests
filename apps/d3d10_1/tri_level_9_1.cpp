@@ -86,8 +86,6 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    ShowWindow(hWnd, SW_SHOW);
-
     UINT Flags = 0;
     if (LoadLibraryA("d3d10sdklayers")) {
         Flags |= D3D10_CREATE_DEVICE_DEBUG;
