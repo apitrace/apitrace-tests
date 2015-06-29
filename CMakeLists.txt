@@ -105,6 +105,9 @@ enable_testing()
 
 add_definitions (-DEXIT_SKIP=125)
 
+include_directories (thirdparty/glad/include)
+add_subdirectory (thirdparty/glad)
+
 add_subdirectory (apps)
 add_subdirectory (traces)
 
