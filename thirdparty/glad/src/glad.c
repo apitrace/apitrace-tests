@@ -25,7 +25,7 @@ static void get_exts(void) {
         num_exts_i = 0;
         glGetIntegerv(GL_NUM_EXTENSIONS, &num_exts_i);
         if (num_exts_i > 0) {
-            exts_i = realloc(exts_i, num_exts_i * sizeof *exts_i);
+            exts_i = (const char **)realloc((void *)exts_i, num_exts_i * sizeof *exts_i);
         }
 
         for(index = 0; index < num_exts_i; index++) {
