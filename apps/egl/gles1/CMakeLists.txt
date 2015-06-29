@@ -23,7 +23,6 @@ set (api egl_gles1)
 
 set (targets
     tri
-    debug_marker
 )
 
 foreach (target ${targets})

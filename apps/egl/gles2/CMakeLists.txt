@@ -22,6 +22,7 @@ include_directories(
 set (api egl_gles2)
 
 set (targets
+    debug_marker
     tri_glsl
     map_buffer
 )
