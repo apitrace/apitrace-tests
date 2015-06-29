@@ -74,56 +74,56 @@ parseArgs(int argc, char** argv)
 }
 
 
-typedef void (GLAPIENTRY * PFNDEBUGMESSAGEINSERT)(GLsizei length, const GLchar *buf);
-typedef void (GLAPIENTRY * PFNPUSHDEBUGGROUP)(GLsizei length, const char *message);
-typedef void (GLAPIENTRY * PFNPOPDEBUGGROUP)(void);
-typedef void (GLAPIENTRY * PFNOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
-typedef void (GLAPIENTRY * PFNGETOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
+typedef void (APIENTRY * PFNDEBUGMESSAGEINSERT)(GLsizei length, const GLchar *buf);
+typedef void (APIENTRY * PFNPUSHDEBUGGROUP)(GLsizei length, const char *message);
+typedef void (APIENTRY * PFNPOPDEBUGGROUP)(void);
+typedef void (APIENTRY * PFNOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
+typedef void (APIENTRY * PFNGETOBJECTLABEL)(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
 
-static void GLAPIENTRY noopDebugMessageInsert(GLsizei length, const GLchar *buf) {}
-static void GLAPIENTRY noopPushDebugGroup(GLsizei length, const char *message) {}
-static void GLAPIENTRY noopPopDebugGroup(void) {}
-static void GLAPIENTRY noopObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) {}
-static void GLAPIENTRY noopGetobjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label) {}
+static void APIENTRY noopDebugMessageInsert(GLsizei length, const GLchar *buf) {}
+static void APIENTRY noopPushDebugGroup(GLsizei length, const char *message) {}
+static void APIENTRY noopPopDebugGroup(void) {}
+static void APIENTRY noopObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) {}
+static void APIENTRY noopGetobjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label) {}
 
-static void GLAPIENTRY
+static void APIENTRY
 khrDebugMessageInsert(GLsizei length, const GLchar *buf) {
    glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_OTHER, 0, GL_DEBUG_SEVERITY_MEDIUM, length, buf);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 arbDebugMessageInsert(GLsizei length, const GLchar *buf) {
    glDebugMessageInsertARB(GL_DEBUG_SOURCE_APPLICATION_ARB, GL_DEBUG_TYPE_OTHER_ARB, 0, GL_DEBUG_SEVERITY_MEDIUM_ARB, length, buf);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 amdDebugMessageInsert(GLsizei length, const GLchar *buf) {
    glDebugMessageInsertAMD(GL_DEBUG_CATEGORY_APPLICATION_AMD, GL_DEBUG_SEVERITY_MEDIUM_AMD, 0, length, buf);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 extDebugMessageInsert(GLsizei length, const GLchar *buf) {
    if (length < 0) length = 0;
    glInsertEventMarkerEXT(length, buf);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 khrPushDebugGroup(GLsizei length, const char *message) {
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION_ARB, 0, length, message);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 khrPopDebugGroup(void) {
     glPopDebugGroup();
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 extPushDebugGroup(GLsizei length, const char *message) {
    if (length < 0) length = 0;
    glPushGroupMarkerEXT(length, message);
 }
 
-static void GLAPIENTRY
+static void APIENTRY
 extPopDebugGroup(void) {
     glPopGroupMarkerEXT();
 }
