@@ -27,8 +27,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <GL/glew.h> // for GL_SHADING_LANGUAGE_VERSION
 #include <GLFW/glfw3.h>
+
+#ifndef GL_SHADING_LANGUAGE_VERSION
+#define GL_SHADING_LANGUAGE_VERSION 0x8B8C
+#endif
 
 
 static GLFWwindow* window = NULL;

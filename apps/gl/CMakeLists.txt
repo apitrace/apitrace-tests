@@ -16,12 +16,11 @@ add_definitions (-DGLFW_INCLUDE_GL)
 include_directories (
     ${OPENGL_INCLUDE_PATH}
     ${GLFW_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
 )
 
 link_libraries (
+    glad
     ${GLFW_LIBRARY}
-    ${GLEW_glew_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     ${OPENGL_gl_LIBRARY}
 )

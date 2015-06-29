@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -73,7 +73,7 @@ Init(void)
       "   gl_FrontColor = gl_Color;\n"
       "}\n";
 
-   if (!GLEW_VERSION_2_0) {
+   if (!GLAD_GL_VERSION_2_0) {
       printf("This program requires OpenGL 2.x\n");
       exit(EXIT_SKIP);
    }
@@ -153,7 +153,9 @@ main(int argc, char **argv)
 
    glfwMakeContextCurrent(window);
 
-   glewInit();
+   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+      return EXIT_FAILURE;
+   }
 
    Init();
    Reshape();

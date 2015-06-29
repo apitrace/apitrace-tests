@@ -44,7 +44,7 @@ static void Init(void)
    has_GL_GREMEDY_string_marker = checkExtension("GL_GREMEDY_string_marker", extensions);
    has_GL_GREMEDY_frame_terminator = checkExtension("GL_GREMEDY_string_marker", extensions);
 
-   if (GLEW_VERSION_3_0) {
+   if (GLAD_GL_VERSION_3_0) {
       GLint has_GL3_GREMEDY_string_marker = 0;
       GLint has_GL3_GREMEDY_frame_terminator = 0;
       GLint i;
@@ -64,7 +64,7 @@ static void Init(void)
             exit(1);
          }
 
-         if (strcmp(extension, "GL_GREMEDY_string_marker_count") == 0) {
+         if (strcmp(extension, "GL_GREMEDY_string_marker") == 0) {
             ++has_GL3_GREMEDY_string_marker;
          }
 
@@ -84,19 +84,17 @@ static void Init(void)
       }
    }
 
-   glewInit();
-
-   if (!!has_GL_GREMEDY_string_marker != !!GLEW_GREMEDY_string_marker) {
-      fprintf(stderr, "error: GL_GREMEDY_string_marker not consistently supported by GLEW\n");
+   if (!!has_GL_GREMEDY_string_marker != !!GLAD_GL_GREMEDY_string_marker) {
+      fprintf(stderr, "error: GL_GREMEDY_string_marker not consistently supported by GLAD\n");
       exit(1);
    }
 
-   if (!!has_GL_GREMEDY_frame_terminator != !!GLEW_GREMEDY_frame_terminator) {
-      fprintf(stderr, "error: GL_GREMEDY_frame_terminator not consistently supported by GLEW\n");
+   if (!!has_GL_GREMEDY_frame_terminator != !!GLAD_GL_GREMEDY_frame_terminator) {
+      fprintf(stderr, "error: GL_GREMEDY_frame_terminator not consistently supported by GLAD\n");
       exit(1);
    }
 
-   if (GLEW_GREMEDY_string_marker) {
+   if (GLAD_GL_GREMEDY_string_marker) {
       glStringMarkerGREMEDY(strlen("Init"), "Init - this should not be included");
    }
 
@@ -108,7 +106,7 @@ static void Reshape(void)
    int width, height;
    glfwGetFramebufferSize(window, &width, &height);
 
-   if (GLEW_GREMEDY_string_marker) {
+   if (GLAD_GL_GREMEDY_string_marker) {
       glStringMarkerGREMEDY(0, __FUNCTION__);
    }
 
@@ -122,7 +120,7 @@ static void Reshape(void)
 
 static void Draw(void)
 {
-   if (GLEW_GREMEDY_string_marker) {
+   if (GLAD_GL_GREMEDY_string_marker) {
       glStringMarkerGREMEDY(0, __FUNCTION__);
    }
 
@@ -139,7 +137,7 @@ static void Draw(void)
 
    glFlush();
 
-   if (GLEW_GREMEDY_frame_terminator) {
+   if (GLAD_GL_GREMEDY_frame_terminator) {
       glFrameTerminatorGREMEDY();
    }
 
@@ -158,6 +156,10 @@ int main(int argc, char **argv)
    }
 
    glfwMakeContextCurrent(window);
+
+   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+       return EXIT_FAILURE;
+   }
 
    Init();
    Reshape();

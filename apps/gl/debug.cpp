@@ -145,7 +145,7 @@ Init(void)
     checkGlError("glGetString(GL_EXTENSIONS)");
     hasDebugExtension = checkExtension(debugExtensionString, extensions);
 
-    if (GLEW_VERSION_3_0) {
+    if (GLAD_GL_VERSION_3_0) {
        GLboolean hasDebugExtension3 = GL_FALSE;
        GLint i;
 
@@ -175,10 +175,8 @@ Init(void)
        }
     }
 
-    glewInit();
-
-    if (hasDebugExtension != glewIsSupported(debugExtensionString)) {
-       fprintf(stderr, "error: %s not consistently supported by GLEW\n", debugExtensionString);
+    if (hasDebugExtension != glfwExtensionSupported(debugExtensionString)) {
+       fprintf(stderr, "error: %s not consistently supported by GLFW\n", debugExtensionString);
        exit(1);
     }
 
@@ -300,6 +298,10 @@ main(int argc, char **argv)
     }
 
     glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        return EXIT_FAILURE;
+    }
 
     Init();
     Reshape();

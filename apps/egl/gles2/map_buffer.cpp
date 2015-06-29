@@ -28,15 +28,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-#undef GLFW_INCLUDE_ES2
-#define GLFW_INCLUDE_ES3
-#undef GLFW_INCLUDE_GLEXT
+#include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
-
-#include <GLES2/gl2ext.h>
-#include <GLES3/gl3ext.h>
 
 
 static GLFWwindow* window = NULL;
@@ -74,24 +68,16 @@ parseArgs(int argc, char** argv)
 }
 
 
-#define GET_PROC(_name, _NAME) \
-    PFNGL##_NAME##PROC gl##_name = (PFNGL##_NAME##PROC)glfwGetProcAddress("gl" #_name )
-
-
-
 static void
 testMapBufferOES(void)
 {
     GLuint buffers[2];
     GLvoid *ptr;
 
-    if (!glfwExtensionSupported("GL_OES_mapbuffer")) {
+    if (!GLAD_GL_OES_mapbuffer) {
         fprintf(stderr, "error: GL_OES_mapbuffer not supported\n");
         exit(EXIT_SKIP);
     }
-
-    GET_PROC(MapBufferOES, MAPBUFFEROES);
-    GET_PROC(UnmapBufferOES, UNMAPBUFFEROES);
 
     glGenBuffers(2, buffers);
 
@@ -127,14 +113,10 @@ testMapBufferRangeEXT(void)
     GLuint buffers[2];
     GLvoid *ptr;
 
-    if (!glfwExtensionSupported("GL_EXT_map_buffer_range")) {
+    if (!GLAD_GL_EXT_map_buffer_range) {
         fprintf(stderr, "error: GL_EXT_map_buffer_range not supported\n");
         exit(EXIT_SKIP);
     }
-
-    GET_PROC(MapBufferRangeEXT, MAPBUFFERRANGEEXT);
-    GET_PROC(FlushMappedBufferRangeEXT, FLUSHMAPPEDBUFFERRANGEEXT);
-    GET_PROC(UnmapBufferOES, UNMAPBUFFEROES);
 
     glGenBuffers(2, buffers);
 
@@ -177,7 +159,7 @@ testMapBufferRange30(void)
     GLuint buffers[2];
     GLvoid *ptr;
 
-    if (glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR) < 3) {
+    if (!GLAD_GL_ES_VERSION_3_0) {
         fprintf(stderr, "error: OpenGL ES 3.0 not supported\n");
         exit(EXIT_SKIP);
     }
@@ -233,6 +215,10 @@ int main(int argc, char** argv)
     }
 
     glfwMakeContextCurrent(window);
+
+   if (!gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress)) {
+       return EXIT_FAILURE;
+   }
 
     switch (mapMethod) {
     case MAP_BUFFER_OES:

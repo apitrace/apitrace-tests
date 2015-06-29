@@ -4,11 +4,9 @@ This is an automated test suite for apitrace.
 
 # Requirements #
 
-In addition to apitrace requirements, it also requires:
+Same as apitrace requirements.
 
-* GLEW
-
-# Invokation #
+# Usage #
 
 To run the test suite do on Unices:
 

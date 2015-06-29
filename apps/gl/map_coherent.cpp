@@ -32,7 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -56,7 +56,7 @@ static void
 testBufferStorage(void)
 {
 
-    if (!GLEW_VERSION_4_4 &&
+    if (!GLAD_GL_VERSION_4_4 &&
         !glfwExtensionSupported("GL_ARB_buffer_storage")) {
         fprintf(stderr, "error: GL_ARB_buffer_storage not supported\n");
         glfwTerminate();
@@ -147,8 +147,9 @@ int main(int argc, char** argv)
 
     glfwMakeContextCurrent(window);
 
-    glewExperimental = GL_TRUE;
-    glewInit();
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        return 1;
+    }
 
     testBufferStorage();
 

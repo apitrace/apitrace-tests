@@ -31,7 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -118,7 +118,7 @@ testMapBuffer(void)
     GLuint buffers[2];
     GLvoid *ptr;
 
-    if (!GLEW_VERSION_1_5) {
+    if (!GLAD_GL_VERSION_1_5) {
         fprintf(stderr, "error: OpenGL version 1.5 not supported\n");
         exit(EXIT_SKIP);
     }
@@ -160,9 +160,9 @@ testMapBufferRange(void)
     GLuint buffers[2];
     GLvoid *ptr;
 
-    if (!GLEW_VERSION_1_5 ||
-        (!GLEW_VERSION_3_2 &&
-         !GLEW_ARB_map_buffer_range)) {
+    if (!GLAD_GL_VERSION_1_5 ||
+        (!GLAD_GL_VERSION_3_2 &&
+         !GLAD_GL_ARB_map_buffer_range)) {
         fprintf(stderr, "error: GL_ARB_map_buffer_range not supported\n");
         exit(EXIT_SKIP);
     }
@@ -225,8 +225,10 @@ int main(int argc, char** argv)
 
     glfwMakeContextCurrent(window);
 
-    glewExperimental = GL_TRUE;
-    glewInit();
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        return EXIT_FAILURE;
+    }
+
     switch (mapMethod) {
     case MAP_BUFFER_ARB:
         testMapBufferARB();

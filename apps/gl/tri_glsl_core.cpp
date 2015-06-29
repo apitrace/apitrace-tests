@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -208,11 +208,9 @@ main(int argc, char *argv[])
 
     glfwMakeContextCurrent(window);
 
-    // glewInit requires glewExperimentel set to true for core profiles.
-    // Depending on the glew version it also generates GL_INVALID_ENUM.
-    glewExperimental = GL_TRUE;
-    glewInit();
-    glGetError();
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+       return EXIT_FAILURE;
+    }
 
     init();
     reshape();

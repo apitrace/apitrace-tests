@@ -25,18 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
-
-
-typedef void (GL_APIENTRY *PFNGLINSERTEVENTMARKEREXT)(GLsizei length, const char *marker);
-typedef void (GL_APIENTRY *PFNGLPUSHGROUPMARKEREXT)(GLsizei length, const char *marker);
-typedef void (GL_APIENTRY *PFNGLPOPGROUPMARKEREXT)(void);
-
-static PFNGLINSERTEVENTMARKEREXT glInsertEventMarkerEXT = NULL;
-static PFNGLPUSHGROUPMARKEREXT glPushGroupMarkerEXT = NULL;
-static PFNGLPOPGROUPMARKEREXT glPopGroupMarkerEXT = NULL;
-
-static GLboolean has_GL_EXT_debug_marker = GL_FALSE;
 
 
 static GLFWwindow* window = NULL;
@@ -45,13 +36,13 @@ static GLFWwindow* window = NULL;
 static void
 draw(void)
 {
-   if (has_GL_EXT_debug_marker) {
+   if (GLAD_GL_EXT_debug_marker) {
        glPushGroupMarkerEXT(0, __FUNCTION__);
    }
 
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   if (has_GL_EXT_debug_marker) {
+   if (GLAD_GL_EXT_debug_marker) {
        glPopGroupMarkerEXT();
    }
 
@@ -73,22 +64,8 @@ reshape(void)
 static void
 init(void)
 {
-   has_GL_EXT_debug_marker = glfwExtensionSupported("GL_EXT_debug_marker");
-
-   if (has_GL_EXT_debug_marker) {
-
-#define GET_PROC(name, type) \
-   name = (type)glfwGetProcAddress(#name); \
-   if (!name) { \
-      fprintf(stderr, "error: glfwGetProcAddress(\"" #name "\" returned NULL\n"); \
-      exit(1); \
-   }
-
-      GET_PROC(glInsertEventMarkerEXT, PFNGLINSERTEVENTMARKEREXT)
-      GET_PROC(glPushGroupMarkerEXT, PFNGLPUSHGROUPMARKEREXT)
-      GET_PROC(glPopGroupMarkerEXT, PFNGLPOPGROUPMARKEREXT)
-
-#undef GET_PROC
+   if (GLAD_GL_EXT_debug_marker) {
+      assert(glInsertEventMarkerEXT);
 
       glInsertEventMarkerEXT(strlen("Init"), "Init - this should not be included");
    }
@@ -112,6 +89,13 @@ main(int argc, char *argv[])
    }
 
    glfwMakeContextCurrent(window);
+
+   if (!gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress)) {
+       return EXIT_FAILURE;
+   }
+
+   assert(GLAD_GL_ES_VERSION_2_0);
+   assert(GLAD_GL_EXT_debug_marker == glfwExtensionSupported("GL_EXT_debug_marker"));
 
    init();
    reshape();

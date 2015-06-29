@@ -63,7 +63,7 @@ macro (add_app_tests)
     endforeach ()
 endmacro ()
 
-if (OPENGL_FOUND AND GLEW_FOUND)
+if (OPENGL_FOUND)
     add_subdirectory (gl)
 endif ()
 
