@@ -603,6 +603,7 @@ class TraceParser(Parser):
             else:
                 name = None
                 value = self.handleID(token.text)
+                value = self.parse_value_expr(value)
         else:
             name = None
             value = self.parse_value()
@@ -613,6 +614,9 @@ class TraceParser(Parser):
 
     def parse_value(self):
         value = self._parse_value()
+        return self.parse_value_expr(value)
+
+    def parse_value_expr(self, value):
         if self.match(VERT):
             flags = [value]
             while self.match(VERT):
