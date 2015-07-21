@@ -7,13 +7,11 @@ macro (fxc VS_PROFILE PS_PROFILE)
     add_custom_command (
         OUTPUT ${VS_HEADER}
         COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /Qstrip_reflect /T ${VS_PROFILE} /E VS /Fh ${VS_HEADER} ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
-        DEPENDS tri.fx
     )
 
     add_custom_command (
         OUTPUT ${PS_HEADER}
         COMMAND ${DirectX_FXC_EXECUTABLE} /nologo /Qstrip_reflect /T ${PS_PROFILE} /E PS /Fh ${PS_HEADER} ${CMAKE_CURRENT_SOURCE_DIR}/tri.fx
-        DEPENDS tri.fx
     )
 
     set (HEADERS ${HEADERS} ${VS_HEADER} ${PS_HEADER})
