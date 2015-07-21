@@ -8,6 +8,8 @@ fork
 gremedy
 map_buffer
 map_coherent
+program_binary
+program_binary.bin
 tri
 tri_glsl
 tri_glsl_core

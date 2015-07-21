@@ -39,6 +39,7 @@ set (targets
     varray
     map_buffer
     map_coherent
+    program_binary
     exception
 )
 
