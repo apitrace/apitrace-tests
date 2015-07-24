@@ -28,11 +28,17 @@
 
 #include <assert.h>
 
+#include <windows.h>
+
 
 /**
  * Simple smart pointer template for COM interfaces.
+ *
+ * - https://msdn.microsoft.com/en-us/magazine/dn904668.aspx
+ * - https://msdn.microsoft.com/en-us/library/417w8b3b.aspx
+ * - https://msdn.microsoft.com/en-us/library/ezzw7k98.aspx
  */
-template< class T >
+template< typename T >
 class com_ptr
 {
 private:
@@ -50,8 +56,10 @@ public:
     }
 
     ~com_ptr() {
-        if (p) {
-            p->Release();
+        T *temp = p;
+        p = NULL;
+        if (temp) {
+            temp->Release();
         }
     }
 
@@ -67,21 +75,33 @@ public:
         return p;
     }
 
+    struct no_ref_count : public T
+    {
+    private:
+        ULONG STDMETHODCALLTYPE AddRef(void);
+        ULONG STDMETHODCALLTYPE Release(void);
+    };
+
     // Methods
-    T *
+    no_ref_count *
     operator -> () const {
-        return p;
+        assert(p != NULL);
+        return static_cast< no_ref_count *>(p);
     }
 
-    T *
+    com_ptr &
     operator = (T *q) {
-        if (p) {
-            p->Release();
+        if (p != q) {
+            T *temp = p;
+            p = q;
+            if (temp) {
+                temp->Release();
+            }
+            if (q) {
+                q->AddRef();
+            }
         }
-        if (q) {
-            q->AddRef();
-        }
-        return p = q;
+        return *this;
     }
 
 private:
