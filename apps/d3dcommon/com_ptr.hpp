@@ -46,7 +46,7 @@ private:
 
 public:
     com_ptr(void) :
-        p(NULL)
+        p(nullptr)
     {
     }
 
@@ -57,7 +57,7 @@ public:
 
     ~com_ptr() {
         T *temp = p;
-        p = NULL;
+        p = nullptr;
         if (temp) {
             temp->Release();
         }
@@ -66,7 +66,7 @@ public:
     // Used when initializing
     T **
     operator & () {
-        assert(p == NULL);
+        assert(p == nullptr);
         return &p;
     }
 
@@ -85,7 +85,7 @@ public:
     // Methods
     no_ref_count *
     operator -> () const {
-        assert(p != NULL);
+        assert(p != nullptr);
         return static_cast< no_ref_count *>(p);
     }
 
@@ -104,9 +104,8 @@ public:
         return *this;
     }
 
-private:
-    com_ptr(const com_ptr &);
-    com_ptr & operator= (const com_ptr &);
+    com_ptr(const com_ptr &) = delete;
+    com_ptr & operator= (const com_ptr &) = delete;
 };
 
 

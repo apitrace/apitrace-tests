@@ -70,6 +70,10 @@ if (WIN32)
 endif ()
 
 if (MSVC)
+    if (${MSVC_VERSION} LESS 1800)
+        message (FATAL_ERROR "Visual Studio 2013 or later required")
+    endif ()
+
     # Enable math constants defines
     add_definitions (-D_USE_MATH_DEFINES)
 
@@ -78,6 +82,29 @@ if (MSVC)
     add_definitions (-D_SCL_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
     add_definitions (-wd4244) # conversion' conversion from 'type1' to 'type2', possible loss of data
     add_definitions (-wd4305) # truncation from 'type1' to 'type2'
+else ()
+    # Enable and require C++11
+    #
+    # We must use `-std=gnu++11` instead `-std=c++11` as the latter defines
+    # __STRICT_ANSI__ which prevents _isnan from being declared with MinGW.
+    #
+    # See also:
+    # - https://gcc.gnu.org/projects/cxx0x.html
+    # - http://clang.llvm.org/cxx_status.html
+    check_cxx_compiler_flag ("-std=gnu++11" CXX_COMPILER_FLAG_STD_GNUXX11)
+    if (CXX_COMPILER_FLAG_STD_GNUXX11)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        check_cxx_compiler_flag ("-std=gnu++0x" CXX_COMPILER_FLAG_STD_GNUXX0X)
+        if (NOT CXX_COMPILER_FLAG_STD_GNUXX0X OR
+            CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.6")
+            message (FATAL_ERROR "GCC 4.6 or later required for adequate C++11 support")
+        else ()
+            set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+        endif ()
+    else ()
+        message (FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} compiler does not support C++11")
+    endif ()
 endif ()
 
 if (MINGW)
