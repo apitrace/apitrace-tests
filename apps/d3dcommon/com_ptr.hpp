@@ -44,6 +44,11 @@ public:
     {
     }
 
+    com_ptr(T *_p) :
+        p(_p)
+    {
+    }
+
     ~com_ptr() {
         if (p) {
             p->Release();

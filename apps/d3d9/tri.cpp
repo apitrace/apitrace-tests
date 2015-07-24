@@ -28,10 +28,7 @@
 
 #include <d3d9.h>
 
-
-static IDirect3D9 * g_pD3D = NULL;
-static IDirect3DDevice9 * g_pDevice = NULL;
-static D3DPRESENT_PARAMETERS g_PresentationParameters;
+#include "com_ptr.hpp"
 
 
 int
@@ -79,15 +76,15 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-    if (!g_pD3D) {
+    com_ptr<IDirect3D9> pD3D(Direct3DCreate9(D3D_SDK_VERSION));
+    if (!pD3D) {
         return 1;
     }
 
     D3DPERF_SetMarker(D3DCOLOR_XRGB(128, 128, 128), L"Marker");
 
     D3DCAPS9 caps;
-    hr = g_pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+    hr = pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     if (FAILED(hr)) {
        return 1;
     }
@@ -100,25 +97,25 @@ main(int argc, char *argv[])
        dwBehaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
     }
 
-    ZeroMemory(&g_PresentationParameters, sizeof g_PresentationParameters);
-    g_PresentationParameters.Windowed = TRUE;
-    g_PresentationParameters.BackBufferCount = 1;
-    g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
-    g_PresentationParameters.hDeviceWindow = hWnd;
+    D3DPRESENT_PARAMETERS PresentationParameters;
+    ZeroMemory(&PresentationParameters, sizeof PresentationParameters);
+    PresentationParameters.Windowed = TRUE;
+    PresentationParameters.BackBufferCount = 1;
+    PresentationParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
+    PresentationParameters.hDeviceWindow = hWnd;
 
-    g_PresentationParameters.EnableAutoDepthStencil = FALSE;
-    g_PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    PresentationParameters.EnableAutoDepthStencil = FALSE;
+    PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    hr = g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
+    com_ptr<IDirect3DDevice9> pDevice;
+    hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
                               D3DDEVTYPE_HAL,
                               hWnd,
                               dwBehaviorFlags,
-                              &g_PresentationParameters,
-                              &g_pDevice);
+                              &PresentationParameters,
+                              &pDevice);
     if (FAILED(hr)) {
-        g_pD3D->Release();
-        g_pD3D = NULL;
         return 1;
     }
 
@@ -129,11 +126,11 @@ main(int argc, char *argv[])
 
 
     D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(0.3f, 0.1f, 0.3f, 1.0f);
-    g_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
-    g_pDevice->BeginScene();
+    pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
+    pDevice->BeginScene();
 
-    g_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-    g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+    pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
     static const Vertex vertices[] = {
         { -0.9f, -0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.8f, 0.0f, 0.0f, 0.1f) },
@@ -141,21 +138,16 @@ main(int argc, char *argv[])
         {  0.0f,  0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.7f, 0.1f) },
     };
 
-    g_pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+    pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 
     D3DPERF_BeginEvent(D3DCOLOR_XRGB(128, 128, 128), L"Draw");
-    g_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
+    pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
     D3DPERF_EndEvent();
 
-    g_pDevice->EndScene();
+    pDevice->EndScene();
 
-    g_pDevice->Present(NULL, NULL, NULL, NULL);
+    pDevice->Present(NULL, NULL, NULL, NULL);
 
-
-    g_pDevice->Release();
-    g_pDevice = NULL;
-    g_pD3D->Release();
-    g_pD3D = NULL;
 
     DestroyWindow(hWnd);
 

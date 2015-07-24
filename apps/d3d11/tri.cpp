@@ -200,7 +200,7 @@ main(int argc, char *argv[])
 
     pDeviceContext->IASetInputLayout(pVertexLayout);
 
-    com_ptr<ID3D11PixelShader>  pPixelShader;
+    com_ptr<ID3D11PixelShader> pPixelShader;
     hr = pDevice->CreatePixelShader(g_PS, sizeof g_PS, NULL, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
@@ -271,7 +271,7 @@ main(int argc, char *argv[])
     pSwapChain->Present(0, 0);
 
 
-    ID3D11Buffer * pNullBuffer = NULL;
+    ID3D11Buffer *pNullBuffer = NULL;
     UINT NullStride = 0;
     UINT NullOffset = 0;
     pDeviceContext->IASetVertexBuffers(0, 1, &pNullBuffer, &NullStride, &NullOffset);

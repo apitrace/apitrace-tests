@@ -30,13 +30,10 @@
 
 #include <d3d9.h>
 
+#include "com_ptr.hpp"
+
 #include "tri_vs_2_0.h"
 #include "tri_ps_2_0.h"
-
-
-static IDirect3D9 * g_pD3D = NULL;
-static IDirect3DDevice9 * g_pDevice = NULL;
-static D3DPRESENT_PARAMETERS g_PresentationParameters;
 
 
 int
@@ -84,13 +81,13 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-    if (!g_pD3D) {
+    com_ptr<IDirect3D9> pD3D(Direct3DCreate9(D3D_SDK_VERSION));
+    if (!pD3D) {
         return 1;
     }
 
     D3DCAPS9 caps;
-    hr = g_pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
+    hr = pD3D->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps);
     if (FAILED(hr)) {
        return 1;
     }
@@ -103,28 +100,30 @@ main(int argc, char *argv[])
        dwBehaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
     }
 
-    ZeroMemory(&g_PresentationParameters, sizeof g_PresentationParameters);
-    g_PresentationParameters.Windowed = TRUE;
-    g_PresentationParameters.BackBufferCount = 1;
-    g_PresentationParameters.SwapEffect = D3DSWAPEFFECT_FLIP;
-    g_PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
-    g_PresentationParameters.hDeviceWindow = hWnd;
+    D3DPRESENT_PARAMETERS PresentationParameters;
+    ZeroMemory(&PresentationParameters, sizeof PresentationParameters);
+    PresentationParameters.Windowed = TRUE;
+    PresentationParameters.BackBufferCount = 1;
+    PresentationParameters.SwapEffect = D3DSWAPEFFECT_FLIP;
+    PresentationParameters.BackBufferFormat = D3DFMT_X8R8G8B8;
+    PresentationParameters.hDeviceWindow = hWnd;
 
-    g_PresentationParameters.EnableAutoDepthStencil = FALSE;
-    g_PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    PresentationParameters.EnableAutoDepthStencil = FALSE;
+    PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    hr = g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
+    com_ptr<IDirect3DDevice9> pDevice;
+    hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
                               D3DDEVTYPE_HAL,
                               hWnd,
                               dwBehaviorFlags,
-                              &g_PresentationParameters,
-                              &g_pDevice);
+                              &PresentationParameters,
+                              &pDevice);
     if (FAILED(hr)) {
         return 1;
     }
 
     D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(0.3f, 0.1f, 0.3f, 1.0f);
-    g_pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
+    pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
 
     struct Vertex {
         float position[4];
@@ -143,51 +142,37 @@ main(int argc, char *argv[])
         D3DDECL_END()
     };
 
-    LPDIRECT3DVERTEXDECLARATION9 pVertexDeclaration = NULL;
-    hr = g_pDevice->CreateVertexDeclaration(VertexElements, &pVertexDeclaration);
+    com_ptr<IDirect3DVertexDeclaration9> pVertexDeclaration;
+    hr = pDevice->CreateVertexDeclaration(VertexElements, &pVertexDeclaration);
     if (FAILED(hr)) {
         return 1;
     }
-    g_pDevice->SetVertexDeclaration(pVertexDeclaration);
+    pDevice->SetVertexDeclaration(pVertexDeclaration);
 
-    LPDIRECT3DVERTEXSHADER9 pVertexShader = NULL;
-    hr = g_pDevice->CreateVertexShader((CONST DWORD *)g_vs20_VS, &pVertexShader);
+    com_ptr<IDirect3DVertexShader9> pVertexShader;
+    hr = pDevice->CreateVertexShader((CONST DWORD *)g_vs20_VS, &pVertexShader);
     if (FAILED(hr)) {
         return 1;
     }
-    g_pDevice->SetVertexShader(pVertexShader);
+    pDevice->SetVertexShader(pVertexShader);
 
-    LPDIRECT3DPIXELSHADER9 pPixelShader = NULL;
-    hr = g_pDevice->CreatePixelShader((CONST DWORD *)g_ps20_PS, &pPixelShader);
+    com_ptr<IDirect3DPixelShader9> pPixelShader;
+    hr = pDevice->CreatePixelShader((CONST DWORD *)g_ps20_PS, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
     }
-    g_pDevice->SetPixelShader(pPixelShader);
+    pDevice->SetPixelShader(pPixelShader);
 
-    g_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-    g_pDevice->BeginScene();
+    pDevice->BeginScene();
 
-    g_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
+    pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
 
-    g_pDevice->EndScene();
+    pDevice->EndScene();
 
-    g_pDevice->Present(NULL, NULL, NULL, NULL);
+    pDevice->Present(NULL, NULL, NULL, NULL);
 
-    pPixelShader->Release();
-    pPixelShader = NULL;
-
-    pVertexShader->Release();
-    pVertexShader = NULL;
-
-    pVertexDeclaration->Release();
-    pVertexDeclaration = NULL;
-
-    g_pDevice->Release();
-    g_pDevice = NULL;
-
-    g_pD3D->Release();
-    g_pD3D = NULL;
 
     DestroyWindow(hWnd);
 
