@@ -19,6 +19,9 @@ endif ()
 set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package (PythonInterp 2.7 REQUIRED)
+if (NOT PYTHON_VERSION_MAJOR EQUAL 2)
+    message (FATAL_ERROR "Python 2.x required and requested, but Python ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} found.")
+endif ()
 find_package (PkgConfig)
 
 # Set default built type
