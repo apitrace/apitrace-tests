@@ -167,7 +167,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    pDeviceContext1->OMSetRenderTargets(1, &pRenderTargetView.p, NULL);
+    ID3D11RenderTargetView *pRenderTargetViews[1] = { pRenderTargetView };
+    pDeviceContext->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, NULL);
 
     pUserDefinedAnnotation->BeginEvent(L"Frame");
 
@@ -237,9 +238,10 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    ID3D11Buffer *pVertexBuffers[1] = { pVertexBuffer };
     UINT Stride = sizeof(Vertex);
     UINT Offset = 0;
-    pDeviceContext1->IASetVertexBuffers(0, 1, &pVertexBuffer.p, &Stride, &Offset);
+    pDeviceContext1->IASetVertexBuffers(0, _countof(pVertexBuffers), pVertexBuffers, &Stride, &Offset);
 
     D3D11_VIEWPORT ViewPort;
     ViewPort.TopLeftX = 0;

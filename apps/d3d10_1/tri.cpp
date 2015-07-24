@@ -151,7 +151,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    pDevice->OMSetRenderTargets(1, &pRenderTargetView.p, NULL);
+    ID3D10RenderTargetView *pRenderTargetViews[1] = { pRenderTargetView };
+    pDevice->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, NULL);
 
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
     pDevice->ClearRenderTargetView(pRenderTargetView, clearColor);
@@ -217,9 +218,10 @@ main(int argc, char *argv[])
     memcpy(pMap, vertices, sizeof vertices);
     pVertexBuffer->Unmap();
 
+    ID3D10Buffer *pVertexBuffers[1] = { pVertexBuffer };
     UINT Stride = sizeof(Vertex);
     UINT Offset = 0;
-    pDevice->IASetVertexBuffers(0, 1, &pVertexBuffer.p, &Stride, &Offset);
+    pDevice->IASetVertexBuffers(0, _countof(pVertexBuffers), pVertexBuffers, &Stride, &Offset);
 
     D3D10_VIEWPORT ViewPort;
     ViewPort.TopLeftX = 0;

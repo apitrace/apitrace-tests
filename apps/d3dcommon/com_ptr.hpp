@@ -23,8 +23,7 @@
  *
  **************************************************************************/
 
-#ifndef COM_PTR_HPP
-#define COM_PTR_HPP
+#pragma once
 
 
 #include <assert.h>
@@ -36,9 +35,10 @@
 template< class T >
 class com_ptr
 {
-public:
+private:
     T *p;
 
+public:
     com_ptr(void) :
         p(NULL)
     {
@@ -91,4 +91,3 @@ private:
 
 
 
-#endif // COM_PTR_HPP
