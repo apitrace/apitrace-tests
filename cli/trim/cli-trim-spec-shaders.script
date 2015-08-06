@@ -1,6 +1,6 @@
 # Trim trace to the final glxDestroyContext, eliminating almost everything
 
-apitrace trim --auto --trim-spec=shaders --calls=88 --output=glxsimple-trim-spec-shaders.trace glxsimple.trace
+apitrace trim-auto --trim-spec=shaders --calls=88 --output=glxsimple-trim-spec-shaders.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to (just shader-generation calls)
 

@@ -1,4 +1,4 @@
-trim --exact -o trim-thread.src.trace --thread=1 glthreads.trace
+trim -o trim-thread.src.trace --thread=1 glthreads.trace
 dump --verbose --thread-ids --call-nos=no trim-thread.src.trace
 @1 glXMakeCurrent(dpy = 0x751280, drawable = 62914565, ctx = 0xa99be0) = True
 @1 glGetString(name = GL_RENDERER) = "Mesa DRI Mobile Intel\2\556 GM45 Express Chipset "

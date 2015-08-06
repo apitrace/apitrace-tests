@@ -1,6 +1,6 @@
 # Trim trace to the final glxDestroyContext, eliminating almost everything
 
-apitrace trim --auto --trim-spec=textures --calls=88 --output glxsimple-trim-spec-textures.trace glxsimple.trace
+apitrace trim-auto --trim-spec=textures --calls=88 --output glxsimple-trim-spec-textures.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to (just texture-generation calls)
 

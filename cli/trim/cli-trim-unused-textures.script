@@ -8,7 +8,7 @@ apitrace dump-images --calls=10,31,50,71,87,88 --call-nos=no -o ./glxsimple-trim
 
 # Trim to the same callset used to generate reference images
 
-apitrace trim --auto --calls=10,31,50,71,87,88 --output=glxsimple-trim-unused-textures.trace glxsimple.trace
+apitrace trim-auto --calls=10,31,50,71,87,88 --output=glxsimple-trim-unused-textures.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to
 

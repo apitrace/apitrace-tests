@@ -5,7 +5,7 @@ apitrace dump-images --call-nos=no -o ./tri-ref/tri tri.trace
 
 # Then, trim trace to final glxSwapBuffers call, and generate a new screenshot
 
-apitrace trim --auto --calls=27 tri.trace
+apitrace trim-auto --calls=27 tri.trace
 
 rm_and_mkdir ./tri-src
 apitrace dump-images --call-nos=no -o ./tri-src/tri tri-trim.trace

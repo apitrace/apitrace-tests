@@ -1,6 +1,6 @@
 # Trim trace to the final glxDestroyContext, eliminating almost everything
 
-apitrace trim --auto --trim-spec=drawing --calls=88 --output=glxsimple-trim-spec-drawing.trace glxsimple.trace
+apitrace trim-auto --trim-spec=drawing --calls=88 --output=glxsimple-trim-spec-drawing.trace glxsimple.trace
 
 # Verify that we actually trimmed what we wanted to (just drawing calls)
 

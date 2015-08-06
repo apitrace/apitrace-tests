@@ -77,7 +77,7 @@ class TrimStressDriver(Driver):
         for frame in range(frames):
             try:
                 subprocess.check_call([self.options.apitrace,
-                                       "trim", "--auto",
+                                       "trim-auto",
                                        "--frame=%d/frame" % (frame),
                                        "--output=" + trim_file, trace_file])
             except:
