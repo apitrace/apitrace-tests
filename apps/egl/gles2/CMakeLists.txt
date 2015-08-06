@@ -46,5 +46,3 @@ set_target_properties (${api}_rtld_local PROPERTIES OUTPUT_NAME rtld_local)
 target_link_libraries (${api}_rtld_local ${CMAKE_DL_LIBS})
 
 add_app_tests ()
-
-set_property (TEST app_${api}_rtld_local PROPERTY WILL_FAIL TRUE)
