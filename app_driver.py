@@ -425,6 +425,7 @@ class AppDriver(Driver):
         replay = self.api_replay_map[self.api]
         #cmd = [get_build_program(replay)]
         cmd = [options.apitrace, 'replay']
+        cmd += ['--headless']
         if not self.doubleBuffer:
             cmd += ['--sb']
         if args:
