@@ -1,5 +1,5 @@
 //!map_buffer -staging
-CreateDXGIFactory(riid = {Data1 = 2071029484, Data2 = 8647, Data3 = 17582, Data4 = {178, 26, 201, 174, 50, 26, 227, 105}}, ppFactory = &<pFactory>) = S_OK
+CreateDXGIFactory(riid = IID_IDXGIFactory, ppFactory = &<pFactory>) = S_OK
 IDXGIFactory::EnumAdapters(this = <pFactory>, Adapter = 0, ppAdapter = &<pAdapter>) = S_OK
 D3D10CreateDevice(pAdapter = <pAdapter>, DriverType = D3D10_DRIVER_TYPE_HARDWARE, Software = NULL, Flags = <>, SDKVersion = 29, ppDevice = &<pDevice>) = S_OK
 
