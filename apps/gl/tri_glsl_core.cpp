@@ -90,10 +90,10 @@ draw(void)
     glVertexAttribPointer(attr_color, ARRAY_SIZE(verts[0].color), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
     glEnableVertexAttribArray(attr_color);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glDisableVertexAttribArray(attr_pos);
-        glDisableVertexAttribArray(attr_color);
+    glDisableVertexAttribArray(attr_pos);
+    glDisableVertexAttribArray(attr_color);
 
     glfwSwapBuffers(window);
 }
