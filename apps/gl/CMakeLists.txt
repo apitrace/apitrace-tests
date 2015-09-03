@@ -35,6 +35,7 @@ set (targets
     tri
     tri_glsl
     tri_glsl_core
+    tri_glsl_es2
     gremedy
     varray
     map_buffer
