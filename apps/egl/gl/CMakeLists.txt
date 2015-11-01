@@ -30,7 +30,7 @@ set (targets
 foreach (target ${targets})
     add_executable (${api}_${target} ${target}.c)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
-    target_link_libraries (${api}_${target} ${GLFW_LIBRARY} ${OPENGL_gl_LIBRARY} ${EGL_LIBRARIES})
+    target_link_libraries (${api}_${target} glad ${GLFW_LIBRARY} ${OPENGL_gl_LIBRARY} ${EGL_LIBRARIES})
 
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${target}.ref.txt)
         add_app_test(
