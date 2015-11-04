@@ -32,6 +32,7 @@ set (targets
     config
     debug
     default
+    dlopen
     tri
     tri_glsl
     tri_glsl_core
@@ -52,5 +53,7 @@ foreach (target ${targets})
     add_executable (${api}_${target} ${target}.cpp)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
 endforeach (target)
+
+target_link_libraries (${api}_dlopen ${CMAKE_DL_LIBS})
 
 add_app_tests ()

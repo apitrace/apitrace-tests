@@ -3,6 +3,7 @@ child
 config
 debug
 default
+dlopen
 exception
 fork
 gremedy
