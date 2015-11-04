@@ -74,7 +74,12 @@ main(int argc, char **argv)
 
 #else
 
+#ifdef __APPLE__
+    void *handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW | RTLD_LOCAL);
+#else
     void *handle = dlopen("libGL.so.1", RTLD_NOW | RTLD_LOCAL);
+#endif
+
     pfnClearColor = (PFNGLCLEARCOLOR)dlsym(handle, "glClearColor");
 
 #endif
