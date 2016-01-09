@@ -298,13 +298,13 @@ main(int argc, char *argv[])
 
     glProgramBinary(program, binaryFormat, binary, binaryLength);
     
-    GLint status;
+    GLint status = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     if (!status) {
         GLsizei len;
         char log[1000];
         glGetProgramInfoLog(program, sizeof log, &len, log);
-        fprintf(stderr, "error: glProgramBinary:\n%s\n", log);
+        fprintf(stderr, "warning: glProgramBinary failed -- %s\n", log);
     }
     if (tracing && status) {
         exit(EXIT_FAILURE);
