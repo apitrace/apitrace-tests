@@ -16,3 +16,4 @@ tri_glsl
 tri_glsl_core
 varray
 tri_glsl_es2
+window_resize

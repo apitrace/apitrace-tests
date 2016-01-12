@@ -44,6 +44,7 @@ set (targets
     map_coherent
     program_binary
     exception
+    window_resize
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
