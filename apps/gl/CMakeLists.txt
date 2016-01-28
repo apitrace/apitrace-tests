@@ -51,6 +51,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set (targets ${targets} fork)
 endif ()
 
+if (WIN32)
+    set (targets ${targets} wglfont)
+endif ()
+
 foreach (target ${targets})
     add_executable (${api}_${target} ${target}.cpp)
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
