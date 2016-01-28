@@ -47,7 +47,7 @@ template< typename T >
 inline void
 setObjectName(com_ptr<T> &pObject, const char *szName)
 {
-    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, strlen(szName), szName);
+    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)strlen(szName), szName);
 }
 
 
