@@ -50,14 +50,18 @@ macro (add_app_tests)
             string (REPLACE " " ";" TEST_ARGS_SPLIT "${TEST_ARGS}")
 
             if (TEST_TARGET)
-                message (STATUS "Found test ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}")
-                get_filename_component (TEST_NAME ${TEST_REF} NAME_WE)
-                add_app_test (
-                    NAME ${api}_${TEST_NAME}
-                    TARGET ${api}_${TEST_TARGET}
-                    REF ${TEST_REF}
-                    ARGS ${TEST_ARGS_SPLIT}
-                )
+                if (TARGET "${api}_${TEST_TARGET}")
+                    message (STATUS "Found test ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF}")
+                    get_filename_component (TEST_NAME ${TEST_REF} NAME_WE)
+                    add_app_test (
+                        NAME ${api}_${TEST_NAME}
+                        TARGET ${api}_${TEST_TARGET}
+                        REF ${TEST_REF}
+                        ARGS ${TEST_ARGS_SPLIT}
+                    )
+                else ()
+                    message (STATUS "Skipping test ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_REF} because ${api}_${TEST_TARGET} is not being built.")
+                endif ()
             endif ()
         endif ()
     endforeach ()
