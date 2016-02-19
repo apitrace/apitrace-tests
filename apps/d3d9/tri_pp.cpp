@@ -54,7 +54,7 @@ main(int argc, char *argv[])
         NULL,
         NULL,
         NULL,
-        "SimpleDX9",
+        "tri",
         NULL
     };
     RegisterClassEx(&wc);

@@ -12,6 +12,7 @@ set (api d3d9)
 set (targets
     tri
     tri_pp
+    tex_sysmem
 )
 
 foreach (target ${targets})
