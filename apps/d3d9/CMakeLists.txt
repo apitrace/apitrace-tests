@@ -10,6 +10,7 @@ link_libraries (
 set (api d3d9)
 
 set (targets
+    freelibrary
     tri
     tri_pp
     tex_sysmem
