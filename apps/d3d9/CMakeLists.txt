@@ -14,6 +14,7 @@ set (targets
     tri
     tri_pp
     tex_sysmem
+    map_readonly
 )
 
 foreach (target ${targets})
