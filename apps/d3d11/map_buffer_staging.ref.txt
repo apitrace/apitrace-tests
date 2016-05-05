@@ -3,28 +3,28 @@ D3D11CreateDevice(pAdapter = NULL, DriverType = D3D_DRIVER_TYPE_HARDWARE, Softwa
 
 ID3D11Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D11_USAGE_STAGING, BindFlags = 0, CPUAccessFlags = D3D11_CPU_ACCESS_WRITE, MiscFlags = 0x0, StructureByteStride = 0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer0>) = S_OK
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0>, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 512, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 1024, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 1536, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 2048, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 2560, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 3072, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap0>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap0>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap0> + 3584, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer0>, Subresource = 0)
 ID3D11DeviceContext::Flush(this = <pDeviceContext>)
 ID3D11Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D11_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery0>) = S_OK
@@ -35,28 +35,28 @@ ID3D11Buffer::Release(this = <pVertexBuffer0>) = 0
 
 ID3D11Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D11_USAGE_STAGING, BindFlags = 0, CPUAccessFlags = D3D11_CPU_ACCESS_WRITE, MiscFlags = 0x0, StructureByteStride = 0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer1>) = S_OK
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1>, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 512, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 1024, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 1536, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 2048, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 2560, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 3072, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap1>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap1>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap1> + 3584, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer1>, Subresource = 0)
 ID3D11DeviceContext::Flush(this = <pDeviceContext>)
 ID3D11Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D11_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery1>) = S_OK
@@ -67,28 +67,28 @@ ID3D11Buffer::Release(this = <pVertexBuffer1>) = 0
 
 ID3D11Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D11_USAGE_STAGING, BindFlags = 0, CPUAccessFlags = D3D11_CPU_ACCESS_WRITE, MiscFlags = 0x0, StructureByteStride = 0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer2>) = S_OK
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2>, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 512, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 1024, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 1536, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 2048, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 2560, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 3072, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap2>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap2>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap2> + 3584, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer2>, Subresource = 0)
 ID3D11DeviceContext::Flush(this = <pDeviceContext>)
 ID3D11Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D11_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery2>) = S_OK
@@ -99,28 +99,28 @@ ID3D11Buffer::Release(this = <pVertexBuffer2>) = 0
 
 ID3D11Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D11_USAGE_STAGING, BindFlags = 0, CPUAccessFlags = D3D11_CPU_ACCESS_WRITE, MiscFlags = 0x0, StructureByteStride = 0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer3>) = S_OK
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3>, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 512, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 1024, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 1536, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 2048, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 2560, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 3072, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Map(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0, MapType = D3D11_MAP_WRITE, MapFlags = 0x0, pMappedResource = &{pData = <pMap3>, RowPitch = 4096, DepthPitch = 4096}) = S_OK
-memcpy(dest = <pMap3>, src = blob(4096), n = 4096)
+memcpy(dest = <pMap3> + 3584, src = blob(512), n = 512)
 ID3D11DeviceContext::Unmap(this = <pDeviceContext>, pResource = <pVertexBuffer3>, Subresource = 0)
 ID3D11DeviceContext::Flush(this = <pDeviceContext>)
 ID3D11Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D11_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery3>) = S_OK
