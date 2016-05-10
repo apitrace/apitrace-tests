@@ -1,11 +1,12 @@
-glfw
 child
+compiled_vertex_array
 config
 debug
 default
 dlopen
 exception
 fork
+glfw
 gremedy
 map_buffer
 map_coherent
@@ -14,6 +15,6 @@ program_binary.bin
 tri
 tri_glsl
 tri_glsl_core
-varray
 tri_glsl_es2
+varray
 window_resize

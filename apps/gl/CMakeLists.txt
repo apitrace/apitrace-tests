@@ -31,6 +31,7 @@ set (api gl)
 set (targets
     child
     config
+    compiled_vertex_array
     debug
     default
     dlopen
