@@ -87,7 +87,8 @@ main(int argc, char *argv[])
     }
 
     UINT Flags = 0;
-    if (LoadLibraryA("d3d11sdklayers")) {
+    hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_NULL, 0, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, NULL, NULL, NULL);
+    if (SUCCEEDED(hr)) {
         Flags |= D3D11_CREATE_DEVICE_DEBUG;
     }
 
