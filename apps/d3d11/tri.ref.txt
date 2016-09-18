@@ -1,5 +1,8 @@
 //!tri
-D3D11CreateDeviceAndSwapChain(pAdapter = NULL, DriverType = D3D_DRIVER_TYPE_HARDWARE, Software = NULL, Flags = <>, pFeatureLevels = {D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0}, FeatureLevels = 3, SDKVersion = 7, pSwapChainDesc = &{BufferDesc = {Width = 250, Height = 250, RefreshRate = {Numerator = 60, Denominator = 1}, Format = DXGI_FORMAT_R8G8B8A8_UNORM, ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED, Scaling = DXGI_MODE_SCALING_UNSPECIFIED}, SampleDesc = {Count = 1, Quality = 0}, BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT, BufferCount = 2, OutputWindow = <hWnd>, Windowed = TRUE, SwapEffect = DXGI_SWAP_EFFECT_DISCARD, Flags = 0x0}, ppSwapChain = &<pSwapChain>, ppDevice = &<pDevice>, pFeatureLevel = NULL, ppImmediateContext = &<pDeviceContext>) = S_OK
+CreateDXGIFactory(riid = IID_IDXGIFactory, ppFactory = &<pFactory>) = S_OK
+IDXGIFactory::EnumAdapters(this = <pFactory>, Adapter = 0, ppAdapter = &<pAdapter>) = S_OK
+D3D11CreateDevice(pAdapter = <pAdapter>, DriverType = D3D_DRIVER_TYPE_UNKNOWN, Software = NULL, Flags = <>, pFeatureLevels = {D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0}, FeatureLevels = 3, SDKVersion = 7, ppDevice = &<pDevice>, pFeatureLevel = NULL, ppImmediateContext = &<pDeviceContext>) = S_OK
+IDXGIFactory::CreateSwapChain(this = <pFactory>, pDevice = <pDevice>, pDesc = &{BufferDesc = {Width = 250, Height = 250, RefreshRate = {Numerator = 60, Denominator = 1}, Format = DXGI_FORMAT_R8G8B8A8_UNORM, ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED, Scaling = DXGI_MODE_SCALING_UNSPECIFIED}, SampleDesc = {Count = 1, Quality = 0}, BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT, BufferCount = 2, OutputWindow = <hWnd>, Windowed = TRUE, SwapEffect = DXGI_SWAP_EFFECT_DISCARD, Flags = 0x0}, ppSwapChain = &<pSwapChain>) = S_OK
 D3DPERF_SetMarker(col = 4286611584, wszName = "Marker")
 ID3D11Device1::SetPrivateData(this = <pDevice>, guid = WKPDID_D3DDebugObjectName, DataSize = 6, pData = "Device") = S_OK
 IDXGISwapChain::GetBuffer(this = <pSwapChain>, Buffer = 0, riid = IID_ID3D11Texture2D, ppSurface = &<pSurface>) = S_OK
@@ -123,3 +126,5 @@ ID3D11Texture2D::Release(this = <pSurface>) = 0
 IDXGISwapChain::Release(this = <pSwapChain>) = 0
 ID3D11DeviceContext::Release(this = <pDeviceContext>) = 0
 ID3D11Device::Release(this = <pDevice>) = 0
+IDXGIAdapter::Release(this = <pAdapter>) = 0
+IDXGIFactory::Release(this = <pFactory>) = 0

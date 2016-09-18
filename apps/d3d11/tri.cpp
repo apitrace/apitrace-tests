@@ -103,6 +103,40 @@ main(int argc, char *argv[])
         Flags |= D3D11_CREATE_DEVICE_DEBUG;
     }
 
+    com_ptr<IDXGIFactory> pFactory;
+    hr = CreateDXGIFactory(IID_IDXGIFactory, (void**)(&pFactory));
+    if (FAILED(hr)) {
+        return 1;
+    }
+
+    com_ptr<IDXGIAdapter> pAdapter;
+    hr = pFactory->EnumAdapters(0, &pAdapter);
+    if (FAILED(hr)) {
+        return 1;
+    }
+
+    static const D3D_FEATURE_LEVEL FeatureLevels[] = {
+        D3D_FEATURE_LEVEL_11_0,
+        D3D_FEATURE_LEVEL_10_1,
+        D3D_FEATURE_LEVEL_10_0
+    };
+
+    com_ptr<ID3D11Device> pDevice;
+    com_ptr<ID3D11DeviceContext> pDeviceContext;
+    hr = D3D11CreateDevice(pAdapter,
+                           D3D_DRIVER_TYPE_UNKNOWN,
+                           NULL, /* Software */
+                           Flags,
+                           FeatureLevels,
+                           sizeof FeatureLevels / sizeof FeatureLevels[0],
+                           D3D11_SDK_VERSION,
+                           &pDevice,
+                           NULL, /* pFeatureLevel */
+                           &pDeviceContext); /* ppImmediateContext */
+    if (FAILED(hr)) {
+        return 1;
+    }
+
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
     SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;;
@@ -116,27 +150,8 @@ main(int argc, char *argv[])
     SwapChainDesc.Windowed = true;
     SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-    static const D3D_FEATURE_LEVEL FeatureLevels[] = {
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0
-    };
-
-    com_ptr<ID3D11Device> pDevice;
-    com_ptr<ID3D11DeviceContext> pDeviceContext;
     com_ptr<IDXGISwapChain> pSwapChain;
-    hr = D3D11CreateDeviceAndSwapChain(NULL, /* pAdapter */
-                                       D3D_DRIVER_TYPE_HARDWARE,
-                                       NULL, /* Software */
-                                       Flags,
-                                       FeatureLevels,
-                                       sizeof FeatureLevels / sizeof FeatureLevels[0],
-                                       D3D11_SDK_VERSION,
-                                       &SwapChainDesc,
-                                       &pSwapChain,
-                                       &pDevice,
-                                       NULL, /* pFeatureLevel */
-                                       &pDeviceContext); /* ppImmediateContext */
+    hr = pFactory->CreateSwapChain(pDevice, &SwapChainDesc, &pSwapChain);
     if (FAILED(hr)) {
         return 1;
     }
