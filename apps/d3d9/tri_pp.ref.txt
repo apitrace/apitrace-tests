@@ -1,3 +1,4 @@
+//!tri_pp
 Direct3DCreate9(SDKVersion = 32) = <pD3D>
 IDirect3D9::GetDeviceCaps(this = <pD3D>, Adapter = D3DADAPTER_DEFAULT, DeviceType = D3DDEVTYPE_HAL, pCaps = &<Caps>) = D3D_OK
 IDirect3D9::CreateDevice(this = <pD3D>, Adapter = D3DADAPTER_DEFAULT, DeviceType = D3DDEVTYPE_HAL, hFocusWindow = <hWnd>, BehaviorFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING, pPresentationParameters = &{BackBufferWidth = 250, BackBufferHeight = 250, BackBufferFormat = D3DFMT_X8R8G8B8, BackBufferCount = 1, MultiSampleType = D3DMULTISAMPLE_NONE, MultiSampleQuality = 0, SwapEffect = D3DSWAPEFFECT_FLIP, hDeviceWindow = <hWnd>, Windowed = TRUE, EnableAutoDepthStencil = FALSE, AutoDepthStencilFormat = D3DFMT_UNKNOWN, Flags = 0, FullScreen_RefreshRateInHz = 0, PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE}, ppReturnedDeviceInterface = &<pDevice>) = D3D_OK

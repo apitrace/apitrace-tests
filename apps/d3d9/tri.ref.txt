@@ -1,3 +1,4 @@
+//!tri
 Direct3DCreate9(SDKVersion = 32) = <pD3D>
 D3DPERF_SetMarker(col = 4286611584, wszName = "Marker")
 IDirect3D9::GetDeviceCaps(this = <pD3D>, Adapter = D3DADAPTER_DEFAULT, DeviceType = D3DDEVTYPE_HAL, pCaps = &<Caps>) = D3D_OK
