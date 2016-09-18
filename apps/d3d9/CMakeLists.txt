@@ -11,6 +11,7 @@ set (api d3d9)
 
 set (targets
     freelibrary
+    subprocess
     tri
     tri_pp
     tex_sysmem
@@ -23,3 +24,6 @@ foreach (target ${targets})
 endforeach (target)
 
 add_app_tests ()
+
+# XXX: Doesn't work yet
+set_tests_properties (app_d3d9_subprocess_createprocessasuserw PROPERTIES WILL_FAIL TRUE)
