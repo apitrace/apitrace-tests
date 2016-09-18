@@ -141,8 +141,6 @@ testCreateProcessAsUserW(void)
 int
 main(int argc, char *argv[])
 {
-    HRESULT hr;
-
     if (argc <= 1) {
         fprintf(stderr, "Child process.\n");
         fflush(stderr);
