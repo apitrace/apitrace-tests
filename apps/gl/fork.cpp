@@ -29,9 +29,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define GLX_GLXEXT_PROTOTYPES
+
 #include <X11/Xlib.h>
 #include <GL/gl.h>
+#include <GL/glext.h>
 #include <GL/glx.h>
+#include <GL/glxext.h>  // for glXGetProcAddressARB
 
 
 int main(int argc, char **argv)
