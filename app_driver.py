@@ -153,16 +153,20 @@ class AppDriver(Driver):
             if not os.path.exists(trace_dir):
                 os.makedirs(trace_dir)
 
-        cmd = self.cmd
         env = os.environ.copy()
         
         cmd = [
             options.apitrace, 'trace', 
             '-v',
             '-a', self.api_trace_map[self.api],
+        ]
+        if int(os.environ.get('USE_MHOOK', '0')):
+            cmd += ['-m']
+        cmd += [
             '-o', self.trace_file,
             '--'
-        ] + cmd
+        ]
+        cmd += self.cmd
         if self.max_frames is not None:
             env['TRACE_FRAMES'] = str(self.max_frames)
         if self.getNamePrefix() == 'config':
