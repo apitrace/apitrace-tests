@@ -6,7 +6,7 @@ if (APITRACE_EXECUTABLE AND APITRACE_SOURCE_DIR)
         add_test(
             NAME ${TEST_NAME}
             COMMAND
-            ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tool_driver.py
+            ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tool_driver.py
                 --apitrace ${APITRACE_EXECUTABLE}
                 --apitrace-source ${APITRACE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}

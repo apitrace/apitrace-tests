@@ -5,6 +5,7 @@ include_directories (
 )
 
 link_libraries (
+    ${DirectX_DXGI_LIBRARY}
     ${DirectX_D3D11_LIBRARY}
     ${DirectX_D3D9_LIBRARY}
 )

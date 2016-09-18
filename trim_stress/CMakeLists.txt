@@ -9,7 +9,7 @@ foreach (trace ${traces})
         add_test(
             NAME trim-stress-${trace}
             COMMAND
-            ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/trim_stress_driver.py
+            ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/trim_stress_driver.py
                 --apitrace ${APITRACE_EXECUTABLE}
                 --apitrace-source ${APITRACE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${trace}

@@ -7,8 +7,8 @@ set (GLFW_SUFFIX _gl)
 set (GLFW_USE_EGL 0)
 set (GLFW_USE_RETINA 0)
 set (GLFW_CLIENT_LIBRARY "opengl")
-add_subdirectory (${CMAKE_SOURCE_DIR}/thirdparty/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw EXCLUDE_FROM_ALL)
-set (GLFW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/glfw/include)
+add_subdirectory (${PROJECT_SOURCE_DIR}/thirdparty/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw EXCLUDE_FROM_ALL)
+set (GLFW_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/glfw/include)
 set (GLFW_LIBRARY glfw${GLFW_SUFFIX} ${GLFW_LIBRARIES})
 
 
