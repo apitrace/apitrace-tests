@@ -1,6 +1,6 @@
 //========================================================================
-// Video mode test
-// Copyright (c) Camilla Berglund <elmindreda@elmindreda.org>
+// Monitor information tool
+// Copyright (c) Camilla Berglund <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -23,10 +23,12 @@
 //
 //========================================================================
 //
-// This test enumerates or verifies video modes
+// This test prints monitor and video mode information or verifies video
+// modes
 //
 //========================================================================
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -43,8 +45,8 @@ enum Mode
 
 static void usage(void)
 {
-    printf("Usage: modes [-t]\n");
-    printf("       modes -h\n");
+    printf("Usage: monitors [-t]\n");
+    printf("       monitors -h\n");
 }
 
 static const char* format_mode(const GLFWvidmode* mode)
@@ -77,12 +79,12 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
 static void list_modes(GLFWmonitor* monitor)
 {
-    int count, x, y, widthMM, heightMM, dpi, i;
+    int count, x, y, widthMM, heightMM, i;
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     const GLFWvidmode* modes = glfwGetVideoModes(monitor, &count);
 
@@ -95,8 +97,8 @@ static void list_modes(GLFWmonitor* monitor)
     printf("Current mode: %s\n", format_mode(mode));
     printf("Virtual position: %i %i\n", x, y);
 
-    dpi = (int) ((float) mode->width * 25.4f / (float) widthMM);
-    printf("Physical size: %i x %i mm (%i dpi)\n", widthMM, heightMM, dpi);
+    printf("Physical size: %i x %i mm (%0.2f dpi)\n",
+           widthMM, heightMM, mode->width * 25.4f / widthMM);
 
     printf("Modes:\n");
 
@@ -148,6 +150,7 @@ static void test_modes(GLFWmonitor* monitor)
         glfwSetKeyCallback(window, key_callback);
 
         glfwMakeContextCurrent(window);
+        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
         glfwSwapInterval(1);
 
         glfwSetTime(0.0);

@@ -1,6 +1,6 @@
 //========================================================================
-// Full screen anti-aliasing test
-// Copyright (c) Camilla Berglund <elmindreda@elmindreda.org>
+// Multisample anti-aliasing test
+// Copyright (c) Camilla Berglund <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -25,11 +25,11 @@
 //
 // This test renders two high contrast, slowly rotating quads, one aliased
 // and one (hopefully) anti-aliased, thus allowing for visual verification
-// of whether FSAA is indeed enabled
+// of whether MSAA is indeed enabled
 //
 //========================================================================
 
-#define GLFW_INCLUDE_GLEXT
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -62,7 +62,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 static void usage(void)
 {
-    printf("Usage: fsaa [-h] [-s SAMPLES]\n");
+    printf("Usage: msaa [-h] [-s SAMPLES]\n");
 }
 
 int main(int argc, char** argv)
@@ -92,12 +92,12 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
 
     if (samples)
-        printf("Requesting FSAA with %i samples\n", samples);
+        printf("Requesting MSAA with %i samples\n", samples);
     else
-        printf("Requesting that FSAA not be available\n");
+        printf("Requesting that MSAA not be available\n");
 
     glfwWindowHint(GLFW_SAMPLES, samples);
-    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
     window = glfwCreateWindow(800, 400, "Aliasing Detector", NULL, NULL);
     if (!window)
@@ -110,11 +110,12 @@ int main(int argc, char** argv)
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwMakeContextCurrent(window);
+    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     glfwSwapInterval(1);
 
-    if (!glfwExtensionSupported("GL_ARB_multisample"))
+    if (!GLAD_GL_ARB_multisample && !GLAD_GL_VERSION_1_3)
     {
-        printf("GL_ARB_multisample extension not supported\n");
+        printf("Multisampling is not supported\n");
 
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -122,11 +123,11 @@ int main(int argc, char** argv)
 
     glfwShowWindow(window);
 
-    glGetIntegerv(GL_SAMPLES_ARB, &samples);
+    glGetIntegerv(GL_SAMPLES, &samples);
     if (samples)
-        printf("Context reports FSAA is available with %i samples\n", samples);
+        printf("Context reports MSAA is available with %i samples\n", samples);
     else
-        printf("Context reports FSAA is unavailable\n");
+        printf("Context reports MSAA is unavailable\n");
 
     glMatrixMode(GL_PROJECTION);
     glOrtho(0.f, 1.f, 0.f, 0.5f, 0.f, 1.f);

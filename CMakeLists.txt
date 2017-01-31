@@ -133,7 +133,17 @@ enable_testing()
 add_definitions (-DEXIT_SKIP=125)
 
 include_directories (thirdparty/glad/include)
-add_subdirectory (thirdparty/glad)
+add_subdirectory (thirdparty/glad EXCLUDE_FROM_ALL)
+
+# http://www.glfw.org/docs/latest/build.html#build_link_cmake_source
+set (GLFW_BUILD_EXAMPLES 0)
+set (GLFW_BUILD_TESTS 0)
+set (GLFW_BUILD_DOCS 0)
+set (GLFW_INSTALL 0)
+set (GLFW_USE_RETINA 0)
+add_subdirectory (thirdparty/glfw EXCLUDE_FROM_ALL)
+set (GLFW_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/glfw/include)
+set (GLFW_LIBRARY glfw ${GLFW_LIBRARIES})
 
 add_subdirectory (apps)
 add_subdirectory (traces)
