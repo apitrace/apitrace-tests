@@ -36,6 +36,7 @@ main(int argc, char *argv[])
    glfwInit();
 
    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+   glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

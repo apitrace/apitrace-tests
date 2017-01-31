@@ -2,7 +2,7 @@ eglGetDisplay(display_id = <display_id>) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_ES_API) = EGL_TRUE
 eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = <>) = <ctx>
-eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = {}) = <surface>
+eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = <>) = <surface>
 eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glScissor(x = 0, y = 0, width = 300, height = 300)
