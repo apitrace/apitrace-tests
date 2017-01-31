@@ -52,19 +52,19 @@ if (APPLE)
     set_source_files_properties(${glfw_SOURCES} PROPERTIES LANGUAGE C)
 endif()
 
-add_library(glfw${GLFW_SUFFIX} ${glfw_SOURCES} ${glfw_HEADERS})
-set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES
+add_library(glfw ${glfw_SOURCES} ${glfw_HEADERS})
+set_target_properties(glfw PROPERTIES
                       OUTPUT_NAME ${GLFW_LIB_NAME}
                       VERSION ${GLFW_VERSION}
                       SOVERSION ${GLFW_VERSION_MAJOR}
                       POSITION_INDEPENDENT_CODE ON
                       FOLDER "GLFW3")
 
-target_compile_definitions(glfw${GLFW_SUFFIX} PRIVATE -D_GLFW_USE_CONFIG_H)
-target_include_directories(glfw${GLFW_SUFFIX} PUBLIC
+target_compile_definitions(glfw PRIVATE -D_GLFW_USE_CONFIG_H)
+target_include_directories(glfw PUBLIC
                            $<BUILD_INTERFACE:${GLFW_SOURCE_DIR}/include>
                            $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
-target_include_directories(glfw${GLFW_SUFFIX} PRIVATE
+target_include_directories(glfw PRIVATE
                            "${GLFW_SOURCE_DIR}/src"
                            "${GLFW_BINARY_DIR}/src"
                            ${glfw_INCLUDE_DIRS})
@@ -73,11 +73,11 @@ target_include_directories(glfw${GLFW_SUFFIX} PRIVATE
 # the inclusion of stddef.h (by glfw3.h), which is itself included before
 # win32_platform.h.  We define them here until a saner solution can be found
 # NOTE: MinGW-w64 and Visual C++ do /not/ need this hack.
-target_compile_definitions(glfw${GLFW_SUFFIX} PRIVATE
+target_compile_definitions(glfw PRIVATE
                            "$<$<BOOL:${MINGW}>:UNICODE;WINVER=0x0501>")
 
 # Enable a reasonable set of warnings (no, -Wextra is not reasonable)
-target_compile_options(glfw${GLFW_SUFFIX} PRIVATE
+target_compile_options(glfw PRIVATE
                        "$<$<C_COMPILER_ID:Clang>:-Wall>"
                        "$<$<C_COMPILER_ID:GNU>:-Wall>")
 
@@ -85,36 +85,36 @@ if (BUILD_SHARED_LIBS)
     if (WIN32)
         if (MINGW)
             # Remove the lib prefix on the DLL (but not the import library
-            set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES PREFIX "")
+            set_target_properties(glfw PROPERTIES PREFIX "")
 
             # Add a suffix to the import library to avoid naming conflicts
-            set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES IMPORT_SUFFIX "dll.a")
+            set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.a")
         else()
             # Add a suffix to the import library to avoid naming conflicts
-            set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES IMPORT_SUFFIX "dll.lib")
+            set_target_properties(glfw PROPERTIES IMPORT_SUFFIX "dll.lib")
         endif()
     elseif (APPLE)
         # Add -fno-common to work around a bug in Apple's GCC
-        target_compile_options(glfw${GLFW_SUFFIX} PRIVATE "-fno-common")
+        target_compile_options(glfw PRIVATE "-fno-common")
 
-        set_target_properties(glfw${GLFW_SUFFIX} PROPERTIES
+        set_target_properties(glfw PROPERTIES
                               INSTALL_NAME_DIR "lib${LIB_SUFFIX}")
     elseif (UNIX)
         # Hide symbols not explicitly tagged for export from the shared library
-        target_compile_options(glfw${GLFW_SUFFIX} PRIVATE "-fvisibility=hidden")
+        target_compile_options(glfw PRIVATE "-fvisibility=hidden")
     endif()
 
-    target_compile_definitions(glfw${GLFW_SUFFIX} INTERFACE -DGLFW_DLL)
-    target_link_libraries(glfw${GLFW_SUFFIX} PRIVATE ${glfw_LIBRARIES})
+    target_compile_definitions(glfw INTERFACE -DGLFW_DLL)
+    target_link_libraries(glfw PRIVATE ${glfw_LIBRARIES})
 else()
-    target_link_libraries(glfw${GLFW_SUFFIX} INTERFACE ${glfw_LIBRARIES})
+    target_link_libraries(glfw INTERFACE ${glfw_LIBRARIES})
 endif()
 
 if (MSVC)
-    target_compile_definitions(glfw${GLFW_SUFFIX} PRIVATE _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(glfw PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
 if (GLFW_INSTALL)
-    install(TARGETS glfw${GLFW_SUFFIX} EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS glfw EXPORT glfwTargets DESTINATION lib${LIB_SUFFIX})
 endif()
 
