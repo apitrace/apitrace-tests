@@ -75,36 +75,34 @@ if (EGL_FOUND)
     add_subdirectory (egl)
 endif ()
 
-if (DirectX_FXC_EXECUTABLE)
-    add_subdirectory (d3dcommon)
-endif ()
-
-if (DirectX_D3D11_1_FOUND)
-    add_subdirectory (d3d11_1)
-endif ()
-
-if (DirectX_D3D11_FOUND AND DirectX_D3D9_FOUND)
-    add_subdirectory (d3d11)
-endif ()
-
-if (DirectX_D3D10_1_FOUND)
-    add_subdirectory (d3d10_1)
-endif ()
-
-if (DirectX_D3D10_FOUND)
-    add_subdirectory (d3d10)
-endif ()
-
-if (DirectX_D3D9_FOUND)
-    add_subdirectory (d3d9)
-endif ()
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    if (DirectX_D3D8_FOUND)
-        add_subdirectory (d3d8)
+if (WIN32)
+    if (DirectX_FXC_EXECUTABLE)
+        add_subdirectory (d3dcommon)
     endif ()
 
-    if (DirectX_D3D_FOUND)
+    if (DirectX_D3D11_1_FOUND)
+        add_subdirectory (d3d11_1)
+    endif ()
+
+    if (DirectX_D3D11_FOUND)
+        add_subdirectory (d3d11)
+    endif ()
+
+    if (DirectX_D3D10_1_FOUND)
+        add_subdirectory (d3d10_1)
+    endif ()
+
+    if (DirectX_D3D10_FOUND)
+        add_subdirectory (d3d10)
+    endif ()
+
+    add_subdirectory (d3d9)
+
+    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+        if (DirectX_D3D8_FOUND)
+            add_subdirectory (d3d8)
+        endif ()
+
         add_subdirectory (d3d7)
     endif ()
 endif ()

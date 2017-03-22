@@ -1,10 +1,9 @@
 include_directories (
     ${CMAKE_CURRENT_SOURCE_DIR}/../d3dcommon
-    ${DirectX_D3D_INCLUDE_DIR}
 )
 
 link_libraries (
-    ${DirectX_DDRAW_LIBRARY}
+    ddraw
 )
 
 set (api d3d7)

@@ -142,53 +142,34 @@ if (WIN32)
     find_winsdk_library (DDRAW   ddraw)
     find_combined       (DDRAW   DDRAW DDRAW)
 
-    if (CMAKE_GENERATOR_TOOLSET MATCHES "_xp$")
-        set (WINDOWS_XP TRUE)
-    endif ()
-
-    if (WINDOWS_XP)
-        # Windows 7 SDKs, used by XP toolset, do not include d3d.h
-        find_dxsdk_header   (D3D     d3d.h)
-    else ()
-        find_winsdk_header  (D3D     d3d.h)
-    endif ()
-    find_combined       (D3D     D3D DDRAW)
-
     find_dxsdk_header   (D3D8    d3d8.h)
     find_dxsdk_library  (D3D8    d3d8)
     find_combined       (D3D8    D3D8 D3D8)
 
-    find_winsdk_header  (D3D9    d3d9.h)
-    find_winsdk_library (D3D9    d3d9)
-    find_combined       (D3D9    D3D9 D3D9)
+    find_winsdk_header  (DXGI    dxgi.h)
+    find_winsdk_header  (DXGI1_2 dxgi1_2.h)
+    find_winsdk_header  (DXGI1_3 dxgi1_3.h)
+    find_winsdk_library (DXGI    dxgi)
 
-    if (NOT WINDOWS_XP)
-        find_winsdk_header  (DXGI    dxgi.h)
-        find_winsdk_header  (DXGI1_2 dxgi1_2.h)
-        find_winsdk_header  (DXGI1_3 dxgi1_3.h)
-        find_winsdk_library (DXGI    dxgi)
+    find_winsdk_header  (D3D10   d3d10.h)
+    find_winsdk_library (D3D10   d3d10)
+    find_combined       (D3D10   D3D10 D3D10)
 
-        find_winsdk_header  (D3D10   d3d10.h)
-        find_winsdk_library (D3D10   d3d10)
-        find_combined       (D3D10   D3D10 D3D10)
+    find_winsdk_header  (D3D10_1 d3d10_1.h)
+    find_winsdk_library (D3D10_1 d3d10_1)
+    find_combined       (D3D10_1 D3D10_1 D3D10_1)
 
-        find_winsdk_header  (D3D10_1 d3d10_1.h)
-        find_winsdk_library (D3D10_1 d3d10_1)
-        find_combined       (D3D10_1 D3D10_1 D3D10_1)
+    find_winsdk_header  (D3D11   d3d11.h)
+    find_winsdk_library (D3D11   d3d11)
+    find_combined       (D3D11   D3D11 D3D11)
+    find_winsdk_header  (D3D11_1 d3d11_1.h)
+    find_combined       (D3D11_1 D3D11_1 D3D11)
+    find_winsdk_header  (D3D11_2 d3d11_2.h)
+    find_combined       (D3D11_2 D3D11_2 D3D11)
 
-
-        find_winsdk_header  (D3D11   d3d11.h)
-        find_winsdk_library (D3D11   d3d11)
-        find_combined       (D3D11   D3D11 D3D11)
-        find_winsdk_header  (D3D11_1 d3d11_1.h)
-        find_combined       (D3D11_1 D3D11_1 D3D11)
-        find_winsdk_header  (D3D11_2 d3d11_2.h)
-        find_combined       (D3D11_2 D3D11_2 D3D11)
-
-        find_winsdk_header  (D2D1    d2d1.h)
-        find_winsdk_library (D2D1    d2d1)
-        find_combined       (D2D1    D2D1 D2D1)
-    endif ()
+    find_winsdk_header  (D2D1    d2d1.h)
+    find_winsdk_library (D2D1    d2d1)
+    find_combined       (D2D1    D2D1 D2D1)
 
     find_program (DirectX_FXC_EXECUTABLE fxc
         HINTS ${DirectX_BIN_SEARCH_PATH}
