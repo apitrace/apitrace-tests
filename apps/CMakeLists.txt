@@ -80,22 +80,10 @@ if (WIN32)
         add_subdirectory (d3dcommon)
     endif ()
 
-    if (DirectX_D3D11_1_FOUND)
-        add_subdirectory (d3d11_1)
-    endif ()
-
-    if (DirectX_D3D11_FOUND)
-        add_subdirectory (d3d11)
-    endif ()
-
-    if (DirectX_D3D10_1_FOUND)
-        add_subdirectory (d3d10_1)
-    endif ()
-
-    if (DirectX_D3D10_FOUND)
-        add_subdirectory (d3d10)
-    endif ()
-
+    add_subdirectory (d3d11_1)
+    add_subdirectory (d3d11)
+    add_subdirectory (d3d10_1)
+    add_subdirectory (d3d10)
     add_subdirectory (d3d9)
 
     if (CMAKE_SIZEOF_VOID_P EQUAL 4)

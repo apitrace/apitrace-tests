@@ -40,6 +40,11 @@
 #include "tri_ps_4_0_level_9_1.h"
 
 
+#ifdef __MINGW32__
+EXTERN_C HRESULT WINAPI
+D3D10CreateDeviceAndSwapChain1(IDXGIAdapter *, D3D10_DRIVER_TYPE, HMODULE, UINT, D3D10_FEATURE_LEVEL1, UINT, DXGI_SWAP_CHAIN_DESC *, IDXGISwapChain **, ID3D10Device1 **ppDevice);
+#endif
+
 
 int
 main(int argc, char *argv[])

@@ -1,10 +1,9 @@
 include_directories (
     ${CMAKE_CURRENT_SOURCE_DIR}/../d3dcommon
-    ${DirectX_D3D11_1_INCLUDE_DIR}
 )
 
 link_libraries (
-    ${DirectX_D3D11_LIBRARY}
+    d3d11
 )
 
 set (api d3d11_1)

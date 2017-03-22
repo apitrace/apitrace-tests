@@ -44,7 +44,7 @@ if (WIN32)
     endif ()
 
     find_path (DirectX_ROOT_DIR
-        Include/d3d9.h
+        Include/d3d8.h
         PATHS
             "$ENV{DXSDK_DIR}"
             "${ProgramFiles}/Microsoft DirectX SDK (June 2010)"
@@ -62,15 +62,6 @@ if (WIN32)
         set (DirectX_INC_SEARCH_PATH "${DirectX_ROOT_DIR}/Include")
         set (DirectX_LIB_SEARCH_PATH "${DirectX_ROOT_DIR}/Lib/${DirectX_ARCHITECTURE}")
         set (DirectX_BIN_SEARCH_PATH "${DirectX_ROOT_DIR}/Utilities/bin/x86")
-    endif ()
-
-    # With VS 2011 and Windows 8 SDK, the DirectX SDK is included as part of
-    # the Windows SDK.
-    #
-    # See also:
-    # - http://msdn.microsoft.com/en-us/library/windows/desktop/ee663275.aspx
-    if (DEFINED MSVC_VERSION AND NOT ${MSVC_VERSION} LESS 1700)
-        set (USE_WINSDK_HEADERS TRUE)
     endif ()
 
     # Find a header in the DirectX SDK
@@ -104,32 +95,6 @@ if (WIN32)
         mark_as_advanced (${library_var})
     endmacro ()
 
-    # Find a header in the Windows SDK
-    macro (find_winsdk_header var_name header)
-        if (USE_WINSDK_HEADERS)
-            # Windows SDK
-            set (include_dir_var "DirectX_${var_name}_INCLUDE_DIR")
-            set (include_found_var "DirectX_${var_name}_INCLUDE_FOUND")
-            check_include_file_cxx (${header} ${include_found_var})
-            set (${include_dir_var})
-            mark_as_advanced (${include_found_var})
-        else ()
-            find_dxsdk_header (${var_name} ${header})
-        endif ()
-    endmacro ()
-
-    # Find a library in the Windows SDK
-    macro (find_winsdk_library var_name library)
-        if (USE_WINSDK_HEADERS)
-            # XXX: We currently just assume the library exists
-            set (library_var "DirectX_${var_name}_LIBRARY")
-            set (${library_var} ${library})
-            mark_as_advanced (${library_var})
-        else ()
-            find_dxsdk_library (${var_name} ${library})
-        endif ()
-    endmacro ()
-
     # Combine header and library variables into an API found variable
     macro (find_combined var_name inc_var_name lib_var_name)
         if (DirectX_${inc_var_name}_INCLUDE_FOUND AND DirectX_${lib_var_name}_LIBRARY)
@@ -138,42 +103,62 @@ if (WIN32)
         endif ()
     endmacro ()
 
-    find_winsdk_header  (DDRAW   ddraw.h)
-    find_winsdk_library (DDRAW   ddraw)
-    find_combined       (DDRAW   DDRAW DDRAW)
-
-    find_dxsdk_header   (D3D8    d3d8.h)
-    find_dxsdk_library  (D3D8    d3d8)
-    find_combined       (D3D8    D3D8 D3D8)
-
-    find_winsdk_header  (DXGI    dxgi.h)
-    find_winsdk_header  (DXGI1_2 dxgi1_2.h)
-    find_winsdk_header  (DXGI1_3 dxgi1_3.h)
-    find_winsdk_library (DXGI    dxgi)
-
-    find_winsdk_header  (D3D10   d3d10.h)
-    find_winsdk_library (D3D10   d3d10)
-    find_combined       (D3D10   D3D10 D3D10)
-
-    find_winsdk_header  (D3D10_1 d3d10_1.h)
-    find_winsdk_library (D3D10_1 d3d10_1)
-    find_combined       (D3D10_1 D3D10_1 D3D10_1)
-
-    find_winsdk_header  (D3D11   d3d11.h)
-    find_winsdk_library (D3D11   d3d11)
-    find_combined       (D3D11   D3D11 D3D11)
-    find_winsdk_header  (D3D11_1 d3d11_1.h)
-    find_combined       (D3D11_1 D3D11_1 D3D11)
-    find_winsdk_header  (D3D11_2 d3d11_2.h)
-    find_combined       (D3D11_2 D3D11_2 D3D11)
-
-    find_winsdk_header  (D2D1    d2d1.h)
-    find_winsdk_library (D2D1    d2d1)
-    find_combined       (D2D1    D2D1 D2D1)
+    if (MINGW)
+        # MinGW always has D3D8 headers and library.  They are not perfect, but
+        # sufficient for our test apps.
+        set (DirectX_D3D8_INCLUDE_DIR)
+        set (DirectX_D3D8_LIBRARY d3d8)
+        set (DirectX_D3D8_FOUND TRUE)
+        mark_as_advanced (DirectX_D3D8_FOUND)
+    else ()
+        find_dxsdk_header   (D3D8    d3d8.h)
+        find_dxsdk_library  (D3D8    d3d8)
+        find_combined       (D3D8    D3D8 D3D8)
+    endif ()
 
     find_program (DirectX_FXC_EXECUTABLE fxc
         HINTS ${DirectX_BIN_SEARCH_PATH}
         DOC "Path to fxc.exe executable."
     )
+
+    # MinGW lacks libd3d10.a and libd3d10_1.a
+    if (MINGW)
+
+        # Find dlltool
+        get_filename_component (GCC_NAME ${CMAKE_C_COMPILER} NAME)
+        string (REPLACE gcc dlltool DLLTOOL_NAME ${GCC_NAME})
+        find_program (DLLTOOL NAMES ${DLLTOOL_NAME})
+        if (DLLTOOL)
+            message (STATUS "Found dlltool: ${DLLTOOL}")
+        else ()
+            message (SEND_ERROR "dlltool not found")
+        endif ()
+
+        macro (add_dxsdk_implib target def)
+            set (MGWHELP_IMPLIB ${CMAKE_BINARY_DIR}/lib${target}.a)
+            add_custom_command (
+                OUTPUT ${MGWHELP_IMPLIB}
+                COMMAND
+                    ${DLLTOOL}
+                    --output-lib ${MGWHELP_IMPLIB}
+                    --dllname ${target}.dll
+                    --kill-at
+                    --input-def=${CMAKE_CURRENT_LIST_DIR}/${def}
+                DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${def}
+            )
+            add_custom_target (lib${target} DEPENDS ${MGWHELP_IMPLIB})
+            add_library (${target} INTERFACE IMPORTED GLOBAL)
+            target_link_libraries (${target} INTERFACE ${MGWHELP_IMPLIB})
+        endmacro ()
+
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            add_dxsdk_implib (d3d10 d3d10.x86.def)
+            add_dxsdk_implib (d3d10_1 d3d10_1.x86.def)
+        else ()
+            add_dxsdk_implib (d3d10 d3d10.x64.def)
+            add_dxsdk_implib (d3d10_1 d3d10_1.x64.def)
+        endif ()
+
+    endif ()
 
 endif ()
