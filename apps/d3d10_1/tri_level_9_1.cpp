@@ -30,7 +30,7 @@
 #include <initguid.h>
 #include <windows.h>
 
-#include "compat.h"
+#include "winsdk_compat.h"
 
 #include <d3d10_1.h>
 
