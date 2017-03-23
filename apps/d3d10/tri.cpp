@@ -103,17 +103,6 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<ID3D10Device> pDevice;
-    hr = D3D10CreateDevice(pAdapter,
-                           D3D10_DRIVER_TYPE_HARDWARE,
-                           NULL,
-                           Flags,
-                           D3D10_SDK_VERSION,
-                           &pDevice);
-    if (FAILED(hr)) {
-        return 1;
-    }
-
     DXGI_SWAP_CHAIN_DESC SwapChainDesc;
     ZeroMemory(&SwapChainDesc, sizeof SwapChainDesc);
     SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;;
@@ -127,8 +116,16 @@ main(int argc, char *argv[])
     SwapChainDesc.Windowed = true;
     SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
+    com_ptr<ID3D10Device> pDevice;
     com_ptr<IDXGISwapChain> pSwapChain;
-    hr = pFactory->CreateSwapChain(pDevice, &SwapChainDesc, &pSwapChain);
+    hr = D3D10CreateDeviceAndSwapChain(pAdapter,
+                                       D3D10_DRIVER_TYPE_HARDWARE,
+                                       NULL,
+                                       Flags,
+                                       D3D10_SDK_VERSION,
+                                       &SwapChainDesc,
+                                       &pSwapChain,
+                                       &pDevice);
     if (FAILED(hr)) {
         return 1;
     }
