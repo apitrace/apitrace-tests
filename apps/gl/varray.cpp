@@ -94,7 +94,7 @@ static void parseArgs(int argc, char** argv)
 
 static void setupPointers(void)
 {
-   static GLint vertices[] = {
+   static const GLint vertices[] = {
        25,  25,
       100, 325,
       175,  25,
@@ -102,7 +102,7 @@ static void setupPointers(void)
       250,  25,
       325, 325
    };
-   static GLfloat colors[] = {
+   static const GLfloat colors[] = {
       1.00f, 0.20f, 0.20f,
       0.20f, 0.20f, 1.00f,
       0.80f, 1.00f, 0.20f,
@@ -120,7 +120,7 @@ static void setupPointers(void)
 
 static void setupInterleave(void)
 {
-   static GLfloat intertwined[] = {
+   static const GLfloat intertwined[] = {
        1.00f, 0.20f, 0.20f,  25.0f,  25.0f, 0.0f,
        0.20f, 0.20f, 1.00f, 100.0f, 325.0f, 0.0f,
        0.80f, 1.00f, 0.20f, 175.0f,  25.0f, 0.0f,
@@ -136,7 +136,14 @@ static void init(void)
 {
    glClearColor(0.0, 0.0, 0.0, 1.0);
    glShadeModel(GL_SMOOTH);
-   setupPointers();
+   switch (setupMethod) {
+   case POINTER:
+       setupPointers();
+       break;
+   case INTERLEAVED:
+       setupInterleave();
+       break;
+   }
 }
 
 static void display(void)
