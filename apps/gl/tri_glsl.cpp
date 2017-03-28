@@ -22,7 +22,6 @@ static GLFWwindow* window;
 static GLuint fragShader;
 static GLuint vertShader;
 static GLuint program;
-static GLfloat xpos = 0, ypos = 0;
 
 
 static void

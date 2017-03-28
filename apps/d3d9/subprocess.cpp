@@ -97,14 +97,6 @@ testCreateProcessW(void)
 }
 
 
-typedef BOOL
-(WINAPI *PFNCREATEPROCESSASUSERW) (HANDLE, LPCWSTR, LPWSTR,
-        LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES, BOOL, DWORD, LPVOID,
-        LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION);
-
-static PFNCREATEPROCESSASUSERW pfnCreateProcessAsUserW = &CreateProcessAsUserW;
-
-
 static int
 testCreateProcessAsUserW(void)
 {

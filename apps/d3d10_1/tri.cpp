@@ -65,7 +65,6 @@ main(int argc, char *argv[])
 
     const int WindowWidth = 250;
     const int WindowHeight = 250;
-    BOOL Windowed = TRUE;
 
     DWORD dwStyle = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW;
 
