@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 
    glfwMakeContextCurrent(window);
 
-   if (!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress)) {
+   if (!gladLoadGLES1Loader((GLADloadproc)glfwGetProcAddress)) {
       return EXIT_FAILURE;
    }
 
