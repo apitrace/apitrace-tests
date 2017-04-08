@@ -105,6 +105,8 @@ class AppDriver(Driver):
 
     api_trace_map = {
         'gl': 'gl',
+        'gles1': 'gl',
+        'gles2': 'gl',
         'egl_gl': 'egl',
         'egl_gles1': 'egl',
         'egl_gles2': 'egl',
@@ -119,6 +121,8 @@ class AppDriver(Driver):
 
     api_replay_map = {
         'gl': 'glreplay',
+        'gles1': 'glreplay',
+        'gles2': 'glreplay',
         'egl_gl': 'eglreplay',
         'egl_gles1': 'eglreplay',
         'egl_gles2': 'eglreplay',

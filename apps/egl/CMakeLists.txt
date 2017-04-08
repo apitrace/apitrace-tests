@@ -1,5 +1,4 @@
 if (NOT WIN32 AND NOT APPLE)
-	add_subdirectory (gles1)
 	add_subdirectory (gles2)
 endif ()
 

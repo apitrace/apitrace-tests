@@ -2,7 +2,7 @@ include_directories(
     ${GLFW_INCLUDE_DIR}
 )
 
-set (api egl_gles1)
+set (api gles1)
 
 set (targets
     tri

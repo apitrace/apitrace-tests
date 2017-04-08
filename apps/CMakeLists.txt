@@ -69,6 +69,10 @@ endmacro ()
 
 if (OPENGL_FOUND)
     add_subdirectory (gl)
+
+    if (NOT APPLE)
+        add_subdirectory (gles1)
+    endif ()
 endif ()
 
 if (EGL_FOUND)
