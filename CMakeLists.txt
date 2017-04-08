@@ -1,9 +1,6 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 
-option (TEST_UNRELIABLE "Run unreliable tests" OFF)
-
-
 project (apitrace-tests)
 
 find_path (APITRACE_SOURCE_DIR NAMES cmake/FindDirectX.cmake PATHS .. ../.. DOC "apitrace source tree" NO_DEFAULT_PATH)
@@ -154,7 +151,4 @@ add_subdirectory (traces)
 #
 if (OPENGL_FOUND AND PIL_FOUND)
     add_subdirectory (cli)
-    if (TEST_UNRELIABLE)
-        add_subdirectory (trim_stress)
-    endif ()
 endif ()

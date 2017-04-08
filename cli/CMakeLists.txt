@@ -13,7 +13,3 @@ if (APITRACE_EXECUTABLE)
         )
     endforeach ()
 endif ()
-
-if (TEST_UNRELIABLE)
-    add_subdirectory (trim)
-endif ()
