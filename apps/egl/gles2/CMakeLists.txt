@@ -1,9 +1,5 @@
-add_definitions (-DGLFW_INCLUDE_ES2)
-
 include_directories(
     ${GLFW_INCLUDE_DIR}
-    ${EGL_INCLUDE_DIRS}
-    ${GLESV2_INCLUDE_DIRS}
 )
 
 set (api egl_gles2)
@@ -20,8 +16,6 @@ foreach (target ${targets})
     target_link_libraries (${api}_${target}
         glad
         ${GLFW_LIBRARY}
-        ${GLESV2_LIBRARIES}
-        ${EGL_LIBRARIES}
     )
 endforeach (target)
 

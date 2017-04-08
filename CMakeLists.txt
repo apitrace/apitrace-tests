@@ -16,7 +16,7 @@ if (NOT EXISTS ${APITRACE_EXECUTABLE})
     message (WARNING "Please specify path to apitrace executable via APITRACE_EXECUTABLE")
 endif ()
 
-set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+list (INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package (PythonInterp 2.7 REQUIRED)
 if (NOT PYTHON_VERSION_MAJOR EQUAL 2)
@@ -41,8 +41,6 @@ if (WIN32)
     find_package (DirectX)
 elseif (PKG_CONFIG_FOUND)
 	pkg_check_modules (EGL egl)
-	pkg_check_modules (GLESV1 glesv1_cm)
-	pkg_check_modules (GLESV2 glesv2)
 endif ()
 
 # Check for the presence of several python packages, which are needed to build

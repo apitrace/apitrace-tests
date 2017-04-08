@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -190,10 +191,14 @@ main(int argc, char *argv[])
 
     window = glfwCreateWindow(250, 250, argv[0], NULL, NULL);
     if (!window) {
-         return EXIT_SKIP;
+        return EXIT_SKIP;
     }
 
     glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress)) {
+        return EXIT_FAILURE;
+    }
 
     init();
     reshape();
