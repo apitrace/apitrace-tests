@@ -33,6 +33,7 @@
 
 
 extern "C"
+__attribute__ ((visibility("default")))
 int
 test(int argc, char *argv[])
 {
