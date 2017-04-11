@@ -32,7 +32,6 @@ endif (NOT CMAKE_BUILD_TYPE)
 include (CMakeParseArguments)
 
 find_package (OpenGL)
-find_package (GLEW)
 
 if (WIN32)
     find_package (DirectX)
