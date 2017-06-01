@@ -10,11 +10,12 @@ set (api d3d9)
 
 set (targets
     freelibrary
+    map_cubemap
+    map_readonly
     subprocess
     tri
     tri_pp
     tex_sysmem
-    map_readonly
 )
 
 foreach (target ${targets})
