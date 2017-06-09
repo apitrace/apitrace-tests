@@ -124,6 +124,10 @@ main(int argc, char *argv[])
                 return 1;
             } 
 
+            if (reinterpret_cast<uintptr_t>(pMap) % 512) {
+                return EXIT_SKIP;
+            }
+
             int c = (j % 255) + 1;
             memset(pMap + j*SegmentSize, c, SegmentSize);
 

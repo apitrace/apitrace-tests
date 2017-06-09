@@ -127,6 +127,10 @@ main(int argc, char *argv[])
             
             BYTE *pMap = (BYTE *)MappedResource.pData;
 
+            if (reinterpret_cast<uintptr_t>(pMap) % 512) {
+                return EXIT_SKIP;
+            }
+
             int c = (j % 255) + 1;
             memset(pMap + j*SegmentSize, c, SegmentSize);
 
