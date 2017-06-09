@@ -92,7 +92,7 @@ main(int argc, char *argv[])
     }
 
     UINT Flags = 0;
-    if (LoadLibraryA("d3d10sdklayers")) {
+    if (0) {
         Flags |= D3D10_CREATE_DEVICE_DEBUG;
     }
 
