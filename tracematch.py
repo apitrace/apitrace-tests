@@ -483,7 +483,7 @@ class Parser:
 
 #######################################################################
 
-ID, NUMBER, HEXNUM, STRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB, MISSING = xrange(16)
+ID, NUMBER, HEXNUM, STRING, WSTRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB, MISSING = xrange(17)
 
 
 class CallScanner(Scanner):
@@ -496,6 +496,9 @@ class CallScanner(Scanner):
         # comments
         (SKIP, r'//[^\r\n]*', False),
 
+        # String IDs
+        (WSTRING, r'L"[^"\\]*(?:\\.[^"\\]*)*"', False),
+
         # Alphanumeric IDs
         (ID, r'[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)?', True),
 
@@ -507,7 +510,7 @@ class CallScanner(Scanner):
 
         # String IDs
         (STRING, r'"[^"\\]*(?:\\.[^"\\]*)*"', False),
-        
+
         # Wildcard
         (WILDCARD, r'<[^>]*>', False),
     ]
@@ -537,6 +540,10 @@ class CallLexer(Lexer):
     scanner = CallScanner()
 
     def filter(self, type, text):
+        if type == WSTRING:
+            text = text[1:]
+            type = STRING
+
         if type == STRING:
             text = text[1:-1]
 
