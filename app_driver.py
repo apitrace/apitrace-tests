@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##########################################################################
 #
 # Copyright 2011 Jose Fonseca
@@ -27,6 +27,7 @@
 '''Application test driver.'''
 
 
+import io
 import os.path
 import platform
 import re
@@ -35,11 +36,6 @@ import sys
 import time
 import json
 import base64
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 
 import tracematch
@@ -207,7 +203,7 @@ class AppDriver(Driver):
 
             try:
                 mo = refTrace.match(srcTrace)
-            except tracematch.TraceMismatch, ex:
+            except tracematch.TraceMismatch as ex:
                 fail(str(ex))
 
             dirName, baseName = os.path.split(os.path.abspath(self.ref_dump))
@@ -339,7 +335,7 @@ class AppDriver(Driver):
             attachments = ['GL_FRONT', 'GL_FRONT_LEFT', 'GL_FRONT_RIGHT', 'GL_COLOR_ATTACHMENT0', 'RENDER_TARGET_0']
         imageObj = self.getFramebufferAttachment(state, attachments)
         data = imageObj['__data__']
-        stream = StringIO(base64.b64decode(data))
+        stream = io.BytesIO(base64.b64decode(data))
         im = Image.open(stream)
         return im
 
@@ -395,7 +391,7 @@ class AppDriver(Driver):
         except KeyError:
             pass
         else:
-            for label, shader in shaders.iteritems():
+            for label, shader in shaders.items():
                 if tracematch.isShaderDisassembly(shader):
                     shader = tracematch.normalizeShaderDisassembly(shader)
                     shaders[label] = shader

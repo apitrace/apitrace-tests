@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2012 Intel Corporation
 #
@@ -37,7 +37,7 @@ class CliDriver(Driver):
     def do_apitrace(self, args):
         cmd = [self.options.apitrace] + args.split()
  
-        print " ".join(cmd)
+        print(" ".join(cmd))
         proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, universal_newlines=True)
         self.output = proc.communicate()[0]
 
@@ -130,7 +130,7 @@ class CliDriver(Driver):
     def run(self):
         self.parseOptions()
 
-	self.run_script(self.args[0])
+        self.run_script(self.args[0])
 
         pass_()
 

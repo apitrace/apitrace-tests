@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##########################################################################
 #
 # Copyright 2008-2012 Jose Fonseca
@@ -184,7 +184,7 @@ class StructMatcher(Matcher):
         if len(value) != len(self.refMembers):
             return False
 
-        for name, refMember in self.refMembers.iteritems():
+        for name, refMember in self.refMembers.items():
             try:
                 member = value[name]
             except KeyError:
@@ -196,7 +196,7 @@ class StructMatcher(Matcher):
         return True
 
     def __str__(self):
-        return '{' + ', '.join(['%s = %s' % refMember for refMember in self.refMembers.iteritems()]) + '}'
+        return '{' + ', '.join(['%s = %s' % refMember for refMember in self.refMembers.items()]) + '}'
 
 
 class CallMatcher(Matcher):
@@ -282,18 +282,18 @@ class TraceMatcher:
         srcCalls = iter(calls)
         for refCall in self.calls:
             if verbose:
-                print refCall
+                print(refCall)
             skippedSrcCalls = []
             while True:
                 try:
-                    srcCall = srcCalls.next()
+                    srcCall = next(srcCalls)
                 except StopIteration:
                     if skippedSrcCalls:
                         raise TraceMismatch('missing call\n  %s\nfound\n  %s)' % (refCall, skippedSrcCalls[0]))
                     else:
                         raise TraceMismatch('missing call\n  %s' % refCall)
                 if verbose:
-                    print '\t%s %s%r = %r' % srcCall
+                    print('\t%s %s%r = %r' % srcCall)
                 if refCall.match(srcCall, mo):
                     break
                 else:
@@ -375,23 +375,9 @@ class Lexer:
 
     def __init__(self, buf = None, pos = 0, filename = None, fp = None):
         if fp is not None:
-            try:
-                fileno = fp.fileno()
-                length = os.path.getsize(fp.name)
-                import mmap
-            except:
-                # read whole file into memory
-                buf = fp.read()
-                pos = 0
-            else:
-                # map the whole file into memory
-                if length:
-                    # length must not be zero
-                    buf = mmap.mmap(fileno, length, access = mmap.ACCESS_READ)
-                    pos = os.lseek(fileno, 0, 1)
-                else:
-                    buf = ''
-                    pos = 0
+            # read whole file into memory
+            buf = fp.read()
+            pos = 0
 
             if filename is None:
                 try:
@@ -405,7 +391,7 @@ class Lexer:
         self.col = 1
         self.filename = filename
 
-    def next(self):
+    def __next__(self):
         while True:
             # save state
             pos = self.pos
@@ -457,7 +443,7 @@ class Parser:
 
     def __init__(self, lexer):
         self.lexer = lexer
-        self.lookahead = self.lexer.next()
+        self.lookahead = next(self.lexer)
 
     def match(self, type):
         return self.lookahead.type == type
@@ -477,13 +463,13 @@ class Parser:
         if type is not None and not self.match(type):
             self.error()
         token = self.lookahead
-        self.lookahead = self.lexer.next()
+        self.lookahead = next(self.lexer)
         return token
 
 
 #######################################################################
 
-ID, NUMBER, HEXNUM, STRING, WSTRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB, MISSING = xrange(17)
+ID, NUMBER, HEXNUM, STRING, WSTRING, WILDCARD, LPAREN, RPAREN, LCURLY, RCURLY, COMMA, AMP, EQUAL, PLUS, VERT, BLOB, MISSING = range(17)
 
 
 class CallScanner(Scanner):
@@ -874,10 +860,10 @@ def main():
 
     if options.verbose:
         sys.stdout.write('// Parameters\n')
-        paramNames = mo.params.keys()
+        paramNames = list(mo.params.keys())
         paramNames.sort()
         for paramName in paramNames:
-            print '%s = %r' % (paramName, mo.params[paramName])
+            print('%s = %r' % (paramName, mo.params[paramName]))
 
 
 if __name__ == '__main__':

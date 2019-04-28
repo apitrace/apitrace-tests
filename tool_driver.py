@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##########################################################################
 #
 # Copyright 2011 Jose Fonseca
@@ -54,7 +54,7 @@ class AsciiComparer:
 
         numLines = max(len(refLines), len(srcLines))
 
-        for lineNo in xrange(numLines):
+        for lineNo in range(numLines):
             try:
                 refLine = refLines[lineNo]
             except IndexError:

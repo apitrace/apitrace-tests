@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##########################################################################
 #
 # Copyright 2011-2012 Jose Fonseca
@@ -73,7 +73,7 @@ def popen(command, *args, **kwargs):
     except KeyError:
         env = None
     else:
-        names = env.keys()
+        names = list(env.keys())
         names.sort()
         for name in names:
             value = env[name]
