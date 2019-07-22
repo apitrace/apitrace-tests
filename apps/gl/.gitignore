@@ -1,6 +1,7 @@
 child
 compiled_vertex_array
 config
+coherent_memory_write
 debug
 default
 dlopen
