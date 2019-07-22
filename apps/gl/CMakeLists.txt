@@ -17,6 +17,7 @@ set (api gl)
 set (targets
     child
     config
+    coherent_memory_write
     compiled_vertex_array
     debug
     default
