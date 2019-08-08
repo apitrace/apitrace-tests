@@ -18,6 +18,7 @@ set (targets
     child
     config
     compiled_vertex_array
+    coherent_memory_read
     debug
     default
     dlopen
