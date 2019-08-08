@@ -1,5 +1,6 @@
 child
 compiled_vertex_array
+coherent_memory_read
 config
 coherent_memory_write
 debug

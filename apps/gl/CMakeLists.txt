@@ -19,6 +19,7 @@ set (targets
     config
     coherent_memory_write
     compiled_vertex_array
+    coherent_memory_read
     debug
     default
     dlopen
