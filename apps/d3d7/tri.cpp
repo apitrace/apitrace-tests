@@ -35,7 +35,9 @@
 
 #include <d3d.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int main(int argc, char *argv[])
@@ -82,7 +84,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<IDirectDraw7> pDD;
+    ComPtr<IDirectDraw7> pDD;
     hr = DirectDrawCreateEx(NULL, (void **)&pDD, IID_IDirectDraw7, NULL);
     if (FAILED(hr)) {
         return 1;
@@ -103,7 +105,7 @@ int main(int argc, char *argv[])
     ddsd.dwFlags        = DDSD_CAPS;
     ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-    com_ptr<IDirectDrawSurface7> pddsPrimary;
+    ComPtr<IDirectDrawSurface7> pddsPrimary;
     hr = pDD->CreateSurface(&ddsd, &pddsPrimary, NULL);
     if (FAILED(hr)) {
         return 1;
@@ -125,26 +127,22 @@ int main(int argc, char *argv[])
     ddsd.dwWidth  = rcScreenRect.right - rcScreenRect.left;
     ddsd.dwHeight = rcScreenRect.bottom - rcScreenRect.top;
 
-    com_ptr<IDirectDrawSurface7> pddsBackBuffer;
+    ComPtr<IDirectDrawSurface7> pddsBackBuffer;
     hr = pDD->CreateSurface(&ddsd, &pddsBackBuffer, NULL);
     if (FAILED(hr)) {
         return 1;
     }
 
-    com_ptr<IDirectDrawClipper> pcClipper;
+    ComPtr<IDirectDrawClipper> pcClipper;
     hr = pDD->CreateClipper(0, &pcClipper, NULL);
     if (FAILED(hr)) {
         return 1;
     }
 
     pcClipper->SetHWnd(0, hWnd);
-    pddsPrimary->SetClipper(pcClipper);
+    pddsPrimary->SetClipper(pcClipper.Get());
 
-    /*
-     * Initialize D3D
-     */
-
-    com_ptr<IDirect3D7> pD3D;
+    ComPtr<IDirect3D7> pD3D;
     hr = pDD->QueryInterface(IID_IDirect3D7, (void **)&pD3D);
     if (FAILED(hr)) {
         /* D3D7 is not supported on 64 bits processes. */
@@ -152,8 +150,8 @@ int main(int argc, char *argv[])
         return EXIT_SKIP;
     }
 
-    com_ptr<IDirect3DDevice7> pDevice;
-    hr = pD3D->CreateDevice(IID_IDirect3DHALDevice, pddsBackBuffer, &pDevice);
+    ComPtr<IDirect3DDevice7> pDevice;
+    hr = pD3D->CreateDevice(IID_IDirect3DHALDevice, pddsBackBuffer.Get(), &pDevice);
     if (FAILED(hr)) {
         return 1;
     }
@@ -162,7 +160,6 @@ int main(int argc, char *argv[])
         float x, y, z;
         DWORD color;
     };
-
 
     D3DCOLOR clearColor = D3DRGBA(0.3f, 0.1f, 0.3f, 1.0f);
     pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
@@ -184,7 +181,7 @@ int main(int argc, char *argv[])
     /*
      * Present
      */
-    hr = pddsPrimary->Blt(&rcScreenRect, pddsBackBuffer, &rcViewportRect, DDBLT_WAIT, NULL);
+    hr = pddsPrimary->Blt(&rcScreenRect, pddsBackBuffer.Get(), &rcViewportRect, DDBLT_WAIT, NULL);
     if (FAILED(hr)) {
         return 1;
     }

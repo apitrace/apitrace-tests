@@ -28,7 +28,9 @@
 
 #include <d3d9.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int
@@ -78,7 +80,8 @@ main(int argc, char *argv[])
 
     ShowWindow(hWnd, SW_SHOW);
 
-    com_ptr<IDirect3D9> pD3D(Direct3DCreate9(D3D_SDK_VERSION));
+    ComPtr<IDirect3D9> pD3D;
+    pD3D.Attach(Direct3DCreate9(D3D_SDK_VERSION));
     if (!pD3D) {
         return 1;
     }
@@ -108,7 +111,7 @@ main(int argc, char *argv[])
     PresentationParameters.EnableAutoDepthStencil = FALSE;
     PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    com_ptr<IDirect3DDevice9> pDevice;
+    ComPtr<IDirect3DDevice9> pDevice;
     hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
                             D3DDEVTYPE_HAL,
                             hWnd,
@@ -139,7 +142,7 @@ main(int argc, char *argv[])
 
     static const DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
 
-    com_ptr<IDirect3DVertexBuffer9> pVertexBuffer;
+    ComPtr<IDirect3DVertexBuffer9> pVertexBuffer;
     hr = pDevice->CreateVertexBuffer( sizeof vertices, 0, FVF, D3DPOOL_DEFAULT, &pVertexBuffer, NULL);
     if (FAILED(hr)) {
         return 1;
@@ -154,7 +157,7 @@ main(int argc, char *argv[])
     memcpy(pData, vertices, sizeof vertices);
     pVertexBuffer->Unlock();
 
-    pDevice->SetStreamSource(0, pVertexBuffer, 0, sizeof vertices[0]);
+    pDevice->SetStreamSource(0, pVertexBuffer.Get(), 0, sizeof vertices[0]);
     pDevice->SetFVF(FVF);
 
     pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);

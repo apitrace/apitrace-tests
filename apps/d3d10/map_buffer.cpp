@@ -40,7 +40,9 @@
 
 #include <d3d10.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int
@@ -61,13 +63,13 @@ main(int argc, char *argv[])
         }
     }
 
-    com_ptr<IDXGIFactory> pFactory;
+    ComPtr<IDXGIFactory> pFactory;
     hr = CreateDXGIFactory(IID_IDXGIFactory, (void**)&pFactory);
     if (FAILED(hr)) {
         return 1;
     }
 
-    com_ptr<IDXGIAdapter> pAdapter;
+    ComPtr<IDXGIAdapter> pAdapter;
     hr = pFactory->EnumAdapters(0, &pAdapter);
     if (FAILED(hr)) {
         return 1;
@@ -78,8 +80,8 @@ main(int argc, char *argv[])
         Flags |= D3D10_CREATE_DEVICE_DEBUG;
     }
 
-    com_ptr<ID3D10Device> pDevice;
-    hr = D3D10CreateDevice(pAdapter,
+    ComPtr<ID3D10Device> pDevice;
+    hr = D3D10CreateDevice(pAdapter.Get(),
                            D3D10_DRIVER_TYPE_HARDWARE,
                            nullptr,
                            Flags,
@@ -107,7 +109,7 @@ main(int argc, char *argv[])
 
     D3D10_MAP MapType = D3D10_MAP_WRITE;
     for (UINT i = 0; i < NumBuffers; ++i) {
-        com_ptr<ID3D10Buffer> pVertexBuffer;
+        ComPtr<ID3D10Buffer> pVertexBuffer;
         hr = pDevice->CreateBuffer(&BufferDesc, nullptr, &pVertexBuffer);
         if (FAILED(hr)) {
             return 1;
@@ -139,7 +141,7 @@ main(int argc, char *argv[])
         D3D10_QUERY_DESC QueryDesc;
         QueryDesc.Query = D3D10_QUERY_EVENT;
         QueryDesc.MiscFlags = 0;
-        com_ptr<ID3D10Query> pQuery;
+        ComPtr<ID3D10Query> pQuery;
         hr = pDevice->CreateQuery(&QueryDesc, &pQuery);
         if (FAILED(hr)) {
             return 1;

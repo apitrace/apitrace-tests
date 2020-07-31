@@ -29,7 +29,9 @@
 
 #include <d3d9.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int
@@ -77,7 +79,7 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<IDirect3D9Ex> pD3D;
+    ComPtr<IDirect3D9Ex> pD3D;
     hr = Direct3DCreate9Ex(D3D_SDK_VERSION, &pD3D);
     if (FAILED(hr)) {
         return 1;
@@ -108,7 +110,7 @@ main(int argc, char *argv[])
     PresentationParameters.EnableAutoDepthStencil = FALSE;
     PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    com_ptr<IDirect3DDevice9Ex> pDevice;
+    ComPtr<IDirect3DDevice9Ex> pDevice;
     hr = pD3D->CreateDeviceEx(D3DADAPTER_DEFAULT,
                               D3DDEVTYPE_HAL,
                               hWnd,
@@ -120,7 +122,7 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<IDirect3DTexture9> pTexture;
+    ComPtr<IDirect3DTexture9> pTexture;
     hr = pDevice->CreateTexture(32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &pTexture, nullptr);
     if (FAILED(hr)) {
         return 1;
@@ -140,13 +142,13 @@ main(int argc, char *argv[])
 
         HANDLE hTexels = reinterpret_cast<HANDLE>(texels);
 
-        com_ptr<IDirect3DTexture9> pStagingTexture;
+        ComPtr<IDirect3DTexture9> pStagingTexture;
         hr = pDevice->CreateTexture(32, 32, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &pStagingTexture, &hTexels);
         if (FAILED(hr)) {
             return 1;
         }
 
-        hr = pDevice->UpdateTexture(pStagingTexture, pTexture);
+        hr = pDevice->UpdateTexture(pStagingTexture.Get(), pTexture.Get());
         if (FAILED(hr)) {
             return 1;
         }
@@ -174,7 +176,7 @@ main(int argc, char *argv[])
 
     pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
 
-    pDevice->SetTexture(0, pTexture);
+    pDevice->SetTexture(0, pTexture.Get());
 
     pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
     pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);

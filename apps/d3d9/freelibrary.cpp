@@ -28,7 +28,9 @@
 
 #include <d3d9.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 typedef IDirect3D9 * (WINAPI * PFNDIRECT3DCREATE9)(UINT SDKVersion);
 
@@ -41,7 +43,8 @@ load(void)
     if (hD3D9) {
         PFNDIRECT3DCREATE9 pfnDirect3DCreate9 = (PFNDIRECT3DCREATE9)GetProcAddress(hD3D9, "Direct3DCreate9");
         if (pfnDirect3DCreate9) {
-            com_ptr<IDirect3D9> pD3D(pfnDirect3DCreate9(D3D_SDK_VERSION));
+            ComPtr<IDirect3D9> pD3D;
+            pD3D.Attach(pfnDirect3DCreate9(D3D_SDK_VERSION));
             if (pD3D) {
                 result = true;
             }

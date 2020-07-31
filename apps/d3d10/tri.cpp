@@ -34,7 +34,9 @@
 
 #include <d3d10.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 #include "tri_vs_4_0.h"
 #include "tri_ps_4_0.h"
@@ -90,13 +92,13 @@ main(int argc, char *argv[])
         Flags |= D3D10_CREATE_DEVICE_DEBUG;
     }
 
-    com_ptr<IDXGIFactory> pFactory;
+    ComPtr<IDXGIFactory> pFactory;
     hr = CreateDXGIFactory(IID_IDXGIFactory, (void**)(&pFactory));
     if (FAILED(hr)) {
         return 1;
     }
 
-    com_ptr<IDXGIAdapter> pAdapter;
+    ComPtr<IDXGIAdapter> pAdapter;
     hr = pFactory->EnumAdapters(0, &pAdapter);
     if (FAILED(hr)) {
         return 1;
@@ -115,9 +117,9 @@ main(int argc, char *argv[])
     SwapChainDesc.Windowed = true;
     SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-    com_ptr<ID3D10Device> pDevice;
-    com_ptr<IDXGISwapChain> pSwapChain;
-    hr = D3D10CreateDeviceAndSwapChain(pAdapter,
+    ComPtr<ID3D10Device> pDevice;
+    ComPtr<IDXGISwapChain> pSwapChain;
+    hr = D3D10CreateDeviceAndSwapChain(pAdapter.Get(),
                                        D3D10_DRIVER_TYPE_HARDWARE,
                                        NULL,
                                        Flags,
@@ -129,7 +131,7 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<ID3D10Texture2D> pBackBuffer;
+    ComPtr<ID3D10Texture2D> pBackBuffer;
     hr = pSwapChain->GetBuffer(0, IID_ID3D10Texture2D, (void **)&pBackBuffer);
     if (FAILED(hr)) {
         return 1;
@@ -140,19 +142,18 @@ main(int argc, char *argv[])
     RenderTargetViewDesc.ViewDimension = D3D10_RTV_DIMENSION_TEXTURE2D;
     RenderTargetViewDesc.Texture2D.MipSlice = 0;
 
-    com_ptr<ID3D10RenderTargetView> pRenderTargetView;
-    hr = pDevice->CreateRenderTargetView(pBackBuffer, &RenderTargetViewDesc, &pRenderTargetView);
+    ComPtr<ID3D10RenderTargetView> pRenderTargetView;
+    hr = pDevice->CreateRenderTargetView(pBackBuffer.Get(), &RenderTargetViewDesc, &pRenderTargetView);
     if (FAILED(hr)) {
         return 1;
     }
 
-    ID3D10RenderTargetView *pRenderTargetViews[1] = { pRenderTargetView };
-    pDevice->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, NULL);
+    pDevice->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), NULL);
 
     const float clearColor[4] = { 0.3f, 0.1f, 0.3f, 1.0f };
-    pDevice->ClearRenderTargetView(pRenderTargetView, clearColor);
+    pDevice->ClearRenderTargetView(pRenderTargetView.Get(), clearColor);
 
-    com_ptr<ID3D10VertexShader> pVertexShader;
+    ComPtr<ID3D10VertexShader> pVertexShader;
     hr = pDevice->CreateVertexShader(g_VS, sizeof g_VS, &pVertexShader);
     if (FAILED(hr)) {
         return 1;
@@ -168,7 +169,7 @@ main(int argc, char *argv[])
         { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color),    D3D10_INPUT_PER_VERTEX_DATA, 0 }
     };
 
-    com_ptr<ID3D10InputLayout> pVertexLayout;
+    ComPtr<ID3D10InputLayout> pVertexLayout;
     hr = pDevice->CreateInputLayout(InputElementDescs,
                                     2,
                                     g_VS, sizeof g_VS,
@@ -177,16 +178,16 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    pDevice->IASetInputLayout(pVertexLayout);
+    pDevice->IASetInputLayout(pVertexLayout.Get());
 
-    com_ptr<ID3D10PixelShader> pPixelShader;
+    ComPtr<ID3D10PixelShader> pPixelShader;
     hr = pDevice->CreatePixelShader(g_PS, sizeof g_PS, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
     }
 
-    pDevice->VSSetShader(pVertexShader);
-    pDevice->PSSetShader(pPixelShader);
+    pDevice->VSSetShader(pVertexShader.Get());
+    pDevice->PSSetShader(pPixelShader.Get());
 
     static const Vertex vertices[] = {
         { { -0.9f, -0.9f, 0.5f, 1.0f}, { 0.8f, 0.0f, 0.0f, 0.1f } },
@@ -202,7 +203,7 @@ main(int argc, char *argv[])
     BufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
     BufferDesc.MiscFlags = 0;
 
-    com_ptr<ID3D10Buffer> pVertexBuffer;
+    ComPtr<ID3D10Buffer> pVertexBuffer;
     hr = pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
     if (FAILED(hr)) {
         return 1;
@@ -213,10 +214,9 @@ main(int argc, char *argv[])
     memcpy(pMap, vertices, sizeof vertices);
     pVertexBuffer->Unmap();
 
-    ID3D10Buffer *pVertexBuffers[1] = { pVertexBuffer };
     UINT Stride = sizeof(Vertex);
     UINT Offset = 0;
-    pDevice->IASetVertexBuffers(0, _countof(pVertexBuffers), pVertexBuffers, &Stride, &Offset);
+    pDevice->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &Stride, &Offset);
 
     D3D10_VIEWPORT ViewPort;
     ViewPort.TopLeftX = 0;
@@ -233,12 +233,12 @@ main(int argc, char *argv[])
     RasterizerDesc.FillMode = D3D10_FILL_SOLID;
     RasterizerDesc.FrontCounterClockwise = true;
     RasterizerDesc.DepthClipEnable = true;
-    com_ptr<ID3D10RasterizerState> pRasterizerState;
+    ComPtr<ID3D10RasterizerState> pRasterizerState;
     hr = pDevice->CreateRasterizerState(&RasterizerDesc, &pRasterizerState);
     if (FAILED(hr)) {
         return 1;
     }
-    pDevice->RSSetState(pRasterizerState);
+    pDevice->RSSetState(pRasterizerState.Get());
 
     pDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     pDevice->Draw(3, 0);

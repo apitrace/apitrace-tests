@@ -40,7 +40,9 @@
 
 #include <d3d11.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int
@@ -73,8 +75,8 @@ main(int argc, char *argv[])
         D3D_FEATURE_LEVEL_10_0
     };
 
-    com_ptr<ID3D11Device> pDevice;
-    com_ptr<ID3D11DeviceContext> pDeviceContext;
+    ComPtr<ID3D11Device> pDevice;
+    ComPtr<ID3D11DeviceContext> pDeviceContext;
     hr = D3D11CreateDevice(nullptr, /* pAdapter */
                            D3D_DRIVER_TYPE_HARDWARE,
                            nullptr, /* Software */
@@ -107,7 +109,7 @@ main(int argc, char *argv[])
 
     D3D11_MAP MapType = D3D11_MAP_WRITE;
     for (UINT i = 0; i < NumBuffers; ++i) {
-        com_ptr<ID3D11Buffer> pVertexBuffer;
+        ComPtr<ID3D11Buffer> pVertexBuffer;
         hr = pDevice->CreateBuffer(&BufferDesc, nullptr, &pVertexBuffer);
         if (FAILED(hr)) {
             return 1;
@@ -120,7 +122,7 @@ main(int argc, char *argv[])
         for (UINT j = 0; j < NumSegments; ++j) {
             D3D11_MAPPED_SUBRESOURCE MappedResource;
 
-            hr = pDeviceContext->Map(pVertexBuffer, 0, MapType, 0, &MappedResource);
+            hr = pDeviceContext->Map(pVertexBuffer.Get(), 0, MapType, 0, &MappedResource);
             if (FAILED(hr)) {
                 return 1;
             } 
@@ -130,7 +132,7 @@ main(int argc, char *argv[])
             int c = (j % 255) + 1;
             memset(pMap + j*SegmentSize, c, SegmentSize);
 
-            pDeviceContext->Unmap(pVertexBuffer, 0);
+            pDeviceContext->Unmap(pVertexBuffer.Get(), 0);
             
             if (Usage == D3D11_USAGE_DYNAMIC) {
                 MapType = D3D11_MAP_WRITE_NO_OVERWRITE;
@@ -142,16 +144,16 @@ main(int argc, char *argv[])
         D3D11_QUERY_DESC QueryDesc;
         QueryDesc.Query = D3D11_QUERY_EVENT;
         QueryDesc.MiscFlags = 0;
-        com_ptr<ID3D11Query> pQuery;
+        ComPtr<ID3D11Query> pQuery;
         hr = pDevice->CreateQuery(&QueryDesc, &pQuery);
         if (FAILED(hr)) {
             return 1;
         } 
         
-        pDeviceContext->End(pQuery);
+        pDeviceContext->End(pQuery.Get());
 
         do {
-            hr = pDeviceContext->GetData(pQuery, nullptr, 0, 0);
+            hr = pDeviceContext->GetData(pQuery.Get(), nullptr, 0, 0);
         } while (hr == S_FALSE);
         if (FAILED(hr)) {
             return 1;

@@ -28,7 +28,9 @@
 
 #include <d3d8.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 
 int
@@ -77,7 +79,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<IDirect3D8> pD3D(Direct3DCreate8(D3D_SDK_VERSION));
+    ComPtr<IDirect3D8> pD3D;
+    pD3D.Attach(Direct3DCreate8(D3D_SDK_VERSION));
     if (!pD3D) {
         return 1;
     }
@@ -122,13 +125,13 @@ main(int argc, char *argv[])
 
     PresentationParameters.EnableAutoDepthStencil = FALSE;
 
-    com_ptr<IDirect3DDevice8> pDevice;
+    ComPtr<IDirect3DDevice8> pDevice;
     hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
-                              D3DDEVTYPE_HAL,
-                              hWnd,
-                              dwBehaviorFlags,
-                              &PresentationParameters,
-                              &pDevice);
+                            D3DDEVTYPE_HAL,
+                            hWnd,
+                            dwBehaviorFlags,
+                            &PresentationParameters,
+                            &pDevice);
     if (FAILED(hr)) {
         return 1;
     }

@@ -30,7 +30,9 @@
 
 #include <d3d9.h>
 
-#include "com_ptr.hpp"
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 #include "tri_vs_2_0.h"
 #include "tri_ps_2_0.h"
@@ -81,7 +83,8 @@ main(int argc, char *argv[])
         return 1;
     }
 
-    com_ptr<IDirect3D9> pD3D(Direct3DCreate9(D3D_SDK_VERSION));
+    ComPtr<IDirect3D9> pD3D;
+    pD3D.Attach(Direct3DCreate9(D3D_SDK_VERSION));
     if (!pD3D) {
         return 1;
     }
@@ -111,7 +114,7 @@ main(int argc, char *argv[])
     PresentationParameters.EnableAutoDepthStencil = FALSE;
     PresentationParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    com_ptr<IDirect3DDevice9> pDevice;
+    ComPtr<IDirect3DDevice9> pDevice;
     hr = pD3D->CreateDevice(D3DADAPTER_DEFAULT,
                               D3DDEVTYPE_HAL,
                               hWnd,
@@ -142,26 +145,26 @@ main(int argc, char *argv[])
         D3DDECL_END()
     };
 
-    com_ptr<IDirect3DVertexDeclaration9> pVertexDeclaration;
+    ComPtr<IDirect3DVertexDeclaration9> pVertexDeclaration;
     hr = pDevice->CreateVertexDeclaration(VertexElements, &pVertexDeclaration);
     if (FAILED(hr)) {
         return 1;
     }
-    pDevice->SetVertexDeclaration(pVertexDeclaration);
+    pDevice->SetVertexDeclaration(pVertexDeclaration.Get());
 
-    com_ptr<IDirect3DVertexShader9> pVertexShader;
+    ComPtr<IDirect3DVertexShader9> pVertexShader;
     hr = pDevice->CreateVertexShader((CONST DWORD *)g_vs20_VS, &pVertexShader);
     if (FAILED(hr)) {
         return 1;
     }
-    pDevice->SetVertexShader(pVertexShader);
+    pDevice->SetVertexShader(pVertexShader.Get());
 
-    com_ptr<IDirect3DPixelShader9> pPixelShader;
+    ComPtr<IDirect3DPixelShader9> pPixelShader;
     hr = pDevice->CreatePixelShader((CONST DWORD *)g_ps20_PS, &pPixelShader);
     if (FAILED(hr)) {
         return 1;
     }
-    pDevice->SetPixelShader(pPixelShader);
+    pDevice->SetPixelShader(pPixelShader.Get());
 
     pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
