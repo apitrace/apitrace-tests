@@ -214,7 +214,7 @@ class CallMatcher(Matcher):
             return None, 0, name
 
         if ifaceName[-1] in string.digits:
-            ifaceVersion = ifaceName[-1]
+            ifaceVersion = int(ifaceName[-1])
             ifaceName = ifaceName[:-1]
         else:
             ifaceVersion = 0
