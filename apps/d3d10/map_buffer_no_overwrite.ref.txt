@@ -5,28 +5,28 @@ D3D10CreateDevice(pAdapter = <pAdapter>, DriverType = D3D10_DRIVER_TYPE_HARDWARE
 
 ID3D10Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D10_USAGE_DYNAMIC, BindFlags = D3D10_BIND_VERTEX_BUFFER, CPUAccessFlags = D3D10_CPU_ACCESS_WRITE, MiscFlags = 0x0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer0>) = S_OK
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_DISCARD, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0>, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 512, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 1024, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 1536, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 2048, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 2560, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 3072, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Buffer::Map(this = <pVertexBuffer0>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap0>) = S_OK
-memcpy(dest = <pMap0> + 3584, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer0>)
 ID3D10Device::Flush(this = <pDevice>)
 ID3D10Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D10_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery0>) = S_OK
@@ -37,28 +37,28 @@ ID3D10Buffer::Release(this = <pVertexBuffer0>) = 0
 
 ID3D10Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D10_USAGE_DYNAMIC, BindFlags = D3D10_BIND_VERTEX_BUFFER, CPUAccessFlags = D3D10_CPU_ACCESS_WRITE, MiscFlags = 0x0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer1>) = S_OK
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_DISCARD, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1>, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 512, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 1024, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 1536, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 2048, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 2560, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 3072, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Buffer::Map(this = <pVertexBuffer1>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap1>) = S_OK
-memcpy(dest = <pMap1> + 3584, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer1>)
 ID3D10Device::Flush(this = <pDevice>)
 ID3D10Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D10_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery1>) = S_OK
@@ -69,28 +69,28 @@ ID3D10Buffer::Release(this = <pVertexBuffer1>) = 0
 
 ID3D10Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D10_USAGE_DYNAMIC, BindFlags = D3D10_BIND_VERTEX_BUFFER, CPUAccessFlags = D3D10_CPU_ACCESS_WRITE, MiscFlags = 0x0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer2>) = S_OK
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_DISCARD, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2>, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 512, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 1024, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 1536, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 2048, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 2560, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 3072, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Buffer::Map(this = <pVertexBuffer2>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap2>) = S_OK
-memcpy(dest = <pMap2> + 3584, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer2>)
 ID3D10Device::Flush(this = <pDevice>)
 ID3D10Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D10_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery2>) = S_OK
@@ -101,28 +101,28 @@ ID3D10Buffer::Release(this = <pVertexBuffer2>) = 0
 
 ID3D10Device::CreateBuffer(this = <pDevice>, pDesc = &{ByteWidth = 4096, Usage = D3D10_USAGE_DYNAMIC, BindFlags = D3D10_BIND_VERTEX_BUFFER, CPUAccessFlags = D3D10_CPU_ACCESS_WRITE, MiscFlags = 0x0}, pInitialData = NULL, ppBuffer = &<pVertexBuffer3>) = S_OK
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_DISCARD, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3>, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 512, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 1024, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 1536, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 2048, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 2560, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 3072, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Buffer::Map(this = <pVertexBuffer3>, MapType = D3D10_MAP_WRITE_NO_OVERWRITE, MapFlags = 0x0, ppData = &<pMap3>) = S_OK
-memcpy(dest = <pMap3> + 3584, src = blob(512), n = 512)
+memcpy(dest = <>, src = <>, n = <>)
 ID3D10Buffer::Unmap(this = <pVertexBuffer3>)
 ID3D10Device::Flush(this = <pDevice>)
 ID3D10Device::CreateQuery(this = <pDevice>, pQueryDesc = &{Query = D3D10_QUERY_EVENT, MiscFlags = 0x0}, ppQuery = &<pQuery3>) = S_OK

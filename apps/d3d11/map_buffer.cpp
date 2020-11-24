@@ -62,7 +62,7 @@ main(int argc, char *argv[])
     }
 
     UINT Flags = 0;
-    hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_NULL, 0, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, NULL, NULL, NULL);
+    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_NULL, 0, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, nullptr, nullptr, nullptr);
     if (SUCCEEDED(hr)) {
         Flags |= D3D11_CREATE_DEVICE_DEBUG;
     }
@@ -75,15 +75,15 @@ main(int argc, char *argv[])
 
     com_ptr<ID3D11Device> pDevice;
     com_ptr<ID3D11DeviceContext> pDeviceContext;
-    hr = D3D11CreateDevice(NULL, /* pAdapter */
+    hr = D3D11CreateDevice(nullptr, /* pAdapter */
                            D3D_DRIVER_TYPE_HARDWARE,
-                           NULL, /* Software */
+                           nullptr, /* Software */
                            Flags,
                            FeatureLevels,
                            sizeof FeatureLevels / sizeof FeatureLevels[0],
                            D3D11_SDK_VERSION,
                            &pDevice,
-                           NULL, /* pFeatureLevel */
+                           nullptr, /* pFeatureLevel */
                            &pDeviceContext);
     if (FAILED(hr)) {
         return 1;
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
     D3D11_MAP MapType = D3D11_MAP_WRITE;
     for (UINT i = 0; i < NumBuffers; ++i) {
         com_ptr<ID3D11Buffer> pVertexBuffer;
-        hr = pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
+        hr = pDevice->CreateBuffer(&BufferDesc, nullptr, &pVertexBuffer);
         if (FAILED(hr)) {
             return 1;
         }
@@ -126,10 +126,6 @@ main(int argc, char *argv[])
             } 
             
             BYTE *pMap = (BYTE *)MappedResource.pData;
-
-            if (reinterpret_cast<uintptr_t>(pMap) % 512) {
-                return EXIT_SKIP;
-            }
 
             int c = (j % 255) + 1;
             memset(pMap + j*SegmentSize, c, SegmentSize);
@@ -155,7 +151,7 @@ main(int argc, char *argv[])
         pDeviceContext->End(pQuery);
 
         do {
-            hr = pDeviceContext->GetData(pQuery, NULL, 0, 0);
+            hr = pDeviceContext->GetData(pQuery, nullptr, 0, 0);
         } while (hr == S_FALSE);
         if (FAILED(hr)) {
             return 1;

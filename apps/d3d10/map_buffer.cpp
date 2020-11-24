@@ -81,7 +81,7 @@ main(int argc, char *argv[])
     com_ptr<ID3D10Device> pDevice;
     hr = D3D10CreateDevice(pAdapter,
                            D3D10_DRIVER_TYPE_HARDWARE,
-                           NULL,
+                           nullptr,
                            Flags,
                            D3D10_SDK_VERSION,
                            &pDevice);
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
     D3D10_MAP MapType = D3D10_MAP_WRITE;
     for (UINT i = 0; i < NumBuffers; ++i) {
         com_ptr<ID3D10Buffer> pVertexBuffer;
-        hr = pDevice->CreateBuffer(&BufferDesc, NULL, &pVertexBuffer);
+        hr = pDevice->CreateBuffer(&BufferDesc, nullptr, &pVertexBuffer);
         if (FAILED(hr)) {
             return 1;
         }
@@ -118,15 +118,11 @@ main(int argc, char *argv[])
         }
 
         for (UINT j = 0; j < NumSegments; ++j) {
-            BYTE *pMap = NULL;
+            BYTE *pMap = nullptr;
             hr = pVertexBuffer->Map(MapType, 0, (void **)&pMap);
             if (FAILED(hr)) {
                 return 1;
             } 
-
-            if (reinterpret_cast<uintptr_t>(pMap) % 512) {
-                return EXIT_SKIP;
-            }
 
             int c = (j % 255) + 1;
             memset(pMap + j*SegmentSize, c, SegmentSize);
@@ -152,7 +148,7 @@ main(int argc, char *argv[])
         pQuery->End();
 
         do {
-            hr = pQuery->GetData(NULL, 0, 0);
+            hr = pQuery->GetData(nullptr, 0, 0);
         } while (hr == S_FALSE);
         if (FAILED(hr)) {
             return 1;
