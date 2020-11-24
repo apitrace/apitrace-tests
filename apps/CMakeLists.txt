@@ -80,7 +80,9 @@ if (EGL_FOUND)
 endif ()
 
 if (WIN32)
-    if (DirectX_FXC_EXECUTABLE)
+
+    option (ENABLE_FXC "Recompile HLSL with FXC." OFF)
+    if (ENABLE_FXC AND DirectX_FXC_EXECUTABLE)
         add_subdirectory (d3dcommon)
     endif ()
 
