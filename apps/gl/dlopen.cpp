@@ -70,7 +70,6 @@ main(int argc, char **argv)
     assert(hModule);
     pfnClearColor = (PFNGLCLEARCOLOR)GetProcAddress(hModule, "glClearColor");
     assert(pfnClearColor);
-    FreeLibrary(hModule);
 
 #else
 
@@ -79,6 +78,7 @@ main(int argc, char **argv)
 #else
     void *handle = dlopen("libGL.so.1", RTLD_NOW | RTLD_LOCAL);
 #endif
+    assert(handle);
 
     pfnClearColor = (PFNGLCLEARCOLOR)dlsym(handle, "glClearColor");
 
