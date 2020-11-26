@@ -46,7 +46,8 @@ find_package (OpenGL)
 if (WIN32)
     find_package (DirectX)
 elseif (PKG_CONFIG_FOUND)
-	pkg_check_modules (EGL egl)
+    pkg_check_modules (EGL egl)
+    pkg_check_modules (GLESV2 glesv2)
 endif ()
 
 # Check for the presence of several python packages, which are needed to build

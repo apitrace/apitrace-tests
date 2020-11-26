@@ -1,8 +1,5 @@
-if (NOT WIN32 AND NOT APPLE)
+if (GLESV2_FOUND)
 	add_subdirectory (gles2)
-endif ()
-
-if (NOT WIN32 AND NOT APPLE)
 endif ()
 
 if (OPENGL_FOUND)
