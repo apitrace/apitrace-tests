@@ -28,7 +28,6 @@ function (ADD_APP_TEST)
         if (NOT CMAKE_VERSION VERSION_LESS 3.0)
             set_tests_properties (app_${TEST_NAME} PROPERTIES
                 SKIP_RETURN_CODE 125
-                ENVIRONMENT CMAKE_SKIP_RETURN_CODE=125
             )
         endif ()
     endif ()

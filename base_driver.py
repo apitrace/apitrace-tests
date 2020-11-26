@@ -57,8 +57,7 @@ def fail(reason=None):
     _exit('FAIL', 1, reason)
 
 def skip(reason=None):
-    code = int(os.environ.get('CMAKE_SKIP_RETURN_CODE', '0'))
-    _exit('SKIP', code, reason)
+    _exit('SKIP', 125, reason)
 
 def pass_(reason=None):
     _exit('PASS', 0, reason)
