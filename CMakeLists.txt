@@ -39,6 +39,8 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 include (CMakeParseArguments)
 
+# https://cmake.org/cmake/help/latest/policy/CMP0072.html
+set (OpenGL_GL_PREFERENCE LEGACY)
 find_package (OpenGL)
 
 if (WIN32)
