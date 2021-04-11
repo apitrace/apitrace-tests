@@ -125,13 +125,15 @@ if (WIN32)
     if (MINGW)
 
         # Find dlltool
-        get_filename_component (GCC_NAME ${CMAKE_C_COMPILER} NAME)
-        string (REPLACE gcc dlltool DLLTOOL_NAME ${GCC_NAME})
-        find_program (DLLTOOL NAMES ${DLLTOOL_NAME})
-        if (DLLTOOL)
-            message (STATUS "Found dlltool: ${DLLTOOL}")
-        else ()
-            message (SEND_ERROR "dlltool not found")
+        if (CMAKE_VERSION VERSION_LESS 3.16)
+            get_filename_component (GCC_NAME ${CMAKE_C_COMPILER} NAME)
+            string (REGEX REPLACE [[gcc(-(posix|win32))?]] dlltool DLLTOOL_NAME ${GCC_NAME})
+            find_program (CMAKE_DLLTOOL NAMES ${DLLTOOL_NAME})
+            if (CMAKE_DLLTOOL)
+                message (STATUS "Found dlltool: ${CMAKE_DLLTOOL}")
+            else ()
+                message (SEND_ERROR "dlltool not found")
+            endif ()
         endif ()
 
         macro (add_dxsdk_implib target def)
@@ -139,7 +141,7 @@ if (WIN32)
             add_custom_command (
                 OUTPUT ${MGWHELP_IMPLIB}
                 COMMAND
-                    ${DLLTOOL}
+                    ${CMAKE_DLLTOOL}
                     --output-lib ${MGWHELP_IMPLIB}
                     --dllname ${target}.dll
                     --kill-at
