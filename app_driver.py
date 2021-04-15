@@ -154,6 +154,13 @@ class AppDriver(Driver):
                 os.makedirs(trace_dir)
 
         env = os.environ.copy()
+
+        # See https://github.com/apitrace/apitrace/wiki/WINE
+        if sys.platform != 'win32':
+            wineDllOverrides = ';'.join([dllName + '=n,b' for dllName in (
+                'opengl32', 'ddraw', 'd3d8', 'd3d9', 'd3d10', 'd3d11', 'dxgi',
+            )])
+            env.setdefault('WINEDLLOVERRIDES', wineDllOverrides)
         
         cmd = [
             options.apitrace, 'trace', 
