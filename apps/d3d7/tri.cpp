@@ -151,7 +151,9 @@ int main(int argc, char *argv[])
     }
 
     ComPtr<IDirect3DDevice7> pDevice;
-    hr = pD3D->CreateDevice(IID_IDirect3DHALDevice, pddsBackBuffer.Get(), &pDevice);
+    // IID_IDirect3DTnLHalDevice is absent from RDP sessions, whereas
+    // IID_IDirect3DRGBDevice seems always available.
+    hr = pD3D->CreateDevice(IID_IDirect3DRGBDevice, pddsBackBuffer.Get(), &pDevice);
     if (FAILED(hr)) {
         return 1;
     }

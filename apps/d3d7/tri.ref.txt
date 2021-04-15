@@ -6,7 +6,7 @@ IDirectDraw7::CreateClipper(this = <pDD>, dwFlags = 0, lplpDDClipper = &<pClippe
 IDirectDrawClipper::SetHWnd(this = <pClipper>, dwFlags = 0, hWnd = <hWnd>) = DD_OK
 IDirectDrawSurface7::SetClipper(this = <pddsPrimary>, lpDDClipper = <pClipper>) = DD_OK
 IDirectDraw7::QueryInterface(this = <pDD>, riid = IID_IDirect3D7, ppvObj = &<pD3D>) = S_OK
-IDirect3D7::CreateDevice(this = <pD3D>, rclsid = IID_IDirect3DHALDevice, lpDDS = <pddsBackBuffer>, lplpD3DDevice = &<pDevice>) = D3D_OK
+IDirect3D7::CreateDevice(this = <pD3D>, rclsid = IID_IDirect3DRGBDevice, lpDDS = <pddsBackBuffer>, lplpD3DDevice = &<pDevice>) = D3D_OK
 IDirect3DDevice7::Clear(this = <pDevice>, dwCount = 0, lpRects = NULL, dwFlags = D3DCLEAR_TARGET, dwColor = 0xff4c194c, dvZ = 1, dwStencil = 0) = D3D_OK
 IDirect3DDevice7::BeginScene(this = <pDevice>) = D3D_OK
 IDirect3DDevice7::SetRenderState(this = <pDevice>, dwRenderStateType = D3DRENDERSTATE_LIGHTING, dwRenderState = 0) = D3D_OK
