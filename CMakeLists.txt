@@ -27,6 +27,10 @@ if (NOT PYTHON_VERSION_MAJOR EQUAL 3)
     message (FATAL_ERROR "Python 3.x required and requested, but Python ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} found.")
 endif ()
 
+if (WIN32)
+    set (PKG_CONFIG_FOUND FALSE CACHE BOOL "" FORCE)
+    set (PKG_CONFIG_EXECUTABLE NOTFOUND CACHE FILEPATH "" FORCE)
+endif ()
 find_package (PkgConfig)
 
 # Set default built type
