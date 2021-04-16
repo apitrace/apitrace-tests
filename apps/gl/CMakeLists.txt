@@ -31,6 +31,7 @@ set (targets
     varray
     map_buffer
     map_coherent
+    msaa4
     program_binary
     exception
     window_resize
