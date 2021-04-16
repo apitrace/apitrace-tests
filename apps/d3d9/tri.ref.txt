@@ -8,9 +8,9 @@ IDirect3DDevice9::BeginScene(this = <pDevice>) = D3D_OK
 IDirect3DDevice9::SetRenderState(this = <pDevice>, State = D3DRS_LIGHTING, Value = FALSE) = D3D_OK
 IDirect3DDevice9::SetRenderState(this = <pDevice>, State = D3DRS_CULLMODE, Value = D3DCULL_NONE) = D3D_OK
 IDirect3DDevice9::SetFVF(this = <pDevice>, FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE) = D3D_OK
-D3DPERF_BeginEvent(col = 4286611584, wszName = "Draw") = -1
+D3DPERF_BeginEvent(col = 4286611584, wszName = "Draw") = <>
 IDirect3DDevice9::DrawPrimitiveUP(this = <pDevice>, PrimitiveType = D3DPT_TRIANGLELIST, PrimitiveCount = 1, pVertexStreamZeroData = blob(48), VertexStreamZeroStride = 16) = D3D_OK
-D3DPERF_EndEvent() = -1
+D3DPERF_EndEvent() = <>
 IDirect3DDevice9::EndScene(this = <pDevice>) = D3D_OK
 <present> IDirect3DDevice9::Present(this = <pDevice>, pSourceRect = NULL, pDestRect = NULL, hDestWindowOverride = NULL, pDirtyRegion = NULL) = <>
 IDirect3DDevice9::Release(this = <pDevice>) = 0
