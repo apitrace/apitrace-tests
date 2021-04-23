@@ -102,6 +102,12 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
    }
 
+   GLint samples = 0;
+   glGetIntegerv(GL_SAMPLES, &samples);
+   if (samples != 4) {
+       return EXIT_SKIP;
+   }
+
    Init();
    Reshape();
    Draw();
