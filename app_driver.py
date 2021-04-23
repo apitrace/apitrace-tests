@@ -265,6 +265,9 @@ class AppDriver(Driver):
         precision = comparer.precision(filter=True)
         sys.stdout.write('precision of %f bits against %s\n' % (precision, refImageFileName))
         if precision < self.threshold_precision:
+            if self.unreliableReadPixels:
+                sys.stderr.write('warning: ignoring call %u snapshot and %s mismatch' % (callNo, refImageFileName))
+                return
             prefix = self.getNamePrefix()
             srcImageFileName = '%s.src.%u.png' % (prefix, callNo)
             diffImageFileName = '%s.diff.%u.png' % (prefix, callNo)
@@ -333,9 +336,21 @@ class AppDriver(Driver):
         sys.stdout.flush()
         sys.stderr.write('\n')
 
+    unreliableReadPixels = False
+
     def getImage(self, callNo):
         from PIL import Image
         state = self.getState(callNo)
+        if sys.platform == 'linux':
+            try:
+                vendor = state['parameters']['GL_VENDOR']
+            except KeyError:
+                pass
+            else:
+                if vendor == 'NVIDIA Corporation':
+                    # NVIDIA's glReadPixels is unreliable on Linux due to the
+                    # fragment ownership test.
+                    self.unreliableReadPixels = True
         if self.doubleBuffer:
             attachments = ['GL_BACK', 'GL_BACK_LEFT', 'GL_BACK_RIGHT', 'GL_COLOR_ATTACHMENT0', 'RENDER_TARGET_0']
         else:
