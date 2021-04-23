@@ -83,7 +83,6 @@ static GLuint vao;
 static GLuint ssbo[3];
 static void* coherent_colors[3];
 static void* coherent_vertices;
-static int indexes_count = 0;
 
 static size_t
 getSystemPageSize() {
