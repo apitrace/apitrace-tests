@@ -53,3 +53,7 @@ endforeach (target)
 target_link_libraries (${api}_dlopen ${CMAKE_DL_LIBS})
 
 add_app_tests ()
+
+if (WIN32 OR APPLE)
+    set_tests_properties (app_gl_msaa4 PROPERTIES WILL_FAIL TRUE)
+endif ()
