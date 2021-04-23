@@ -153,7 +153,7 @@ set (GLFW_BUILD_TESTS 0)
 set (GLFW_BUILD_DOCS 0)
 set (GLFW_INSTALL 0)
 set (GLFW_USE_RETINA 0)
-add_subdirectory (thirdparty/glfw EXCLUDE_FROM_ALL)
+add_subdirectory (thirdparty/glfw ${PROJECT_BINARY_DIR}/build/glfw EXCLUDE_FROM_ALL)
 set (GLFW_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/glfw/include)
 set (GLFW_LIBRARY glfw ${GLFW_LIBRARIES})
 
