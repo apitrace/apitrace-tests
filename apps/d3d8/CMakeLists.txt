@@ -11,6 +11,7 @@ set (api d3d8)
 
 set (targets
     tri
+    tri_pp
 )
 
 foreach (target ${targets})

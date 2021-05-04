@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2012 Jose Fonseca
+ * Copyright 2012-2021 VMware, Inc.
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +24,8 @@
  **************************************************************************/
 
 
+#include <stddef.h>
+
 #include <windows.h>
 
 #include <d3d8.h>
@@ -31,6 +33,9 @@
 #include <wrl/client.h>
 
 using Microsoft::WRL::ComPtr;
+
+#include "tri_vs_1_1.h"
+#include "tri_ps_1_1.h"
 
 
 int
@@ -51,7 +56,7 @@ main(int argc, char *argv[])
         NULL,
         NULL,
         NULL,
-        "tri",
+        "tri_pp",
         NULL
     };
     RegisterClassEx(&wc);
@@ -136,31 +141,54 @@ main(int argc, char *argv[])
         return 1;
     }
 
+    D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(0.3f, 0.1f, 0.3f, 1.0f);
+    pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
+
     struct Vertex {
-        float x, y, z;
+        float position[3];
         DWORD color;
     };
 
+    static const Vertex vertices[] = {
+        { { -0.9f, -0.9f, 0.5f }, D3DCOLOR_COLORVALUE(0.8f, 0.0f, 0.0f, 0.1f) },
+        { {  0.9f, -0.9f, 0.5f }, D3DCOLOR_COLORVALUE(0.0f, 0.9f, 0.0f, 0.1f) },
+        { {  0.0f,  0.9f, 0.5f }, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.7f, 0.1f) },
+    };
 
-    D3DCOLOR clearColor = D3DCOLOR_COLORVALUE(0.3f, 0.1f, 0.3f, 1.0f);
-    pDevice->Clear(0, NULL, D3DCLEAR_TARGET, clearColor, 1.0f, 0);
-    pDevice->BeginScene();
+    static const DWORD Declaration[] = {
+        D3DVSD_STREAM(0),
+        D3DVSD_REG(0, D3DVSDT_FLOAT3),
+        D3DVSD_REG(1, D3DVSDT_D3DCOLOR),
+        D3DVSD_END()
+    };
+
+    DWORD hVertexShader = 0;
+    hr = pDevice->CreateVertexShader(Declaration, g_vs11_VS, &hVertexShader, 0);
+    if (FAILED(hr)) {
+        return 1;
+    }
+    pDevice->SetVertexShader(hVertexShader);
+
+    DWORD hPixelShader = 0;
+    hr = pDevice->CreatePixelShader(g_ps11_PS, &hPixelShader);
+    if (FAILED(hr)) {
+        return 1;
+    }
+    pDevice->SetPixelShader(hPixelShader);
 
     pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
     pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-    static const Vertex vertices[] = {
-        { -0.9f, -0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.8f, 0.0f, 0.0f, 0.1f) },
-        {  0.9f, -0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.0f, 0.9f, 0.0f, 0.1f) },
-        {  0.0f,  0.9f, 0.5f, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.7f, 0.1f) },
-    };
+    pDevice->BeginScene();
 
-    pDevice->SetVertexShader(D3DFVF_XYZ | D3DFVF_DIFFUSE);
     pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(Vertex));
 
     pDevice->EndScene();
 
     pDevice->Present(NULL, NULL, NULL, NULL);
+
+    pDevice->DeletePixelShader(hPixelShader);
+    pDevice->DeleteVertexShader(hVertexShader);
 
     DestroyWindow(hWnd);
 
