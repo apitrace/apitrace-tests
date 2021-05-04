@@ -486,7 +486,7 @@ class CallScanner(Scanner):
         (WSTRING, r'L"[^"\\]*(?:\\.[^"\\]*)*"', False),
 
         # Alphanumeric IDs
-        (ID, r'[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)?', True),
+        (ID, r'D3DFVF_TEXCOORDSIZE[1-4]\([0-9]+\)|[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)?', True),
 
         # Numeric IDs
         (HEXNUM, r'-?0x[0-9a-fA-F]+', False),

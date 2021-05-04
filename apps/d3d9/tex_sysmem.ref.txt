@@ -11,7 +11,7 @@ IDirect3DDevice9Ex::BeginScene(this = <pDevice>) = D3D_OK
 IDirect3DDevice9Ex::SetRenderState(this = <pDevice>, State = D3DRS_LIGHTING, Value = FALSE) = D3D_OK
 IDirect3DDevice9Ex::SetRenderState(this = <pDevice>, State = D3DRS_CULLMODE, Value = D3DCULL_NONE) = D3D_OK
 IDirect3DDevice9Ex::SetRenderState(this = <pDevice>, State = D3DRS_ZENABLE, Value = D3DZB_FALSE) = D3D_OK
-IDirect3DDevice9Ex::SetFVF(this = <pDevice>, FVF = D3DFVF_XYZ | 0x100) = D3D_OK
+IDirect3DDevice9Ex::SetFVF(this = <pDevice>, FVF = D3DFVF_XYZ | D3DFVF_TEX1) = D3D_OK
 IDirect3DDevice9Ex::SetTexture(this = <pDevice>, Stage = 0, pTexture = <pTexture>) = D3D_OK
 IDirect3DDevice9Ex::SetSamplerState(this = <pDevice>, Sampler = 0, Type = D3DSAMP_MAGFILTER, Value = D3DTEXF_LINEAR) = D3D_OK
 IDirect3DDevice9Ex::SetSamplerState(this = <pDevice>, Sampler = 0, Type = D3DSAMP_MINFILTER, Value = D3DTEXF_LINEAR) = D3D_OK

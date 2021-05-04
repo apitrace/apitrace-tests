@@ -10,6 +10,7 @@ set (api d3d9)
 
 set (targets
     freelibrary
+    fvf
     map_cubemap
     map_readonly
     subprocess
