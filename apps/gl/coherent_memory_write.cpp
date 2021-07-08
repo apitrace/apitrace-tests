@@ -166,8 +166,8 @@ setup_buffers(const int width, const int height, const size_t mapping_offset,
         glBufferStorage(GL_SHADER_STORAGE_BUFFER, size + mapping_offset, NULL,
             mapping_flags);
 
-        coherent_colors[i] = glMapNamedBufferRange(ssbo[i], mapping_offset, size,
-            mapping_flags);
+        coherent_colors[i] = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, mapping_offset,
+            size, mapping_flags);
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -385,7 +385,7 @@ unmap_buffers(const int width, const int height, const size_t mapping_offset) {
         glBindBufferRange(GL_SHADER_STORAGE_BUFFER, i, ssbo[i],
             mapping_offset, size);
 
-        glUnmapNamedBuffer(ssbo[i]);
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, 0);
     }
 
@@ -402,7 +402,7 @@ main(int argc, char** argv) {
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
