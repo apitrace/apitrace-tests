@@ -17,9 +17,10 @@ set (api gl)
 set (targets
     child
     config
-    coherent_memory_write
-    compiled_vertex_array
     coherent_memory_read
+    coherent_memory_write
+    coherent_memory_write_threaded
+    compiled_vertex_array
     debug
     default
     dlopen
