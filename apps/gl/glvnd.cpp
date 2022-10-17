@@ -50,7 +50,7 @@ main(int argc, char **argv)
 
     PFNGLXGETPROCADDRESSPROC pfnglXGetProcAddress = (PFNGLXGETPROCADDRESSPROC)dlsym(libGLX, "glXGetProcAddress");
     assert(pfnglXGetProcAddress != nullptr);
-    glXGetProcAddress((const GLubyte *)"glClear");
+    pfnglXGetProcAddress((const GLubyte *)"glClear");
 
     void *libOpenGL = dlopen("libOpenGL.so.0", RTLD_NOW | RTLD_LOCAL);
     assert(libOpenGL != nullptr);
