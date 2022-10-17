@@ -37,8 +37,8 @@ set (targets
     window_resize
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set (targets ${targets} fork)
+if (CMAKE_SYSTEM_NAME MATCHES Linux)
+    set (targets ${targets} fork glvnd)
 endif ()
 
 if (WIN32)
@@ -47,10 +47,10 @@ endif ()
 
 foreach (target ${targets})
     add_executable (${api}_${target} ${target}.cpp)
+    target_link_libraries (${api}_${target} ${CMAKE_DL_LIBS})
     set_target_properties (${api}_${target} PROPERTIES OUTPUT_NAME ${target})
 endforeach (target)
 
-target_link_libraries (${api}_dlopen ${CMAKE_DL_LIBS})
 
 add_app_tests ()
 

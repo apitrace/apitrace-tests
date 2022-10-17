@@ -1,8 +1,9 @@
-eglGetDisplay(display_id = <display_id>) = <dpy>
+eglGetPlatformDisplayEXT(platform = EGL_PLATFORM_X11_KHR, native_display = <>, attrib_list = {}) = <dpy>
 eglInitialize(dpy = <dpy>, major = &<major>, minor = &<minor>) = EGL_TRUE
 eglBindAPI(api = EGL_OPENGL_API) = EGL_TRUE
 eglCreateContext(dpy = <dpy>, config = <config>, share_context = NULL, attrib_list = {EGL_NONE}) = <ctx>
-eglCreateWindowSurface(dpy = <dpy>, config = <config>, win = <win>, attrib_list = <>) = <surface>eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
+eglCreatePlatformWindowSurfaceEXT(dpy = <dpy>, config = <config>, native_window = <>, attrib_list = <>) = <surface>
+eglMakeCurrent(dpy = <dpy>, draw = <surface>, read = <surface>, ctx = <ctx>) = EGL_TRUE
 glViewport(x = 0, y = 0, width = 300, height = 300)
 glScissor(x = 0, y = 0, width = 300, height = 300)
 glClearColor(red = 0.4, green = 0.4, blue = 0.4, alpha = 0)
