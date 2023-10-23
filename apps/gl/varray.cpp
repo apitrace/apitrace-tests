@@ -48,6 +48,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 
@@ -63,6 +64,7 @@ enum DerefMethod {
    DRAWARRAYS,
    ARRAYELEMENT,
    DRAWELEMENTS,
+   DRAWARRAYSINDIRECT,
 };
 
 static enum SetupMethod setupMethod = POINTER;
@@ -85,6 +87,8 @@ static void parseArgs(int argc, char** argv)
          derefMethod = ARRAYELEMENT;
       } else if (strcmp(arg, "drawelements") == 0) {
          derefMethod = DRAWELEMENTS;
+      } else if (strcmp(arg, "drawarraysindirect") == 0) {
+         derefMethod = DRAWARRAYSINDIRECT;
       } else {
          fprintf(stderr, "error: unknown arg %s\n", arg);
          exit(1);
@@ -150,19 +154,31 @@ static void display(void)
 {
    glClear(GL_COLOR_BUFFER_BIT);
 
-   if (derefMethod == DRAWARRAYS)
+   if (derefMethod == DRAWARRAYS) {
       glDrawArrays(GL_TRIANGLES, 0, 6);
-   else if (derefMethod == ARRAYELEMENT) {
+   } else if (derefMethod == ARRAYELEMENT) {
       glBegin(GL_TRIANGLES);
       glArrayElement(2);
       glArrayElement(3);
       glArrayElement(5);
       glEnd();
-   }
-   else if (derefMethod == DRAWELEMENTS) {
+   } else if (derefMethod == DRAWELEMENTS) {
       GLuint indices[4] = {0, 1, 3, 4};
 
       glDrawElements(GL_POLYGON, 4, GL_UNSIGNED_INT, indices);
+   } else if (derefMethod == DRAWARRAYSINDIRECT) {
+      typedef  struct {
+         GLuint count;
+         GLuint instanceCount;
+         GLuint first;
+         GLuint baseInstance;
+      } DrawArraysIndirectCommand;
+
+      static const DrawArraysIndirectCommand indirect = { 6, 1, 0, 0 };
+
+      glDrawArraysIndirect(GL_TRIANGLE_STRIP, &indirect);
+   } else {
+      abort();
    }
    glFlush();
 
@@ -187,6 +203,11 @@ int main(int argc, char** argv)
    glfwInit();
 
    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+   if (derefMethod >= DRAWARRAYSINDIRECT) {
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+   }
 
    window = glfwCreateWindow(350, 350, argv[0], NULL, NULL);
    if (!window) {
@@ -194,6 +215,10 @@ int main(int argc, char** argv)
    }
 
    glfwMakeContextCurrent(window);
+
+   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+       return EXIT_FAILURE;
+   }
 
    init();
    reshape();
