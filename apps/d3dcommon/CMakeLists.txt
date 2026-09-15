@@ -20,5 +20,6 @@ endmacro ()
 fxc (vs_2_0 ps_2_0)
 fxc (vs_4_0 ps_4_0)
 fxc (vs_4_0_level_9_1 ps_4_0_level_9_1)
+fxc (vs_5_0 ps_5_0)
 
 add_custom_target (hlsl DEPENDS ${HEADERS})

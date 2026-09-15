@@ -85,6 +85,12 @@ if (WIN32)
         add_subdirectory (d3dcommon)
     endif ()
 
+    include (CheckCXXSourceCompiles)
+    check_cxx_source_compiles ("#include <windows.h>\n#include <d3d12.h>\n#include <dxgi1_4.h>\nint main() { return 0; }" HAVE_D3D12)
+    if (HAVE_D3D12)
+        add_subdirectory (d3d12)
+    endif ()
+
     add_subdirectory (d3d11_1)
     add_subdirectory (d3d11)
     add_subdirectory (d3d10_1)
