@@ -156,7 +156,7 @@ class AppDriver(Driver):
         env = os.environ.copy()
 
         # See https://github.com/apitrace/apitrace/wiki/WINE
-        if sys.platform != 'win32':
+        if sys.platform != 'win32' and 'WSL_DISTRO_NAME' not in os.environ:
             wineDllOverrides = ';'.join([dllName + '=n,b' for dllName in (
                 'opengl32', 'ddraw', 'd3d8', 'd3d9', 'd3d10', 'd3d11', 'dxgi',
             )])
