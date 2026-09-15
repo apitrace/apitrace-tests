@@ -401,8 +401,11 @@ class AppDriver(Driver):
         except KeyError:
             pass
         else:
-            # On NVIDIA drivers glGetIntegerv(GL_INDEX_WRITEMASK) returns 255
+            # NVIDIA
             self.replaceState(parameters, 'GL_INDEX_WRITEMASK', 255, -1)
+            for key in ('GL_DRAW_BUFFER', 'GL_DRAW_BUFFER0'):
+                self.replaceState(parameters, key, 'GL_FRONT_LEFT', 'GL_FRONT')
+                self.replaceState(parameters, key, 'GL_BACK_LEFT', 'GL_BACK')
 
             # Mesa
             self.replaceState(parameters, 'GL_STENCIL_VALUE_MASK', 255, -1)
