@@ -1,0 +1,49 @@
+//!tri
+CreateDXGIFactory1(riid = IID_IDXGIFactory4, ppFactory = &<pFactory>) = S_OK
+IDXGIFactory::EnumAdapters(this = <pFactory>, Adapter = 0, ppAdapter = &<pAdapter>) = S_OK
+D3D12CreateDevice(pAdapter = <pAdapter>, MinimumFeatureLevel = D3D_FEATURE_LEVEL_11_0, riid = IID_ID3D12Device, ppDevice = &<pDevice>) = S_OK
+ID3D12Device::SetName(this = <pDevice>, Name = L"Device") = S_OK
+ID3D12Device::CreateCommandQueue(this = <pDevice>, pDesc = &{Type = D3D12_COMMAND_LIST_TYPE_DIRECT, Priority = 0, Flags = D3D12_COMMAND_QUEUE_FLAG_NONE, NodeMask = 0}, riid = IID_ID3D12CommandQueue, ppCommandQueue = &<pCommandQueue>) = S_OK
+ID3D12CommandQueue::SetName(this = <pCommandQueue>, Name = L"CommandQueue") = S_OK
+IDXGIFactory::CreateSwapChainForHwnd(this = <pFactory>, pDevice = <pCommandQueue>, hWnd = <hWnd>, pDesc = <>, pFullscreenDesc = NULL, pRestrictToOutput = NULL, ppSwapChain = &<pSwapChain>) = S_OK
+ID3D12Device::CreateDescriptorHeap(this = <pDevice>, pDescriptorHeapDesc = &{Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV, NumDescriptors = 2, Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE, NodeMask = 0}, riid = IID_ID3D12DescriptorHeap, ppvHeap = &<pRtvHeap>) = S_OK
+ID3D12DescriptorHeap::SetName(this = <pRtvHeap>, Name = L"RenderTargetViewHeap") = S_OK
+ID3D12DescriptorHeap::GetCPUDescriptorHandleForHeapStart(this = <pRtvHeap>) = {ptr = <rtv0>}
+IDXGISwapChain::GetBuffer(this = <pSwapChain>, Buffer = 0, riid = IID_ID3D12Resource, ppSurface = &<pBackBuffer0>) = S_OK
+ID3D12Resource::SetName(this = <pBackBuffer0>, Name = L"BackBuffer") = S_OK
+ID3D12Device::CreateRenderTargetView(this = <pDevice>, pResource = <pBackBuffer0>, pDesc = &{Format = DXGI_FORMAT_R8G8B8A8_UNORM, ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D, Texture2D = {MipSlice = 0, PlaneSlice = 0}}, DestDescriptor = {ptr = <rtv0>})
+IDXGISwapChain::GetBuffer(this = <pSwapChain>, Buffer = 1, riid = IID_ID3D12Resource, ppSurface = &<pBackBuffer1>) = S_OK
+ID3D12Resource::SetName(this = <pBackBuffer1>, Name = L"BackBuffer") = S_OK
+ID3D12Device::CreateRenderTargetView(this = <pDevice>, pResource = <pBackBuffer1>, pDesc = <>, DestDescriptor = {ptr = <rtv1>})
+D3D12SerializeRootSignature(pRootSignature = <>, Version = D3D_ROOT_SIGNATURE_VERSION_1_0, ppBlob = &<pBlob>, ppErrorBlob = NULL) = S_OK
+ID3D12Device::CreateRootSignature(this = <pDevice>, nodeMask = 0, pBlobWithRootSignature = blob(68), blobLengthInBytes = 68, riid = IID_ID3D12RootSignature, ppvRootSignature = &<pRootSignature>) = S_OK
+ID3D12RootSignature::SetName(this = <pRootSignature>, Name = L"RootSignature") = S_OK
+ID3D12Device::CreateGraphicsPipelineState(this = <pDevice>, pDesc = <>, riid = IID_ID3D12PipelineState, ppPipelineState = &<pPipelineState>) = S_OK
+ID3D12PipelineState::SetName(this = <pPipelineState>, Name = L"PipelineState") = S_OK
+ID3D12Device::CreateCommittedResource(this = <pDevice>, pHeapProperties = &{Type = D3D12_HEAP_TYPE_UPLOAD, CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN, MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN, CreationNodeMask = 0, VisibleNodeMask = 0}, HeapFlags = D3D12_HEAP_FLAG_NONE, pResourceDesc = <>, InitialResourceState = <>, pOptimizedClearValue = NULL, riidResource = IID_ID3D12Resource, ppvResource = &<pVertexBuffer>) = S_OK
+ID3D12Resource::SetName(this = <pVertexBuffer>, Name = L"VertexBuffer") = S_OK
+ID3D12Resource::Map(this = <pVertexBuffer>, Subresource = 0, pReadRange = &{Begin = 0, End = 0}, ppData = &<pVertexBufferMap>) = S_OK
+ID3D12Resource::Unmap(this = <pVertexBuffer>, Subresource = 0, pWrittenRange = NULL)
+ID3D12Resource::GetGPUVirtualAddress(this = <pVertexBuffer>) = <vertexBufferAddress>
+ID3D12Device::CreateCommandAllocator(this = <pDevice>, type = D3D12_COMMAND_LIST_TYPE_DIRECT, riid = IID_ID3D12CommandAllocator, ppCommandAllocator = &<pCommandAllocator>) = S_OK
+ID3D12Device::CreateCommandList(this = <pDevice>, nodeMask = 0, type = D3D12_COMMAND_LIST_TYPE_DIRECT, pCommandAllocator = <pCommandAllocator>, pInitialState = NULL, riid = IID_ID3D12GraphicsCommandList, ppCommandList = &<pCommandList>) = S_OK
+ID3D12GraphicsCommandList::SetName(this = <pCommandList>, Name = L"CommandList") = S_OK
+ID3D12GraphicsCommandList::ResourceBarrier(this = <pCommandList>, NumBarriers = 1, pBarriers = &{Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION, Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE, Transition = {pResource = <pBackBuffer0>, Subresource = 4294967295, StateBefore = D3D12_RESOURCE_STATE_COMMON, StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET}})
+ID3D12GraphicsCommandList::OMSetRenderTargets(this = <pCommandList>, NumRenderTargetDescriptors = 1, pRenderTargetDescriptors = &{ptr = <rtv0>}, RTsSingleHandleToDescriptorRange = FALSE, pDepthStencilDescriptor = NULL)
+ID3D12GraphicsCommandList::ClearRenderTargetView(this = <pCommandList>, RenderTargetView = {ptr = <rtv0>}, ColorRGBA = {0.3, 0.1, 0.3, 1}, NumRects = 0, pRects = NULL)
+ID3D12GraphicsCommandList::SetGraphicsRootSignature(this = <pCommandList>, pRootSignature = <pRootSignature>)
+ID3D12GraphicsCommandList::SetPipelineState(this = <pCommandList>, pPipelineState = <pPipelineState>)
+ID3D12GraphicsCommandList::IASetVertexBuffers(this = <pCommandList>, StartSlot = 0, NumViews = 1, pViews = &{BufferLocation = <vertexBufferAddress>, SizeInBytes = 96, StrideInBytes = 32})
+ID3D12GraphicsCommandList::RSSetViewports(this = <pCommandList>, NumViewports = 1, pViewports = &{TopLeftX = 0, TopLeftY = 0, Width = 250, Height = 250, MinDepth = 0, MaxDepth = 1})
+ID3D12GraphicsCommandList::RSSetScissorRects(this = <pCommandList>, NumRects = 1, pRects = &{left = 0, top = 0, right = 250, bottom = 250})
+ID3D12GraphicsCommandList::IASetPrimitiveTopology(this = <pCommandList>, PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP)
+ID3D12GraphicsCommandList::DrawInstanced(this = <pCommandList>, VertexCountPerInstance = 3, InstanceCount = 1, StartVertexLocation = 0, StartInstanceLocation = 0)
+ID3D12GraphicsCommandList::ResourceBarrier(this = <pCommandList>, NumBarriers = 1, pBarriers = &{Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION, Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE, Transition = {pResource = <pBackBuffer0>, Subresource = 4294967295, StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET, StateAfter = D3D12_RESOURCE_STATE_COMMON}})
+ID3D12GraphicsCommandList::Close(this = <pCommandList>) = S_OK
+memcpy(dest = <pVertexBufferMap>, src = blob(96), n = 96)
+ID3D12CommandQueue::ExecuteCommandLists(this = <pCommandQueue>, NumCommandLists = 1, ppCommandLists = &<pCommandList>)
+<present> IDXGISwapChain::Present(this = <pSwapChain>, SyncInterval = 0, Flags = 0x0) = S_OK
+ID3D12Device::CreateFence(this = <pDevice>, InitialValue = 0, Flags = D3D12_FENCE_FLAG_NONE, riid = IID_ID3D12Fence, ppFence = &<pFence>) = S_OK
+ID3D12Fence::SetEventOnCompletion(this = <pFence>, Value = 1, hEvent = <hFenceEvent>) = S_OK
+ID3D12CommandQueue::Signal(this = <pCommandQueue>, pFence = <pFence>, Value = 1) = S_OK
+WaitForSingleObject(hHandle = <hFenceEvent>, bAlertable = FALSE, pTimeout = NULL) = 0

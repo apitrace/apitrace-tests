@@ -113,6 +113,7 @@ class AppDriver(Driver):
         'd3d10_1': 'd3d10_1',
         'd3d11': 'd3d11',
         'd3d11_1': 'd3d11',
+        'd3d12': 'd3d12',
     }
 
     api_replay_map = {
@@ -129,6 +130,7 @@ class AppDriver(Driver):
         'd3d10_1': 'd3dreplay',
         'd3d11': 'd3dreplay',
         'd3d11_1': 'd3dreplay',
+        'd3d12': 'd3dreplay',
     }
 
     def traceApp(self):
@@ -158,7 +160,7 @@ class AppDriver(Driver):
         # See https://github.com/apitrace/apitrace/wiki/WINE
         if sys.platform != 'win32' and 'WSL_DISTRO_NAME' not in os.environ:
             wineDllOverrides = ';'.join([dllName + '=n,b' for dllName in (
-                'opengl32', 'ddraw', 'd3d8', 'd3d9', 'd3d10', 'd3d11', 'dxgi',
+                'opengl32', 'ddraw', 'd3d8', 'd3d9', 'd3d10', 'd3d11', 'd3d12', 'dxgi',
             )])
             env.setdefault('WINEDLLOVERRIDES', wineDllOverrides)
         
