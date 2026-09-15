@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8.0)
+cmake_minimum_required (VERSION 3.15)
 
 
 project (apitrace-tests)
@@ -22,10 +22,7 @@ endif ()
 
 list (INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package (PythonInterp 3 REQUIRED)
-if (NOT PYTHON_VERSION_MAJOR EQUAL 3)
-    message (FATAL_ERROR "Python 3.x required and requested, but Python ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} found.")
-endif ()
+find_package (Python3 REQUIRED)
 
 if (WIN32)
     set (PKG_CONFIG_FOUND FALSE CACHE BOOL "" FORCE)
@@ -57,7 +54,7 @@ endif ()
 # Check for the presence of several python packages, which are needed to build
 # generated tests.
 execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "import PIL"
+    COMMAND ${Python3_EXECUTABLE} -c "import PIL"
     OUTPUT_QUIET
     ERROR_QUIET
     RESULT_VARIABLE IMPORT_PIL_RESULT)
