@@ -18,6 +18,11 @@ else ()
     set (APITRACE_EXECUTABLE $<TARGET_FILE:apitrace>)
     unset (CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     remove_definitions (-D_WIN32_WINNT=0x0602 -DWINVER=0x0602)
+
+    # Don't inherit the main project's interprocedural optimization: it
+    # merely slows down building these throwaway test binaries.  See also
+    # https://cmake.org/cmake/help/latest/policy/CMP0069.html
+    set (CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
 endif ()
 
 list (INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
